@@ -3,6 +3,7 @@ package com.raiku.troubleclub.radio.managers.command;
 import com.raiku.troubleclub.radio.commands.Join;
 import com.raiku.troubleclub.radio.commands.Leave;
 import com.raiku.troubleclub.radio.commands.Play;
+import com.raiku.troubleclub.radio.commands.Stop;
 import com.raiku.troubleclub.radio.config.ConfigHandler;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ public class CommandManager {
 		addCommand(new Join());
 		addCommand(new Play());
 		addCommand(new Leave());
+		addCommand(new Stop());
 	}
 
 	/**
