@@ -13,7 +13,7 @@ import java.util.*;
 /**
  * Writes default config files
  *
- * @version 1.0 2022-15-06
+ * @version 1.1 2022-15-06
  * @since 1.0
  */
 public class DefaultConfigWriter {
@@ -31,7 +31,7 @@ public class DefaultConfigWriter {
 	/**
 	 * Writes all default configs
 	 */
-	public static void writeDefaultConfigs() {
+	public void writeDefaultConfigs() {
 		if (new File(DEFAULT_DIRECTORY).mkdirs())
 			logger.info("Default directory created");
 
