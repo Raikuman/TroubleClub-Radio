@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles the bot leaving the voice channel of a user
  *
- * @version 1.0 2022-15-06
+ * @version 1.1 2022-16-06
  * @since 1.0
  */
 public class Stop implements CommandInterface {
@@ -42,6 +42,11 @@ public class Stop implements CommandInterface {
 		return "Stops playing music";
 	}
 
+	/**
+	 * Stops current track and clears queue
+	 * @param ctx Provides command context
+	 * @return If stopped track/queue
+	 */
 	public boolean stopMusic(CommandContext ctx) {
 		final TextChannel channel = ctx.getChannel();
 		final Member self = ctx.getGuild().getSelfMember();

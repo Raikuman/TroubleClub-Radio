@@ -74,6 +74,11 @@ public class Play implements CommandInterface {
 		return "Play a song from a link or playlist, or search for a song";
 	}
 
+	/**
+	 * Check if the string input is a url
+	 * @param url Url string
+	 * @return If string is url
+	 */
 	private boolean isUrl(String url) {
 		try {
 			new URI(url);
