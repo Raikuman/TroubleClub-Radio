@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 public class Join implements CommandInterface {
 
 	@Override
-	public void invoke(CommandContext ctx) {
+	public void handle(CommandContext ctx) {
 		boolean joined = joinChannel(ctx);
 
 		if (joined)

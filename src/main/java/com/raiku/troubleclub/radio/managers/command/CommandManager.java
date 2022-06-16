@@ -1,9 +1,6 @@
 package com.raiku.troubleclub.radio.managers.command;
 
-import com.raiku.troubleclub.radio.commands.Join;
-import com.raiku.troubleclub.radio.commands.Leave;
-import com.raiku.troubleclub.radio.commands.Play;
-import com.raiku.troubleclub.radio.commands.Stop;
+import com.raiku.troubleclub.radio.commands.*;
 import com.raiku.troubleclub.radio.config.ConfigHandler;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.slf4j.Logger;
@@ -30,6 +27,11 @@ public class CommandManager {
 		addCommand(new Play());
 		addCommand(new Leave());
 		addCommand(new Stop());
+		addCommand(new Pause());
+		addCommand(new Resume());
+		addCommand(new Queue());
+		addCommand(new Repeat());
+		addCommand(new Loop());
 	}
 
 	/**
@@ -50,7 +52,7 @@ public class CommandManager {
 		);
 
 		if (commandFound) {
-			logger.info("A command with this invoke already exists: " + command.getInvoke());
+			logger.info("A command with this handle already exists: " + command.getInvoke());
 			return;
 		}
 
@@ -96,6 +98,6 @@ public class CommandManager {
 
 		List<String> args = Arrays.asList(split).subList(1, split.length);
 
-		command.invoke(new CommandContext(event, args));
+		command.handle(new CommandContext(event, args));
 	}
 }

@@ -18,7 +18,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 public class Pause implements CommandInterface {
 
 	@Override
-	public void invoke(CommandContext ctx) {
+	public void handle(CommandContext ctx) {
 		final TextChannel channel = ctx.getChannel();
 		final Member self = ctx.getGuild().getSelfMember();
 		final GuildVoiceState selfVoiceState = self.getVoiceState();

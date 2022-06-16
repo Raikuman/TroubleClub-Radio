@@ -14,7 +14,7 @@ import java.util.List;
 public class Leave implements CommandInterface {
 
 	@Override
-	public void invoke(CommandContext ctx) {
+	public void handle(CommandContext ctx) {
 		boolean stopped = new Stop().stopMusic(ctx);
 
 		if (stopped) {

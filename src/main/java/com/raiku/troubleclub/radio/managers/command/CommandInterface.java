@@ -14,7 +14,7 @@ public interface CommandInterface {
 	 * Method containing code for running the command
 	 * @param ctx Context for command use
 	 */
-	void invoke(CommandContext ctx);
+	void handle(CommandContext ctx);
 
 	/**
 	 * Gets invocation string

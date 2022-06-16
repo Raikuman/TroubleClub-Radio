@@ -20,7 +20,7 @@ import java.net.URISyntaxException;
 public class Play implements CommandInterface {
 
 	@Override
-	public void invoke(CommandContext ctx) {
+	public void handle(CommandContext ctx) {
 		final TextChannel channel = ctx.getChannel();
 
 		boolean joined = new Join().joinChannel(ctx);

@@ -18,7 +18,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 public class Stop implements CommandInterface {
 
 	@Override
-	public void invoke(CommandContext ctx) {
+	public void handle(CommandContext ctx) {
 		boolean stopped = stopMusic(ctx);
 
 		if (stopped)
