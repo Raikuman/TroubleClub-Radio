@@ -1,8 +1,8 @@
 package com.raiku.troubleclub.radio.commands;
 
-import com.raiku.troubleclub.radio.helpers.MessageResources;
-import com.raiku.troubleclub.radio.managers.command.CommandContext;
-import com.raiku.troubleclub.radio.managers.command.CommandInterface;
+import com.raiku.botutilities.commands.manager.CommandContext;
+import com.raiku.botutilities.commands.manager.CommandInterface;
+import com.raiku.botutilities.helpers.MessageResources;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles the bot joining the voice channel of a user
  *
- * @version 1.0 2022-15-06
+ * @version 1.1 2022-18-06
  * @since 1.0
  */
 public class Join implements CommandInterface {

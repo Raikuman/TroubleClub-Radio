@@ -1,9 +1,9 @@
 package com.raiku.troubleclub.radio.commands;
 
-import com.raiku.troubleclub.radio.helpers.MessageResources;
-import com.raiku.troubleclub.radio.helpers.RandomColor;
-import com.raiku.troubleclub.radio.managers.command.CommandContext;
-import com.raiku.troubleclub.radio.managers.command.CommandInterface;
+import com.raiku.botutilities.commands.manager.CommandContext;
+import com.raiku.botutilities.commands.manager.CommandInterface;
+import com.raiku.botutilities.helpers.MessageResources;
+import com.raiku.botutilities.helpers.RandomColor;
 import com.raiku.troubleclub.radio.music.GuildMusicManager;
 import com.raiku.troubleclub.radio.music.PlayerManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles the bot looping the current audio player queue
  *
- * @version 1.0 2022-16-06
+ * @version 1.1 2022-18-06
  * @since 1.0
  */
 public class Loop implements CommandInterface {

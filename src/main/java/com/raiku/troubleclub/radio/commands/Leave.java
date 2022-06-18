@@ -1,14 +1,14 @@
 package com.raiku.troubleclub.radio.commands;
 
-import com.raiku.troubleclub.radio.managers.command.CommandContext;
-import com.raiku.troubleclub.radio.managers.command.CommandInterface;
+import com.raiku.botutilities.commands.manager.CommandContext;
+import com.raiku.botutilities.commands.manager.CommandInterface;
 
 import java.util.List;
 
 /**
  * Handles the bot leaving the voice channel of a user
  *
- * @version 1.1 2022-15-06
+ * @version 1.2 2022-18-06
  * @since 1.0
  */
 public class Leave implements CommandInterface {

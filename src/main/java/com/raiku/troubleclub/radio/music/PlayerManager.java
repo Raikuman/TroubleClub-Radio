@@ -1,8 +1,8 @@
 package com.raiku.troubleclub.radio.music;
 
-import com.raiku.troubleclub.radio.helpers.DateAndTime;
-import com.raiku.troubleclub.radio.helpers.MessageResources;
-import com.raiku.troubleclub.radio.helpers.RandomColor;
+import com.raiku.botutilities.helpers.DateAndTime;
+import com.raiku.botutilities.helpers.MessageResources;
+import com.raiku.botutilities.helpers.RandomColor;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -45,8 +45,8 @@ public class PlayerManager {
 	public void loadAndPlay(TextChannel channel, String trackUrl, User user) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
 
-		// Set bot to 50% volume
-		musicManager.audioPlayer.setVolume(50);
+		// Set bot to 25% volume
+		musicManager.audioPlayer.setVolume(25);
 
 		this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
 

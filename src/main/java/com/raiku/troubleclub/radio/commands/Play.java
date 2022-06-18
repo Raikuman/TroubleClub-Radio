@@ -1,8 +1,8 @@
 package com.raiku.troubleclub.radio.commands;
 
-import com.raiku.troubleclub.radio.helpers.MessageResources;
-import com.raiku.troubleclub.radio.managers.command.CommandContext;
-import com.raiku.troubleclub.radio.managers.command.CommandInterface;
+import com.raiku.botutilities.commands.manager.CommandContext;
+import com.raiku.botutilities.commands.manager.CommandInterface;
+import com.raiku.botutilities.helpers.MessageResources;
 import com.raiku.troubleclub.radio.music.GuildMusicManager;
 import com.raiku.troubleclub.radio.music.PlayerManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -14,7 +14,7 @@ import java.net.URISyntaxException;
 /**
  * Handles playing music in a user's voice channel
  *
- * @version 1.0 2022-15-06
+ * @version 1.1 2022-18-06
  * @since 1.0
  */
 public class Play implements CommandInterface {
