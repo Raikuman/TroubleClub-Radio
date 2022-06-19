@@ -1,7 +1,7 @@
 package com.raiku.troubleclub.radio.commands;
 
-import com.raiku.botutilities.commands.manager.CommandContext;
-import com.raiku.botutilities.commands.manager.CommandInterface;
+import com.raikuman.botutilities.commands.manager.CommandContext;
+import com.raikuman.botutilities.commands.manager.CommandInterface;
 
 import java.util.List;
 

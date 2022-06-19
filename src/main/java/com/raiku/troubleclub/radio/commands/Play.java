@@ -1,10 +1,10 @@
 package com.raiku.troubleclub.radio.commands;
 
-import com.raiku.botutilities.commands.manager.CommandContext;
-import com.raiku.botutilities.commands.manager.CommandInterface;
-import com.raiku.botutilities.helpers.MessageResources;
 import com.raiku.troubleclub.radio.music.GuildMusicManager;
 import com.raiku.troubleclub.radio.music.PlayerManager;
+import com.raikuman.botutilities.commands.manager.CommandContext;
+import com.raikuman.botutilities.commands.manager.CommandInterface;
+import com.raikuman.botutilities.helpers.MessageResources;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.TextChannel;
 
