@@ -1,8 +1,8 @@
 package com.raiku.troubleclub.radio.music;
 
-import com.raiku.botutilities.helpers.DateAndTime;
-import com.raiku.botutilities.helpers.MessageResources;
-import com.raiku.botutilities.helpers.RandomColor;
+import com.raikuman.botutilities.helpers.DateAndTime;
+import com.raikuman.botutilities.helpers.MessageResources;
+import com.raikuman.botutilities.helpers.RandomColor;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
