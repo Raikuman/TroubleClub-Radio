@@ -1,6 +1,7 @@
 package com.raiku.troubleclub.radio.listener;
 
 import com.raiku.troubleclub.radio.commands.*;
+import com.raiku.troubleclub.radio.commands.Queue;
 import com.raikuman.botutilities.buttons.manager.ButtonInterface;
 import com.raikuman.botutilities.buttons.pagination.manager.PaginationButtonProvider;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
@@ -44,7 +45,8 @@ public class ListenerHandler {
 			new Repeat(),
 			new Resume(),
 			new Stop(),
-			new Queue()
+			new Queue(),
+			new NowPlaying()
 		);
 	}
 
