@@ -7,13 +7,14 @@ import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.listener.ListenerBuilder;
 import com.raikuman.botutilities.listener.ListenerManager;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * Handles creating a listener manager
  *
- * @version 1.0 2022-19-06
+ * @version 1.1 2020-19-06
  * @since 1.0
  */
 public class ListenerHandler {
@@ -43,8 +44,7 @@ public class ListenerHandler {
 			new Repeat(),
 			new Resume(),
 			new Stop(),
-			new Queue(),
-			new Abc()
+			new Queue()
 		);
 	}
 
@@ -53,6 +53,9 @@ public class ListenerHandler {
 	 * @return The list of buttons
 	 */
 	private static List<ButtonInterface> getButtons() {
-		return new PaginationButtonProvider(new Abc()).provideButtons();
+		List<ButtonInterface> buttonInterfaces = new ArrayList<>();
+		buttonInterfaces.addAll(new PaginationButtonProvider(new Queue()).provideButtons());
+
+		return buttonInterfaces;
 	}
 }
