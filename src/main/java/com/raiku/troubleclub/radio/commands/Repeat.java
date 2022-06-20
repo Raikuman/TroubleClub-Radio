@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles the bot repeating the currently playing audio track
  *
- * @version 1.1 2022-18-06
+ * @version 1.2 2022-20-06
  * @since 1.0
  */
 public class Repeat implements CommandInterface {
@@ -82,7 +82,7 @@ public class Repeat implements CommandInterface {
 		AudioTrack audioTrack = musicManager.audioPlayer.getPlayingTrack();
 
 		EmbedBuilder builder = new EmbedBuilder()
-			.setAuthor(ifRepeat, audioTrack.getInfo().uri, ctx.getEventMember().getAvatarUrl())
+			.setAuthor(ifRepeat, audioTrack.getInfo().uri, ctx.getEventMember().getEffectiveAvatarUrl())
 			.setTitle(audioTrack.getInfo().title, audioTrack.getInfo().uri)
 			.setColor(RandomColor.getRandomColor());
 

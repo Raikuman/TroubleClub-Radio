@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles the bot looping the current audio player queue
  *
- * @version 1.1 2022-18-06
+ * @version 1.2 2022-20-06
  * @since 1.0
  */
 public class Loop implements CommandInterface {
@@ -83,7 +83,7 @@ public class Loop implements CommandInterface {
 		int totalSongs = musicManager.trackScheduler.queue.size() + 1;
 
 		EmbedBuilder builder = new EmbedBuilder()
-			.setAuthor(ifRepeat, null, ctx.getEventMember().getAvatarUrl())
+			.setAuthor(ifRepeat, null, ctx.getEventMember().getEffectiveAvatarUrl())
 			.setTitle(audioTrack.getInfo().title, audioTrack.getInfo().uri)
 			.setColor(RandomColor.getRandomColor());
 		builder
