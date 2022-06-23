@@ -26,7 +26,7 @@ public class ListenerHandler {
 	 */
 	public static ListenerManager getListenerManager() {
 		return new ListenerBuilder()
-			.setCommands(getCommands())
+			.setCommands(provideCommands())
 			.setButtons(getButtons())
 			.build();
 	}
@@ -34,6 +34,17 @@ public class ListenerHandler {
 	/**
 	 * Provides commands to create a listener manager
 	 * @return The list of commands
+	 */
+	private static List<CommandInterface> provideCommands() {
+		List<CommandInterface> commands = new ArrayList<>(getCommands());
+		commands.add(new Help(getCommands()));
+
+		return commands;
+	}
+
+	/**
+	 * Returns an array of commands
+	 * @return The array of commands
 	 */
 	private static List<CommandInterface> getCommands() {
 		return Arrays.asList(
@@ -67,6 +78,7 @@ public class ListenerHandler {
 	private static List<ButtonInterface> getButtons() {
 		List<ButtonInterface> buttonInterfaces = new ArrayList<>();
 		buttonInterfaces.addAll(new PaginationButtonProvider(new Queue()).provideButtons());
+		buttonInterfaces.addAll(new PaginationButtonProvider(new Help(getCommands())).provideButtons());
 
 		return buttonInterfaces;
 	}
