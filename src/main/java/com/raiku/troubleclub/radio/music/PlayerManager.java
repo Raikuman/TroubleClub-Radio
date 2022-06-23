@@ -1,5 +1,6 @@
 package com.raiku.troubleclub.radio.music;
 
+import com.raikuman.botutilities.configs.ConfigIO;
 import com.raikuman.botutilities.helpers.DateAndTime;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
@@ -22,7 +23,7 @@ import java.util.Map;
 /**
  * Handles loading and playing tracks for the guild music manager
  *
- * @version 1.0 2022-23-06
+ * @version 1.1 2022-23-06
  * @since 1.0
  */
 public class PlayerManager {
@@ -51,8 +52,7 @@ public class PlayerManager {
 	public void loadAndPlay(TextChannel channel, String trackUrl, User user) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
 
-		// Set bot to 25% volume
-		musicManager.audioPlayer.setVolume(25);
+		musicManager.audioPlayer.setVolume(loadVolume());
 
 		this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
 
@@ -135,8 +135,7 @@ public class PlayerManager {
 	public void loadToTop(TextChannel channel, String trackUrl, User user, boolean playNow) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
 
-		// Set bot to 25% volume
-		musicManager.audioPlayer.setVolume(25);
+		musicManager.audioPlayer.setVolume(loadVolume());
 
 		this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
 
@@ -260,5 +259,19 @@ public class PlayerManager {
 			.addField("Channel", audioTrack.getInfo().author, true)
 			.addField("Song Duration", DateAndTime.formatMilliseconds(audioTrack.getDuration()), true)
 			.addField("Position in queue", position, true);
+	}
+
+	private int loadVolume() {
+		String volume = ConfigIO.readConfig("musicSettings", "volume");
+		try {
+			int volumeNum = Integer.parseInt(volume);
+
+			if ((volumeNum < 1) || (volumeNum > 25))
+				return 25;
+
+			return volumeNum;
+		} catch (NumberFormatException e) {
+			return 25;
+		}
 	}
 }
