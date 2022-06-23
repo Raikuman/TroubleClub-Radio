@@ -19,6 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Handles loading and playing tracks for the guild music manager
+ *
+ * @version 1.0 2022-23-06
+ * @since 1.0
+ */
 public class PlayerManager {
 
 	private static PlayerManager PLAYER_INSTANCE;
@@ -168,8 +174,6 @@ public class PlayerManager {
 							user
 						).build()
 					).queue();
-
-					return;
 				} else {
 					MessageResources.timedMessage(
 						"Cannot add playlists to the top of the queue",

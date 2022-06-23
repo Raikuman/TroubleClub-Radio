@@ -3,6 +3,12 @@ package com.raiku.troubleclub.radio.music;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 
+/**
+ * Builds an object containing information for the guild music manager
+ *
+ * @version 1.0 2022-23-06
+ * @since 1.0
+ */
 public class GuildMusicManager {
 
 	public final AudioPlayer audioPlayer;

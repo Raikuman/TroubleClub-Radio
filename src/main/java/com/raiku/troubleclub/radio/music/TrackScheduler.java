@@ -10,6 +10,12 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * Schedules tracks to play from a queue
+ *
+ * @version 1.0 2022-23-06
+ * @since 1.0
+ */
 public class TrackScheduler extends AudioEventAdapter {
 
 	public final AudioPlayer audioPlayer;
