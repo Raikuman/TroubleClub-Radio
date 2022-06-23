@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles setting the volume of the bot
  *
- * @version 1.0 2020-23-06
+ * @version 1.1 2020-23-06
  * @since 1.0
  */
 public class Volume implements CommandInterface {
@@ -60,10 +60,18 @@ public class Volume implements CommandInterface {
 		}
 
 		if (ctx.getArgs().size() == 0) {
+			String volume = ConfigIO.readConfig(new MusicConfig().fileName(), "volume");
+
+			int volumeNum;
+			try {
+				volumeNum = Integer.parseInt(volume);
+			} catch (NumberFormatException e) {
+				volumeNum = 100;
+			}
+
 			EmbedBuilder builder = new EmbedBuilder()
 				.setAuthor(
-					"\uD83D\uDD0A Current volume: " + ConfigIO.readConfig(new MusicConfig().fileName(),
-						"volume") + "%",
+					"\uD83D\uDD0A Current volume: " + volumeNum + "%",
 					null,
 					ctx.getEventMember().getEffectiveAvatarUrl()
 				);

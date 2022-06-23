@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Handles loading and playing tracks for the guild music manager
  *
- * @version 1.1 2022-23-06
+ * @version 1.2 2022-23-06
  * @since 1.0
  */
 public class PlayerManager {
@@ -263,15 +263,18 @@ public class PlayerManager {
 
 	private int loadVolume() {
 		String volume = ConfigIO.readConfig("musicSettings", "volume");
+		int calculateVolume;
 		try {
 			int volumeNum = Integer.parseInt(volume);
 
-			if ((volumeNum < 1) || (volumeNum > 25))
+			if ((volumeNum < 1) || (volumeNum > 100))
 				return 25;
 
-			return volumeNum;
+			calculateVolume = volumeNum;
 		} catch (NumberFormatException e) {
-			return 25;
+			calculateVolume = 100;
 		}
+
+		return (int) Math.ceil((double) calculateVolume / 4);
 	}
 }
