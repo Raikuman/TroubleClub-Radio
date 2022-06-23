@@ -8,10 +8,12 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.util.List;
+
 /**
  * Handles the bot joining the voice channel of a user
  *
- * @version 1.1 2022-18-06
+ * @version 1.2 2022-23-06
  * @since 1.0
  */
 public class Join implements CommandInterface {
@@ -39,6 +41,11 @@ public class Join implements CommandInterface {
 	@Override
 	public String getDescription() {
 		return "Joins the user's voice channel";
+	}
+
+	@Override
+	public List<String> getAliases() {
+		return List.of("j");
 	}
 
 	/**

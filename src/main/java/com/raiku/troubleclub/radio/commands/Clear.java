@@ -9,6 +9,8 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.util.List;
+
 /**
  * Handles clearing the current queue of the music manager
  *
@@ -75,5 +77,10 @@ public class Clear implements CommandInterface {
 	@Override
 	public String getDescription() {
 		return "Clears the current queue of songs";
+	}
+
+	@Override
+	public List<String> getAliases() {
+		return List.of("c");
 	}
 }
