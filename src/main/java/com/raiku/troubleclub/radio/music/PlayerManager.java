@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Handles loading and playing tracks for the guild music manager
  *
- * @version 1.2 2022-23-06
+ * @version 1.3 2022-23-06
  * @since 1.0
  */
 public class PlayerManager {
@@ -41,6 +41,11 @@ public class PlayerManager {
 		AudioSourceManagers.registerLocalSource(this.audioPlayerManager);
 	}
 
+	/**
+	 * Returns the music manager from a guild
+	 * @param guild The guild to get the music manager from
+	 * @return The music manager
+	 */
 	public GuildMusicManager getMusicManager(Guild guild) {
 		return this.musicManagerMap.computeIfAbsent(guild.getIdLong(), guildId -> {
 			final GuildMusicManager guildMusicManager = new GuildMusicManager(this.audioPlayerManager);
@@ -49,6 +54,12 @@ public class PlayerManager {
 		});
 	}
 
+	/**
+	 * Handles normally loading tracks from the queue and playing tracks
+	 * @param channel The channel to send messages to
+	 * @param trackUrl The track url to get the audio track from
+	 * @param user The user to display on an embed
+	 */
 	public void loadAndPlay(TextChannel channel, String trackUrl, User user) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
 
@@ -132,6 +143,13 @@ public class PlayerManager {
 		});
 	}
 
+	/**
+	 * Handles loading tracks to the top of the queue
+	 * @param channel The channel to send messages to
+	 * @param trackUrl The track url to get the audio track from
+	 * @param user The user to display on an embed
+	 * @param playNow If the top track should be played immediately
+	 */
 	public void loadToTop(TextChannel channel, String trackUrl, User user, boolean playNow) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
 
@@ -210,6 +228,10 @@ public class PlayerManager {
 		});
 	}
 
+	/**
+	 * Returns the current instance of the player manager
+	 * @return The player manager instance
+	 */
 	public static PlayerManager getInstance() {
 		if (PLAYER_INSTANCE == null) {
 			PLAYER_INSTANCE = new PlayerManager();
@@ -218,6 +240,13 @@ public class PlayerManager {
 		return PLAYER_INSTANCE;
 	}
 
+	/**
+	 * Creates an embed using information from the audio player, queue, and the user
+	 * @param queueSize The size of the current queue
+	 * @param audioTrack The track that was added to the queue
+	 * @param user The user to display on an embed
+	 * @return The embed builder with track information
+	 */
 	private EmbedBuilder trackEmbed(int queueSize, AudioTrack audioTrack, User user) {
 		EmbedBuilder builder = new EmbedBuilder()
 			.setTitle(audioTrack.getInfo().title, audioTrack.getInfo().uri)
@@ -242,6 +271,13 @@ public class PlayerManager {
 		return builder;
 	}
 
+	/**
+	 * Creates an embed when adding tracks to the top of the queue using information from the track and user
+	 * @param audioTrack The track that was added to the top of the queue
+	 * @param user The user to display on an embed
+	 * @param playNow If the track was played immediately
+	 * @return The embed builder with track information
+	 */
 	private EmbedBuilder topEmbed(AudioTrack audioTrack, User user, boolean playNow) {
 		String title, position;
 		if (playNow) {
@@ -261,6 +297,10 @@ public class PlayerManager {
 			.addField("Position in queue", position, true);
 	}
 
+	/**
+	 * Returns the volume setting from the music config
+	 * @return The volume setting normalized for the bot
+	 */
 	private int loadVolume() {
 		String volume = ConfigIO.readConfig("musicSettings", "volume");
 		int calculateVolume;

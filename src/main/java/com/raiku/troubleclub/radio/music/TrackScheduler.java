@@ -13,7 +13,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Schedules tracks to play from a queue
  *
- * @version 1.4 2022-23-06
+ * @version 1.5 2022-23-06
  * @since 1.0
  */
 public class TrackScheduler extends AudioEventAdapter {
@@ -44,12 +44,20 @@ public class TrackScheduler extends AudioEventAdapter {
 		nextTrack();
 	}
 
+	/**
+	 * Adds a track to the end of the queue
+	 * @param audioTrack The track to add
+	 */
 	public void queue(AudioTrack audioTrack) {
 		if (!this.audioPlayer.startTrack(audioTrack, true)) {
 			this.queue.offer(audioTrack);
 		}
 	}
 
+	/**
+	 * Adds a track to the top of the queue
+	 * @param audioTrack The track to add
+	 */
 	public void addToTop(AudioTrack audioTrack) {
 		List<AudioTrack> queueTracks = new ArrayList<>();
 		this.queue.drainTo(queueTracks);
@@ -60,6 +68,11 @@ public class TrackScheduler extends AudioEventAdapter {
 			this.queue.offer(track);
 	}
 
+	/**
+	 * Moves a track from the queue to the top of the queue
+	 * @param trackNum The track number to move
+	 * @return The track information of the moved track
+	 */
 	public AudioTrackInfo moveTrack(int trackNum) {
 		List<AudioTrack> queueTracks = new ArrayList<>();
 		this.queue.drainTo(queueTracks);
@@ -74,6 +87,12 @@ public class TrackScheduler extends AudioEventAdapter {
 		return audioTrack.getInfo();
 	}
 
+	/**
+	 * Moves a track from the queue to a specified location in the queue
+	 * @param trackNum The track number to move
+	 * @param position The position to move the track to
+	 * @return The track information of the moved track
+	 */
 	public AudioTrackInfo moveTrack(int trackNum, int position) {
 		List<AudioTrack> queueTracks = new ArrayList<>();
 		this.queue.drainTo(queueTracks);
@@ -92,10 +111,17 @@ public class TrackScheduler extends AudioEventAdapter {
 		return audioTrack.getInfo();
 	}
 
+	/**
+	 * Plays the next track in the queue
+	 */
 	public void nextTrack() {
 		this.audioPlayer.startTrack(this.queue.poll(), false);
 	}
 
+	/**
+	 * Removes all duplicate songs from the queue
+	 * @return The number of tracks removed from the queue
+	 */
 	public int pruneTracks() {
 		List<AudioTrack> queueTracks = new ArrayList<>();
 		this.queue.drainTo(queueTracks);
@@ -120,6 +146,9 @@ public class TrackScheduler extends AudioEventAdapter {
 		return queueTracks.size() - prunedTracks.size();
 	}
 
+	/**
+	 * Rewinds the current playing track to the beginning
+	 */
 	public void rewind() {
 		AudioTrack playingTrack = this.audioPlayer.getPlayingTrack();
 		if (playingTrack == null)
@@ -128,6 +157,11 @@ public class TrackScheduler extends AudioEventAdapter {
 		this.audioPlayer.startTrack(playingTrack.makeClone(), false);
 	}
 
+	/**
+	 * Skips to the specified location in the queue, playing the track it was skipped to
+	 * @param position The track number to skip to
+	 * @return The track information of the first track skipped to
+	 */
 	public AudioTrackInfo skipTo(int position) {
 		List<AudioTrack> queueTracks = new ArrayList<>();
 		this.queue.drainTo(queueTracks);
