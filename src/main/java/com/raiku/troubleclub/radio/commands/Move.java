@@ -18,7 +18,7 @@ import java.util.List;
  * Handles moving a selected song to the top of the queue, or moving the song to a certain position of the
  * queue
  *
- * @version 1.0 2020-23-06
+ * @version 1.1 2020-23-06
  * @since 1.0
  */
 public class Move implements CommandInterface {
@@ -136,7 +136,7 @@ public class Move implements CommandInterface {
 					.setTitle(audioTrackInfo.title, audioTrackInfo.uri)
 					.setColor(RandomColor.getRandomColor())
 					.setAuthor(
-						"Moved song to position " + posNum + " in queue",
+						"\uD83D\uDCE6 Moved song to position " + posNum + " in queue",
 						audioTrackInfo.uri,
 						ctx.getEventMember().getEffectiveAvatarUrl()
 					);

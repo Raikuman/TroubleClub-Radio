@@ -13,7 +13,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles removing duplicate songs from the current queue
  *
- * @version 1.0 2020-23-06
+ * @version 1.1 2020-23-06
  * @since 1.0
  */
 public class Prune implements CommandInterface {
@@ -62,7 +62,7 @@ public class Prune implements CommandInterface {
 		int songsPruned = musicManager.trackScheduler.pruneTracks();
 
 		EmbedBuilder builder = new EmbedBuilder()
-			.setAuthor("Pruned " + songsPruned + " songs from the queue",
+			.setAuthor("✂️ Pruned " + songsPruned + " songs from the queue",
 				null,
 				ctx.getEventMember().getEffectiveAvatarUrl()
 			);
