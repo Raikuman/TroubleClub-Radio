@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Schedules tracks to play from a queue
  *
- * @version 1.0 2022-23-06
+ * @version 1.1 2022-23-06
  * @since 1.0
  */
 public class TrackScheduler extends AudioEventAdapter {
@@ -58,6 +59,38 @@ public class TrackScheduler extends AudioEventAdapter {
 
 		for (AudioTrack track : queueTracks)
 			this.queue.offer(track);
+	}
+
+	public AudioTrackInfo moveTrack(int trackNum) {
+		List<AudioTrack> queueTracks = new ArrayList<>();
+		this.queue.drainTo(queueTracks);
+
+		AudioTrack audioTrack = queueTracks.remove(trackNum - 1);
+
+		this.queue.offer(audioTrack);
+
+		for (AudioTrack track : queueTracks)
+			this.queue.offer(track);
+
+		return audioTrack.getInfo();
+	}
+
+	public AudioTrackInfo moveTrack(int trackNum, int position) {
+		List<AudioTrack> queueTracks = new ArrayList<>();
+		this.queue.drainTo(queueTracks);
+
+		AudioTrack audioTrack = queueTracks.remove(trackNum - 1);
+
+		int currentPos = 1;
+		for (AudioTrack track : queueTracks) {
+			if (currentPos == position)
+				this.queue.offer(audioTrack);
+
+			this.queue.offer(track);
+			currentPos++;
+		}
+
+		return audioTrack.getInfo();
 	}
 
 	public void nextTrack() {
