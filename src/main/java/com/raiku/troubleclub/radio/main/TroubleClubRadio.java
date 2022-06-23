@@ -3,9 +3,13 @@ package com.raiku.troubleclub.radio.main;
 import com.raiku.troubleclub.radio.config.MusicConfig;
 import com.raiku.troubleclub.radio.listener.ListenerHandler;
 import com.raikuman.botutilities.configs.ConfigFileWriter;
+import com.raikuman.botutilities.configs.ConfigIO;
 import com.raikuman.botutilities.configs.EnvLoader;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Icon;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
@@ -14,9 +18,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The main class for the bot
+ *
+ * @version 1.0 2022-23-06
+ * @since 1.0
+ */
 public class TroubleClubRadio {
 	private static final Logger logger = LoggerFactory.getLogger(TroubleClubRadio.class);
 
@@ -45,6 +57,11 @@ public class TroubleClubRadio {
 		}
 	}
 
+	/**
+	 * Builds a jda object with the given gateway intents
+	 * @param gatewayIntents The list of gateway intents
+	 * @return The jda object
+	 */
 	private static JDA buildJDA(List<GatewayIntent> gatewayIntents) {
 		JDA jda = null;
 
@@ -57,6 +74,9 @@ public class TroubleClubRadio {
 				.addEventListeners(ListenerHandler.getListenerManager().getListeners())
 				.setMemberCachePolicy(MemberCachePolicy.ALL)
 				.build();
+
+			setPresence(jda);
+			setAvatarPicture(jda);
 		} catch (IllegalArgumentException | LoginException e) {
 			e.printStackTrace();
 		}
@@ -64,6 +84,41 @@ public class TroubleClubRadio {
 		return jda;
 	}
 
+	/**
+	 * Sets the presence of the bot
+	 * @param jda The jda object to set presence for
+	 */
+	private static void setPresence(JDA jda) {
+		jda.getPresence().setPresence(
+			OnlineStatus.ONLINE,
+			Activity.playing("music | " + ConfigIO.readConfig("settings", "prefix") + "help")
+		);
+	}
+
+	/**
+	 * Sets the avatar of the bot
+	 * @param jda The jda object to set avatar for
+	 */
+	private static void setAvatarPicture(JDA jda) {
+		File file = new File("profile.png");
+
+		if (!file.exists()) {
+			logger.info("No avatar file found");
+			return;
+		}
+
+		try {
+			Icon icon = Icon.from(file);
+
+			jda.getSelfUser().getManager().setAvatar(icon).queue();
+		} catch (IOException e) {
+			logger.warn("Could not retrieve icon from file: " + file.getName());
+		}
+	}
+
+	/**
+	 * Writes all config files
+	 */
 	private static void writeConfigs() {
 		ConfigFileWriter.writeConfigFiles(new MusicConfig());
 	}
