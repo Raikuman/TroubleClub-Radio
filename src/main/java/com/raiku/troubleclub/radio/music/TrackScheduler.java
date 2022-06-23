@@ -6,15 +6,14 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Schedules tracks to play from a queue
  *
- * @version 1.1 2022-23-06
+ * @version 1.2 2022-23-06
  * @since 1.0
  */
 public class TrackScheduler extends AudioEventAdapter {
@@ -95,5 +94,29 @@ public class TrackScheduler extends AudioEventAdapter {
 
 	public void nextTrack() {
 		this.audioPlayer.startTrack(this.queue.poll(), false);
+	}
+
+	public int pruneTracks() {
+		List<AudioTrack> queueTracks = new ArrayList<>();
+		this.queue.drainTo(queueTracks);
+
+		List<String> identifiers = new ArrayList<>();
+		for (AudioTrack track : queueTracks)
+			identifiers.add(track.getIdentifier());
+
+		identifiers = new ArrayList<>(new LinkedHashSet<>(identifiers));
+
+		List<AudioTrack> prunedTracks = new ArrayList<>();
+		for (AudioTrack track : queueTracks) {
+			if (identifiers.contains(track.getIdentifier())) {
+				prunedTracks.add(track);
+				identifiers.remove(track.getIdentifier());
+			}
+		}
+
+		for (AudioTrack track : prunedTracks)
+			this.queue.offer(track);
+
+		return queueTracks.size() - prunedTracks.size();
 	}
 }
