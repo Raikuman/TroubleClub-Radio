@@ -5,6 +5,8 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -40,6 +42,16 @@ public class TrackScheduler extends AudioEventAdapter {
 		if (!this.audioPlayer.startTrack(audioTrack, true)) {
 			this.queue.offer(audioTrack);
 		}
+	}
+
+	public void addToTop(AudioTrack audioTrack) {
+		List<AudioTrack> queueTracks = new ArrayList<>();
+		this.queue.drainTo(queueTracks);
+
+		this.queue.offer(audioTrack);
+
+		for (AudioTrack track : queueTracks)
+			this.queue.offer(track);
 	}
 
 	public void nextTrack() {

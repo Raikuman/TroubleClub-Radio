@@ -70,8 +70,14 @@ public class PlayerManager {
 				// Handle searching songs
 				if (trackUrl.contains("ytsearch:")) {
 					AudioTrack firstTrack = audioPlaylist.getTracks().remove(0);
-					if (firstTrack == null)
+					if (firstTrack == null) {
+						MessageResources.timedMessage(
+							"Could not retrieve a track",
+							channel,
+							5
+						);
 						return;
+					}
 
 					musicManager.trackScheduler.queue(firstTrack);
 
@@ -120,6 +126,79 @@ public class PlayerManager {
 		});
 	}
 
+	public void loadToTop(TextChannel channel, String trackUrl, User user) {
+		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+
+		// Set bot to 25% volume
+		musicManager.audioPlayer.setVolume(25);
+
+		this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
+
+			@Override
+			public void trackLoaded(AudioTrack audioTrack) {
+				musicManager.trackScheduler.addToTop(audioTrack);
+
+				channel.sendMessageEmbeds(
+					topEmbed(
+						audioTrack,
+						user
+					).build()
+				).queue();
+			}
+
+			@Override
+			public void playlistLoaded(AudioPlaylist audioPlaylist) {
+				// Handle searching songs
+				if (trackUrl.contains("ytsearch:")) {
+					AudioTrack firstTrack = audioPlaylist.getTracks().remove(0);
+					if (firstTrack == null) {
+						MessageResources.timedMessage(
+							"Could not retrieve a track",
+							channel,
+							5
+						);
+						return;
+					}
+
+					musicManager.trackScheduler.addToTop(firstTrack);
+
+					channel.sendMessageEmbeds(
+						topEmbed(
+							firstTrack,
+							user
+						).build()
+					).queue();
+
+					return;
+				} else {
+					MessageResources.timedMessage(
+						"Cannot add playlists to the top of the queue",
+						channel,
+						5
+					);
+				}
+			}
+
+			@Override
+			public void noMatches() {
+				MessageResources.timedMessage(
+					"Nothing found using `" + trackUrl + "`",
+					channel,
+					5
+				);
+			}
+
+			@Override
+			public void loadFailed(FriendlyException e) {
+				MessageResources.timedMessage(
+					"Could not load track! `" + e.getMessage() + "`",
+					channel,
+					5
+				);
+			}
+		});
+	}
+
 	public static PlayerManager getInstance() {
 		if (PLAYER_INSTANCE == null) {
 			PLAYER_INSTANCE = new PlayerManager();
@@ -146,9 +225,19 @@ public class PlayerManager {
 		}
 
 		builder
-			.setAuthor(title, audioTrack.getInfo().uri, user.getAvatarUrl())
+			.setAuthor(title, audioTrack.getInfo().uri, user.getEffectiveAvatarUrl())
 			.addField("Position in queue", nowPlaying, true);
 
 		return builder;
+	}
+
+	private EmbedBuilder topEmbed(AudioTrack audioTrack, User user) {
+		return new EmbedBuilder()
+			.setTitle(audioTrack.getInfo().title, audioTrack.getInfo().uri)
+			.setColor(RandomColor.getRandomColor())
+			.setAuthor("\uD83D\uDD1D Adding song to top of the queue", audioTrack.getInfo().uri, user.getEffectiveAvatarUrl())
+			.addField("Channel", audioTrack.getInfo().author, true)
+			.addField("Song Duration", DateAndTime.formatMilliseconds(audioTrack.getDuration()), true)
+			.addField("Position in queue", "1", true);
 	}
 }
