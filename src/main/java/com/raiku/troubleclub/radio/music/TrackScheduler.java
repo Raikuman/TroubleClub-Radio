@@ -13,7 +13,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Schedules tracks to play from a queue
  *
- * @version 1.3 2022-23-06
+ * @version 1.4 2022-23-06
  * @since 1.0
  */
 public class TrackScheduler extends AudioEventAdapter {
@@ -126,5 +126,17 @@ public class TrackScheduler extends AudioEventAdapter {
 			return;
 
 		this.audioPlayer.startTrack(playingTrack.makeClone(), false);
+	}
+
+	public AudioTrackInfo skipTo(int position) {
+		List<AudioTrack> queueTracks = new ArrayList<>();
+		this.queue.drainTo(queueTracks);
+
+		for (int i = position - 1; i < queueTracks.size(); i++)
+			this.queue.offer(queueTracks.get(i));
+
+		nextTrack();
+
+		return queueTracks.get(position - 1).getInfo();
 	}
 }
