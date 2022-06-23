@@ -37,16 +37,25 @@ public class ListenerHandler {
 	 */
 	private static List<CommandInterface> getCommands() {
 		return Arrays.asList(
+			new Clear(),
 			new Join(),
 			new Leave(),
 			new Loop(),
+			new Move(),
+			new NowPlaying(),
 			new Pause(),
 			new Play(),
+			new PlayNow(),
+			new PlayTop(),
+			new Prune(),
+			new Queue(),
 			new Repeat(),
 			new Resume(),
+			new Rewind(),
+			new Skip(),
+			new SkipTo(),
 			new Stop(),
-			new Queue(),
-			new NowPlaying()
+			new Volume()
 		);
 	}
 
