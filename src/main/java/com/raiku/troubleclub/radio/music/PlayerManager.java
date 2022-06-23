@@ -132,7 +132,7 @@ public class PlayerManager {
 		});
 	}
 
-	public void loadToTop(TextChannel channel, String trackUrl, User user) {
+	public void loadToTop(TextChannel channel, String trackUrl, User user, boolean playNow) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
 
 		// Set bot to 25% volume
@@ -144,10 +144,14 @@ public class PlayerManager {
 			public void trackLoaded(AudioTrack audioTrack) {
 				musicManager.trackScheduler.addToTop(audioTrack);
 
+				if (playNow)
+					musicManager.trackScheduler.nextTrack();
+
 				channel.sendMessageEmbeds(
 					topEmbed(
 						audioTrack,
-						user
+						user,
+						playNow
 					).build()
 				).queue();
 			}
@@ -168,10 +172,14 @@ public class PlayerManager {
 
 					musicManager.trackScheduler.addToTop(firstTrack);
 
+					if (playNow)
+						musicManager.trackScheduler.nextTrack();
+
 					channel.sendMessageEmbeds(
 						topEmbed(
 							firstTrack,
-							user
+							user,
+							playNow
 						).build()
 					).queue();
 				} else {
@@ -235,13 +243,22 @@ public class PlayerManager {
 		return builder;
 	}
 
-	private EmbedBuilder topEmbed(AudioTrack audioTrack, User user) {
+	private EmbedBuilder topEmbed(AudioTrack audioTrack, User user, boolean playNow) {
+		String title, position;
+		if (playNow) {
+			title = "▶️ Playing song now:";
+			position = "Now playing";
+		} else {
+			title = "\uD83D\uDD1D Adding song to top of the queue";
+			position = "1";
+		}
+
 		return new EmbedBuilder()
 			.setTitle(audioTrack.getInfo().title, audioTrack.getInfo().uri)
 			.setColor(RandomColor.getRandomColor())
-			.setAuthor("\uD83D\uDD1D Adding song to top of the queue", audioTrack.getInfo().uri, user.getEffectiveAvatarUrl())
+			.setAuthor(title, audioTrack.getInfo().uri, user.getEffectiveAvatarUrl())
 			.addField("Channel", audioTrack.getInfo().author, true)
 			.addField("Song Duration", DateAndTime.formatMilliseconds(audioTrack.getDuration()), true)
-			.addField("Position in queue", "1", true);
+			.addField("Position in queue", position, true);
 	}
 }

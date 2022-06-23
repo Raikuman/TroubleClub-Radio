@@ -13,12 +13,12 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 /**
- * Handles adding a new song to the top of the queue
+ * Handles playing a new song, skipping the current track
  *
- * @version 1.1 2020-23-06
+ * @version 1.0 2020-23-06
  * @since 1.0
  */
-public class PlayTop implements CommandInterface {
+public class PlayNow implements CommandInterface {
 
 	@Override
 	public void handle(CommandContext ctx) {
@@ -63,14 +63,14 @@ public class PlayTop implements CommandInterface {
 		if (!isUrl(link))
 			link = "ytsearch:" + link;
 
-		PlayerManager.getInstance().loadToTop(channel, link, ctx.getEvent().getAuthor(), false);
+		PlayerManager.getInstance().loadToTop(channel, link, ctx.getEvent().getAuthor(), true);
 
 		ctx.getEvent().getMessage().delete().queue();
 	}
 
 	@Override
 	public String getInvoke() {
-		return "playtop";
+		return "playnow";
 	}
 
 	@Override
@@ -80,12 +80,13 @@ public class PlayTop implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Adds a song from a link or playlist, or a searched song to the top of the queue";
+		return "Plays a song from a link or playlist, or a searched song immediately, skipping the current " +
+			"song";
 	}
 
 	@Override
 	public List<String> getAliases() {
-		return List.of("pt");
+		return List.of("pn");
 	}
 
 	/**
