@@ -1,9 +1,14 @@
 package com.raiku.troubleclub.radio.commands;
 
+import com.raiku.troubleclub.radio.music.GuildMusicManager;
 import com.raiku.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
+import com.raikuman.botutilities.helpers.DateAndTime;
 import com.raikuman.botutilities.helpers.MessageResources;
+import com.raikuman.botutilities.helpers.RandomColor;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -15,7 +20,7 @@ import java.util.List;
 /**
  * Handles playing a new song, skipping the current track
  *
- * @version 1.0 2020-23-06
+ * @version 1.1 2020-23-06
  * @since 1.0
  */
 public class PlayNow implements CommandInterface {
@@ -59,6 +64,47 @@ public class PlayNow implements CommandInterface {
 			return;
 		}
 
+		if (ctx.getArgs().isEmpty()) {
+			MessageResources.timedMessage(
+				"You must provide a valid argument for this command: `" + getUsage() + "`",
+				channel,
+				5
+			);
+			return;
+		}
+
+		if (ctx.getArgs().size() == 1) {
+			try {
+				int songPos = Integer.parseInt(ctx.getArgs().get(0));
+
+				final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
+				musicManager.trackScheduler.moveTrack(songPos);
+				musicManager.trackScheduler.nextTrack();
+
+				AudioTrackInfo audioTrackInfo = musicManager.audioPlayer.getPlayingTrack().getInfo();
+
+				EmbedBuilder builder = new EmbedBuilder()
+					.setTitle(audioTrackInfo.title, audioTrackInfo.uri)
+					.setColor(RandomColor.getRandomColor())
+					.setAuthor("▶️ Playing song now:", audioTrackInfo.uri, ctx.getEventMember().getEffectiveAvatarUrl())
+					.addField("Channel", audioTrackInfo.author, true)
+					.addField("Song Duration", DateAndTime.formatMilliseconds(audioTrackInfo.length), true)
+					.addField("Position in queue", "Now playing", true);
+
+				ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
+
+				ctx.getEvent().getMessage().delete().queue();
+				return;
+			} catch (NumberFormatException e) {
+				MessageResources.timedMessage(
+					"You must provide a valid argument for this command: `" + getUsage() + "`",
+					channel,
+					5
+				);
+				return;
+			}
+		}
+
 		String link = String.join(" ", ctx.getArgs());
 		if (!isUrl(link))
 			link = "ytsearch:" + link;
@@ -75,13 +121,13 @@ public class PlayNow implements CommandInterface {
 
 	@Override
 	public String getUsage() {
-		return "<link>";
+		return "<link>, <position #>";
 	}
 
 	@Override
 	public String getDescription() {
 		return "Plays a song from a link or playlist, or a searched song immediately, skipping the current " +
-			"song";
+			"song. Also immediately plays a song from the queue given the position";
 	}
 
 	@Override
