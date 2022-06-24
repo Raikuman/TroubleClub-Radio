@@ -7,6 +7,7 @@ import com.raikuman.botutilities.buttons.pagination.manager.PaginationButtonProv
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.listener.ListenerBuilder;
 import com.raikuman.botutilities.listener.ListenerManager;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +16,7 @@ import java.util.List;
 /**
  * Handles creating a listener manager
  *
- * @version 1.2 2020-19-06
+ * @version 1.3 2020-23-06
  * @since 1.0
  */
 public class ListenerHandler {
@@ -26,9 +27,18 @@ public class ListenerHandler {
 	 */
 	public static ListenerManager getListenerManager() {
 		return new ListenerBuilder()
+			.setListeners(provideListeners())
 			.setCommands(provideCommands())
-			.setButtons(getButtons())
+			.setButtons(provideButtons())
 			.build();
+	}
+
+	/**
+	 * Provides listener adapters to create a listener manager
+	 * @return The list of listener adapters
+	 */
+	private static List<ListenerAdapter> provideListeners() {
+		return List.of(new VoiceEventListener());
 	}
 
 	/**
@@ -75,7 +85,7 @@ public class ListenerHandler {
 	 * Provides buttons to create a listener manager
 	 * @return The list of buttons
 	 */
-	private static List<ButtonInterface> getButtons() {
+	private static List<ButtonInterface> provideButtons() {
 		List<ButtonInterface> buttonInterfaces = new ArrayList<>();
 		buttonInterfaces.addAll(new PaginationButtonProvider(new Queue()).provideButtons());
 		buttonInterfaces.addAll(new PaginationButtonProvider(new Help(getCommands())).provideButtons());
