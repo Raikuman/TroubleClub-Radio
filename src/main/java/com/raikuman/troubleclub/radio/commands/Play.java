@@ -26,11 +26,6 @@ public class Play implements CommandInterface {
 
 		boolean joined = new Join().joinChannel(ctx);
 
-		if (joined)
-			ctx.getEvent().getMessage().addReaction("U+1F197").queue();
-		else
-			ctx.getEvent().getMessage().addReaction("U+1F6AB").queue();
-
 		if (ctx.getArgs().isEmpty()) {
 			final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
 			AudioTrack currentTrack = musicManager.trackScheduler.audioPlayer.getPlayingTrack();
@@ -50,6 +45,11 @@ public class Play implements CommandInterface {
 				return;
 			}
 		}
+
+		if (joined)
+			ctx.getEvent().getMessage().addReaction("U+1F197").queue();
+		else
+			ctx.getEvent().getMessage().addReaction("U+1F6AB").queue();
 
 		String link = String.join(" ", ctx.getArgs());
 		if (!isUrl(link))
