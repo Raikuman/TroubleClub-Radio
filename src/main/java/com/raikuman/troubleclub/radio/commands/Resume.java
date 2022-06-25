@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles resuming the music player
  *
- * @version 1.1 2022-18-06
+ * @version 1.2 2022-24-06
  * @since 1.0
  */
 public class Resume implements CommandInterface {
@@ -93,6 +93,6 @@ public class Resume implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Resumes the current track";
+		return "Resumes the current playing song";
 	}
 }

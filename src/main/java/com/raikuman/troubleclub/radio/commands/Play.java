@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Handles playing music in a user's voice channel
  *
- * @version 1.2 2022-23-06
+ * @version 1.3 2022-24-06
  * @since 1.0
  */
 public class Play implements CommandInterface {
@@ -72,7 +72,7 @@ public class Play implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Play a song from a link or playlist, or search for a song";
+		return "Plays a song or playlist from a link, or search for a song to play";
 	}
 
 	@Override

@@ -93,6 +93,6 @@ public class Pause implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Pauses the current track";
+		return "Pauses the current playing song";
 	}
 }

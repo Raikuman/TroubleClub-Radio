@@ -11,6 +11,12 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+/**
+ * Handles shuffling the current queue of songs
+ *
+ * @version 1.0 2020-24-06
+ * @since 1.0
+ */
 public class Shuffle implements CommandInterface {
 
 	@Override
@@ -89,6 +95,6 @@ public class Shuffle implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Shuffles the current queue";
+		return "Shuffles the current queue of songs";
 	}
 }

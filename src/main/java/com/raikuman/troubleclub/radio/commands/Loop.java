@@ -12,10 +12,12 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.util.List;
+
 /**
  * Handles the bot looping the current audio player queue
  *
- * @version 1.2 2022-20-06
+ * @version 1.3 2022-24-06
  * @since 1.0
  */
 public class Loop implements CommandInterface {
@@ -105,6 +107,12 @@ public class Loop implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Loops the queue";
+		return "Loops all songs in the queue by moving a finished playing track to the end of the queue " +
+			"(invoke command again to stop looping the queue)";
+	}
+
+	@Override
+	public List<String> getAliases() {
+		return List.of("repeatqueue");
 	}
 }

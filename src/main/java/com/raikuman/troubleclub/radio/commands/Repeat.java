@@ -102,6 +102,6 @@ public class Repeat implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Repeats the currently playing track";
+		return "Repeats the current playing song (invoke command again to stop repeating the song)";
 	}
 }

@@ -113,7 +113,7 @@ public class Queue implements CommandInterface, PageCommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Show the current queue of tracks";
+		return "Show the current queue of songs";
 	}
 
 	@Override

@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Handles skipping to a position in the queue
  *
- * @version 1.0 2020-23-06
+ * @version 1.1 2020-24-06
  * @since 1.0
  */
 public class SkipTo implements CommandInterface {
@@ -123,7 +123,8 @@ public class SkipTo implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Skips to a position in the queue";
+		return "Skips to a position in the queue, playing the song at that position and removing all songs " +
+			"before it";
 	}
 
 	@Override

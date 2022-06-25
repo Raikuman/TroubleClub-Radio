@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  *  Provides configuration for music
  *
- * @version 1.0 2022-23-06
+ * @version 1.1 2022-24-06
  * @since 1.0
  */
 public class MusicConfig implements ConfigInterface {
@@ -21,7 +21,7 @@ public class MusicConfig implements ConfigInterface {
 	@Override
 	public HashMap<String, String> getConfigs() {
 		return new HashMap<>(Map.ofEntries(
-			Map.entry("volume", "100")
+			Map.entry("volume", "50")
 		));
 	}
 }

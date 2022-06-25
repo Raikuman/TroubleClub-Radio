@@ -18,7 +18,7 @@ import java.util.List;
  * Handles moving a selected song to the top of the queue, or moving the song to a certain position of the
  * queue
  *
- * @version 1.1 2020-23-06
+ * @version 1.2 2020-24-06
  * @since 1.0
  */
 public class Move implements CommandInterface {
@@ -166,7 +166,8 @@ public class Move implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Moves a selected song to the top of the queue or to a position in the queue";
+		return "Moves a selected song from the queue to the beginning of the queue, or moves the selected " +
+			"song to a certain position in the queue";
 	}
 
 	@Override

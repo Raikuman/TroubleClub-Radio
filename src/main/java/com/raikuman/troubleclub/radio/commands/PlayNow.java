@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Handles playing a new song, skipping the current track
  *
- * @version 1.1 2020-23-06
+ * @version 1.2 2020-24-06
  * @since 1.0
  */
 public class PlayNow implements CommandInterface {
@@ -126,8 +126,9 @@ public class PlayNow implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Plays a song from a link or playlist, or a searched song immediately, skipping the current " +
-			"song. Also immediately plays a song from the queue given the position";
+		return "Plays a song or playlist from a link, or search for a song to play immediately, skipping " +
+			"the current playing song. If providing a selected song from the queue, it will immediately " +
+			"play that song";
 	}
 
 	@Override

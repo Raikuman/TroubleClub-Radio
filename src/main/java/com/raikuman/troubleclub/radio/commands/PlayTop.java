@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Handles adding a new song to the top of the queue
  *
- * @version 1.1 2020-23-06
+ * @version 1.2 2020-24-06
  * @since 1.0
  */
 public class PlayTop implements CommandInterface {
@@ -80,7 +80,8 @@ public class PlayTop implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Adds a song from a link or playlist, or a searched song to the top of the queue";
+		return "Plays a song or playlist from a link, or search for a song to play and add it to the " +
+			"beginning of the queue";
 	}
 
 	@Override
