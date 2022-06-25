@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Handles creating a listener manager
  *
- * @version 1.3 2020-23-06
+ * @version 1.4 2020-25-06
  * @since 1.0
  */
 public class ListenerHandler {
@@ -70,6 +70,7 @@ public class ListenerHandler {
 			new PlayTop(),
 			new Prune(),
 			new Queue(),
+			new Random(),
 			new Repeat(),
 			new Resume(),
 			new Rewind(),

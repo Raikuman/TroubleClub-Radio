@@ -187,4 +187,23 @@ public class TrackScheduler extends AudioEventAdapter {
 
 		return queueTracks.size();
 	}
+
+	/**
+	 * Randomly gets a track from the queue and plays it immediately
+	 * @return The track information of the random track
+	 */
+	public AudioTrackInfo random() {
+		List<AudioTrack> queueTracks = new ArrayList<>();
+		this.queue.drainTo(queueTracks);
+
+		int position = new Random().nextInt(queueTracks.size());
+		AudioTrack audioTrack = queueTracks.remove(position);
+
+		for (AudioTrack track : queueTracks)
+			this.queue.offer(track);
+
+		this.audioPlayer.startTrack(audioTrack, false);
+
+		return audioTrack.getInfo();
+	}
 }
