@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Handles creating a listener manager
  *
- * @version 1.4 2020-25-06
+ * @version 1.5 2020-27-06
  * @since 1.0
  */
 public class ListenerHandler {
@@ -78,6 +78,7 @@ public class ListenerHandler {
 			new Skip(),
 			new SkipTo(),
 			new Stop(),
+			new ToS(),
 			new Volume()
 		);
 	}
