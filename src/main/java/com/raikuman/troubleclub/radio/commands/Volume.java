@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles setting the volume of the bot
  *
- * @version 1.2 2022-29-06
+ * @version 1.3 2022-29-06
  * @since 1.0
  */
 public class Volume implements CommandInterface {
@@ -60,8 +60,14 @@ public class Volume implements CommandInterface {
 			return;
 		}
 
+		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
+		final AudioPlayer audioPlayer = musicManager.getAudioPlayer();
+
 		if (ctx.getArgs().size() == 0) {
-			String volume = ConfigIO.readConfig(new MusicConfig().fileName(), "volume");
+
+			String volumeConfig = "volumetrack" + musicManager.getCurrentAudioTrack();
+
+			String volume = ConfigIO.readConfig(new MusicConfig().fileName(), volumeConfig);
 
 			int volumeNum;
 			try {
@@ -75,7 +81,8 @@ public class Volume implements CommandInterface {
 					"\uD83D\uDD0A Current volume: " + volumeNum + "%",
 					null,
 					ctx.getEventMember().getEffectiveAvatarUrl()
-				);
+				)
+				.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
 			ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
 		}
@@ -88,9 +95,6 @@ public class Volume implements CommandInterface {
 			);
 			return;
 		}
-
-		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
-		final AudioPlayer audioPlayer = musicManager.getAudioPlayer();
 
 		if (ctx.getArgs().size() == 1) {
 			try {
@@ -107,9 +111,11 @@ public class Volume implements CommandInterface {
 
 				int calculateVolume = (int) Math.ceil((double) volumeNum / 4);
 
+				String volumeConfig = "volumetrack" + musicManager.getCurrentAudioTrack();
+
 				ConfigIO.overwriteConfig(
 					new MusicConfig().fileName(),
-					"volume",
+					volumeConfig,
 					Integer.toString(volumeNum)
 				);
 
@@ -120,7 +126,8 @@ public class Volume implements CommandInterface {
 						"\uD83D\uDD0A Set volume to " + volumeNum + "%",
 						null,
 						ctx.getEventMember().getEffectiveAvatarUrl()
-					);
+					)
+					.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
 				ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
 			} catch (NumberFormatException e) {
