@@ -1,6 +1,5 @@
 package com.raikuman.troubleclub.radio.listener;
 
-import com.raikuman.troubleclub.radio.commands.Queue;
 import com.raikuman.botutilities.buttons.manager.ButtonInterface;
 import com.raikuman.botutilities.buttons.pagination.manager.PaginationButtonProvider;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
@@ -16,7 +15,7 @@ import java.util.List;
 /**
  * Handles creating a listener manager
  *
- * @version 1.5 2020-27-06
+ * @version 1.6 2022-27-06
  * @since 1.0
  */
 public class ListenerHandler {
@@ -58,6 +57,7 @@ public class ListenerHandler {
 	 */
 	private static List<CommandInterface> getCommands() {
 		return Arrays.asList(
+			new ChangeTrack(),
 			new Clear(),
 			new Join(),
 			new Leave(),
