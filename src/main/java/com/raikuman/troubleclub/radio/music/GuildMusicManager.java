@@ -1,24 +1,88 @@
 package com.raikuman.troubleclub.radio.music;
 
+import com.sedmelluq.discord.lavaplayer.filter.equalizer.EqualizerFactory;
+import com.sedmelluq.discord.lavaplayer.format.Pcm16AudioDataFormat;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 
 /**
  * Builds an object containing information for the guild music manager
  *
- * @version 1.0 2022-23-06
+ * @version 1.1 2022-25-06
  * @since 1.0
  */
 public class GuildMusicManager {
 
-	public final AudioPlayer audioPlayer;
-	public final TrackScheduler trackScheduler;
-	public final AudioPlayerSendHandler sendHandler;
+	private final AudioPlayer primaryPlayer;
+	private final AudioPlayer secondaryPlayer;
+	private final AudioPlayer tertiaryPlayer;
+	private final TrackScheduler primaryScheduler;
+	private final TrackScheduler secondaryScheduler;
+	private final TrackScheduler tertiaryScheduler;
+	private int currentAudioTrack;
+	public final MixingSendHandler mixingHandler;
 
 	public GuildMusicManager(AudioPlayerManager manager) {
-		this.audioPlayer = manager.createPlayer();
-		this.trackScheduler = new TrackScheduler(this.audioPlayer);
-		this.audioPlayer.addListener(this.trackScheduler);
-		this.sendHandler = new AudioPlayerSendHandler(this.audioPlayer);
+		currentAudioTrack = 1;
+		manager.getConfiguration().setOutputFormat(new Pcm16AudioDataFormat(2, 48000, 960, true));
+
+		this.primaryPlayer = manager.createPlayer();
+		this.primaryScheduler = new TrackScheduler(this.primaryPlayer);
+		this.primaryPlayer.addListener(this.primaryScheduler);
+
+		this.secondaryPlayer = manager.createPlayer();
+		this.secondaryScheduler = new TrackScheduler(this.secondaryPlayer);
+		this.secondaryPlayer.addListener(this.secondaryScheduler);
+
+		this.tertiaryPlayer = manager.createPlayer();
+		this.tertiaryScheduler = new TrackScheduler(this.tertiaryPlayer);
+		this.tertiaryPlayer.addListener(this.tertiaryScheduler);
+
+		this.mixingHandler = new MixingSendHandler();
+		this.mixingHandler.addSound(this.primaryPlayer);
+		this.mixingHandler.addSound(this.secondaryPlayer);
+		this.mixingHandler.addSound(this.tertiaryPlayer);
+
+		// Testing equalizer
+		this.primaryPlayer.setFilterFactory(new EqualizerFactory());
+		this.secondaryPlayer.setFilterFactory(new EqualizerFactory());
+		this.tertiaryPlayer.setFilterFactory(new EqualizerFactory());
+	}
+
+	public int getCurrentAudioTrack() {
+		return this.currentAudioTrack;
+	}
+
+	public void setCurrentAudioTrack(int currentAudioTrack) {
+		if ((currentAudioTrack < 1) || (currentAudioTrack > 3))
+			return;
+
+		this.currentAudioTrack = currentAudioTrack;
+	}
+
+	public AudioPlayer getAudioPlayer() {
+		switch (this.currentAudioTrack) {
+			case 2:
+				return this.secondaryPlayer;
+
+			case 3:
+				return this.tertiaryPlayer;
+
+			default:
+				return this.primaryPlayer;
+		}
+	}
+
+	public TrackScheduler getTrackScheduler() {
+		switch (this.currentAudioTrack) {
+			case 2:
+				return this.secondaryScheduler;
+
+			case 3:
+				return this.tertiaryScheduler;
+
+			default:
+				return this.primaryScheduler;
+		}
 	}
 }

@@ -1,10 +1,12 @@
 package com.raikuman.troubleclub.radio.commands;
 
+import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -12,7 +14,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles pausing the music player
  *
- * @version 1.1 2022-18-06
+ * @version 1.2 2022-29-06
  * @since 1.0
  */
 public class Pause implements CommandInterface {
@@ -56,7 +58,8 @@ public class Pause implements CommandInterface {
 			return;
 		}
 
-		final AudioPlayer audioPlayer = PlayerManager.getInstance().getMusicManager(ctx.getGuild()).audioPlayer;
+		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
+		final AudioPlayer audioPlayer = musicManager.getAudioPlayer();
 
 		if (audioPlayer.getPlayingTrack() == null) {
 			MessageResources.timedMessage(
@@ -78,7 +81,17 @@ public class Pause implements CommandInterface {
 
 		audioPlayer.setPaused(true);
 
-		ctx.getEvent().getMessage().addReaction("U+23F8").queue();
+		int currentAudioTrack = musicManager.getCurrentAudioTrack();
+		EmbedBuilder builder = new EmbedBuilder()
+			.setAuthor("⏸️Paused audio track " + currentAudioTrack,
+				null,
+				ctx.getEventMember().getEffectiveAvatarUrl()
+			)
+			.setFooter("Audio track " + currentAudioTrack);
+
+		ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
+
+		ctx.getEvent().getMessage().delete().queue();
 	}
 
 	@Override

@@ -10,6 +10,8 @@ import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.context.EventContext;
 import com.raikuman.botutilities.helpers.DateAndTime;
 import com.raikuman.botutilities.helpers.MessageResources;
+import com.raikuman.troubleclub.radio.music.TrackScheduler;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
@@ -24,7 +26,7 @@ import java.util.List;
 /**
  * Handles sending a pagination of songs queued and playing, as well as the state of the audio player
  *
- * @version 1.0 2020-20-06
+ * @version 1.1 2022-29-06
  * @since 1.0
  */
 public class Queue implements CommandInterface, PageCommandInterface {
@@ -69,8 +71,10 @@ public class Queue implements CommandInterface, PageCommandInterface {
 		}
 
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
+		final AudioPlayer audioPlayer = musicManager.getAudioPlayer();
+		final TrackScheduler trackScheduler = musicManager.getTrackScheduler();
 
-		if ((musicManager.audioPlayer.getPlayingTrack() == null) && musicManager.trackScheduler.queue.isEmpty()) {
+		if ((audioPlayer.getPlayingTrack() == null) && trackScheduler.queue.isEmpty()) {
 			MessageResources.timedMessage(
 				"The queue is currently empty",
 				channel,
@@ -124,22 +128,24 @@ public class Queue implements CommandInterface, PageCommandInterface {
 	@Override
 	public List<String> pageStrings(EventContext ctx) {
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
+		final AudioPlayer audioPlayer = musicManager.getAudioPlayer();
+		final TrackScheduler trackScheduler = musicManager.getTrackScheduler();
 		List<String> stringList = new ArrayList<>();
 
 		StringBuilder playerState = new StringBuilder();
-		if (musicManager.trackScheduler.repeat)
+		if (trackScheduler.repeat)
 			playerState.append("\uD83D\uDD01 Repeating current track");
-		else if (musicManager.trackScheduler.repeatQueue)
+		else if (trackScheduler.repeatQueue)
 			playerState.append("\uD83D\uDD03 Repeating queue");
 
 		playerState.append("\n");
 
-		if (musicManager.audioPlayer.isPaused())
+		if (audioPlayer.isPaused())
 			playerState.append("`Paused:` ");
 		else
 			playerState.append("`Playing:` ");
 
-		AudioTrackInfo currentTrackInfo = musicManager.audioPlayer.getPlayingTrack().getInfo();
+		AudioTrackInfo currentTrackInfo = audioPlayer.getPlayingTrack().getInfo();
 		playerState.append(String.format(
 			"[%s](%s) | `%s`",
 			currentTrackInfo.title,
@@ -149,7 +155,7 @@ public class Queue implements CommandInterface, PageCommandInterface {
 		stringList.add(playerState.toString());
 
 		int songNum = 1;
-		for (AudioTrack track : musicManager.trackScheduler.queue) {
+		for (AudioTrack track : trackScheduler.queue) {
 			stringList.add(String.format(
 				"`%d.` [%s](%s) | `%s`",
 				songNum,

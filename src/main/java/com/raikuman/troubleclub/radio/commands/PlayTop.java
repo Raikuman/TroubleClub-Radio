@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Handles adding a new song to the top of the queue
  *
- * @version 1.2 2020-24-06
+ * @version 1.3 2022-29-06
  * @since 1.0
  */
 public class PlayTop implements CommandInterface {

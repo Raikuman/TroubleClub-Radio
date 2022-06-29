@@ -5,14 +5,16 @@ import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
+import com.raikuman.troubleclub.radio.music.TrackScheduler;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 /**
- * Handles the bot leaving the voice channel of a user
+ * Handles the bot stopping the current playing song and clearing the queue
  *
- * @version 1.3 2022-24-06
+ * @version 1.4 2022-29-06
  * @since 1.0
  */
 public class Stop implements CommandInterface {
@@ -21,10 +23,20 @@ public class Stop implements CommandInterface {
 	public void handle(CommandContext ctx) {
 		boolean stopped = stopMusic(ctx);
 
-		if (stopped)
-			ctx.getEvent().getMessage().addReaction("U+1F6D1").queue();
-		else
-			ctx.getEvent().getMessage().addReaction("U+1F6AB").queue();
+		if (stopped) {
+			final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
+
+			EmbedBuilder builder = new EmbedBuilder()
+				.setAuthor("\uD83D\uDED1️Stopped and cleared audio track " + musicManager.getCurrentAudioTrack(),
+					null,
+					ctx.getEventMember().getEffectiveAvatarUrl()
+				)
+				.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
+
+			ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
+
+			ctx.getEvent().getMessage().delete().queue();
+		}
 	}
 
 	@Override
@@ -87,8 +99,9 @@ public class Stop implements CommandInterface {
 
 		// Clear current track and queue
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
-		musicManager.trackScheduler.queue.clear();
-		musicManager.trackScheduler.audioPlayer.stopTrack();
+		final TrackScheduler trackScheduler = musicManager.getTrackScheduler();
+		trackScheduler.queue.clear();
+		trackScheduler.audioPlayer.stopTrack();
 
 		return true;
 	}

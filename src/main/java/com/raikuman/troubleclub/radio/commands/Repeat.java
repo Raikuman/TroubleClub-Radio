@@ -6,6 +6,8 @@ import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.troubleclub.radio.music.TrackScheduler;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
@@ -15,7 +17,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles the bot repeating the currently playing audio track
  *
- * @version 1.2 2022-20-06
+ * @version 1.3 2022-29-06
  * @since 1.0
  */
 public class Repeat implements CommandInterface {
@@ -60,7 +62,10 @@ public class Repeat implements CommandInterface {
 		}
 
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
-		if (musicManager.audioPlayer.getPlayingTrack() == null) {
+		final AudioPlayer audioPlayer = musicManager.getAudioPlayer();
+		final TrackScheduler trackScheduler = musicManager.getTrackScheduler();
+
+		if (audioPlayer.getPlayingTrack() == null) {
 			MessageResources.timedMessage(
 				"There's currently no track playing",
 				channel,
@@ -70,21 +75,22 @@ public class Repeat implements CommandInterface {
 		}
 
 		String ifRepeat;
-		if (!musicManager.trackScheduler.repeat) {
-			musicManager.trackScheduler.repeat = true;
-			musicManager.trackScheduler.repeatQueue = false;
+		if (!trackScheduler.repeat) {
+			trackScheduler.repeat = true;
+			trackScheduler.repeatQueue = false;
 			ifRepeat = "\uD83D\uDD01 Now repeating track:";
 		} else {
-			musicManager.trackScheduler.repeat = false;
+			trackScheduler.repeat = false;
 			ifRepeat = "\uD83D\uDEAB Stopped repeating track:";
 		}
 
-		AudioTrack audioTrack = musicManager.audioPlayer.getPlayingTrack();
+		AudioTrack audioTrack = audioPlayer.getPlayingTrack();
 
 		EmbedBuilder builder = new EmbedBuilder()
 			.setAuthor(ifRepeat, audioTrack.getInfo().uri, ctx.getEventMember().getEffectiveAvatarUrl())
 			.setTitle(audioTrack.getInfo().title, audioTrack.getInfo().uri)
-			.setColor(RandomColor.getRandomColor());
+			.setColor(RandomColor.getRandomColor())
+			.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
 		channel.sendMessageEmbeds(builder.build()).queue();
 		ctx.getEvent().getMessage().delete().queue();

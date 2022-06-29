@@ -7,6 +7,7 @@ import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.DateAndTime;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.troubleclub.radio.music.TrackScheduler;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
@@ -20,7 +21,7 @@ import java.util.List;
 /**
  * Handles playing a new song, skipping the current track
  *
- * @version 1.2 2020-24-06
+ * @version 1.3 2022-29-06
  * @since 1.0
  */
 public class PlayNow implements CommandInterface {
@@ -78,10 +79,12 @@ public class PlayNow implements CommandInterface {
 				int songPos = Integer.parseInt(ctx.getArgs().get(0));
 
 				final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
-				musicManager.trackScheduler.moveTrack(songPos);
-				musicManager.trackScheduler.nextTrack();
+				final TrackScheduler trackScheduler = musicManager.getTrackScheduler();
+				trackScheduler.moveTrack(songPos);
+				trackScheduler.nextTrack();
 
-				AudioTrackInfo audioTrackInfo = musicManager.audioPlayer.getPlayingTrack().getInfo();
+				AudioTrackInfo audioTrackInfo = musicManager.getAudioPlayer().getPlayingTrack()
+					.getInfo();
 
 				EmbedBuilder builder = new EmbedBuilder()
 					.setTitle(audioTrackInfo.title, audioTrackInfo.uri)
@@ -89,7 +92,8 @@ public class PlayNow implements CommandInterface {
 					.setAuthor("▶️ Playing song now:", audioTrackInfo.uri, ctx.getEventMember().getEffectiveAvatarUrl())
 					.addField("Channel", audioTrackInfo.author, true)
 					.addField("Song Duration", DateAndTime.formatMilliseconds(audioTrackInfo.length), true)
-					.addField("Position in queue", "Now playing", true);
+					.addField("Position in queue", "Now playing", true)
+					.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
 				ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
 

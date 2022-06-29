@@ -5,6 +5,7 @@ import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
+import com.raikuman.troubleclub.radio.music.TrackScheduler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
@@ -13,7 +14,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles removing duplicate songs from the current queue
  *
- * @version 1.1 2020-23-06
+ * @version 1.2 2022-29-06
  * @since 1.0
  */
 public class Prune implements CommandInterface {
@@ -58,14 +59,16 @@ public class Prune implements CommandInterface {
 		}
 
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
+		final TrackScheduler trackScheduler = musicManager.getTrackScheduler();
 
-		int songsPruned = musicManager.trackScheduler.pruneTracks();
+		int songsPruned = trackScheduler.pruneTracks();
 
 		EmbedBuilder builder = new EmbedBuilder()
 			.setAuthor("✂️ Pruned " + songsPruned + " songs from the queue",
 				null,
 				ctx.getEventMember().getEffectiveAvatarUrl()
-			);
+			)
+			.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
 		ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
 

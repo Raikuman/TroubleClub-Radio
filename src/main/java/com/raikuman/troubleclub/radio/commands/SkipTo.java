@@ -7,6 +7,7 @@ import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.DateAndTime;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.troubleclub.radio.music.TrackScheduler;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * Handles skipping to a position in the queue
  *
- * @version 1.1 2020-24-06
+ * @version 1.2 2022-29-06
  * @since 1.0
  */
 public class SkipTo implements CommandInterface {
@@ -72,12 +73,13 @@ public class SkipTo implements CommandInterface {
 		}
 
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
+		final TrackScheduler trackScheduler = musicManager.getTrackScheduler();
 
 		if (ctx.getArgs().size() == 1) {
 			try {
 				int posNum = Integer.parseInt(ctx.getArgs().get(0));
 
-				if (posNum > musicManager.trackScheduler.queue.size()) {
+				if (posNum > trackScheduler.queue.size()) {
 					MessageResources.timedMessage(
 						"You must select a valid track number from the queue",
 						channel,
@@ -86,7 +88,7 @@ public class SkipTo implements CommandInterface {
 					return;
 				}
 
-				AudioTrackInfo audioTrackInfo = musicManager.trackScheduler.skipTo(posNum);
+				AudioTrackInfo audioTrackInfo = trackScheduler.skipTo(posNum);
 				EmbedBuilder builder = new EmbedBuilder()
 					.setTitle(audioTrackInfo.title, audioTrackInfo.uri)
 					.setColor(RandomColor.getRandomColor())
@@ -96,7 +98,8 @@ public class SkipTo implements CommandInterface {
 						ctx.getEventMember().getEffectiveAvatarUrl())
 					.addField("Channel", audioTrackInfo.author, true)
 					.addField("Song Duration", DateAndTime.formatMilliseconds(audioTrackInfo.length), true)
-					.addField("Position in queue", "Now playing", true);
+					.addField("Position in queue", "Now playing", true)
+					.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
 				ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
 			} catch (NumberFormatException e) {

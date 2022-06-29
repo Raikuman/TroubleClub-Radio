@@ -5,7 +5,9 @@ import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.net.URI;
@@ -15,7 +17,7 @@ import java.util.List;
 /**
  * Handles playing music in a user's voice channel
  *
- * @version 1.3 2022-24-06
+ * @version 1.4 2022-29-06
  * @since 1.0
  */
 public class Play implements CommandInterface {
@@ -28,7 +30,8 @@ public class Play implements CommandInterface {
 
 		if (ctx.getArgs().isEmpty()) {
 			final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
-			AudioTrack currentTrack = musicManager.trackScheduler.audioPlayer.getPlayingTrack();
+			final AudioPlayer audioPlayer = musicManager.getAudioPlayer();
+			AudioTrack currentTrack = audioPlayer.getPlayingTrack();
 
 			if (currentTrack == null) {
 				MessageResources.timedMessage(
@@ -39,9 +42,20 @@ public class Play implements CommandInterface {
 				return;
 			}
 
-			if (musicManager.audioPlayer.isPaused()) {
-				musicManager.audioPlayer.setPaused(false);
-				ctx.getEvent().getMessage().addReaction("U+25B6").queue();
+			if (audioPlayer.isPaused()) {
+				audioPlayer.setPaused(false);
+
+				EmbedBuilder builder = new EmbedBuilder()
+					.setAuthor("▶️Resuming audio track " + musicManager.getCurrentAudioTrack(),
+						null,
+						ctx.getEventMember().getEffectiveAvatarUrl()
+					)
+					.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
+
+				ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
+
+				ctx.getEvent().getMessage().delete().queue();
+
 				return;
 			}
 		}

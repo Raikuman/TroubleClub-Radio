@@ -5,6 +5,7 @@ import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -14,7 +15,7 @@ import java.util.List;
 /**
  * Handles clearing the current queue of the music manager
  *
- * @version 1.0 2020-21-06
+ * @version 1.1 2022-29-06
  * @since 1.0
  */
 public class Clear implements CommandInterface {
@@ -59,9 +60,20 @@ public class Clear implements CommandInterface {
 		}
 
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
-		musicManager.trackScheduler.queue.clear();
+		int numSongs = musicManager.getTrackScheduler().queue.size();
 
-		ctx.getEvent().getMessage().addReaction("\uD83C\uDD97").queue();
+		EmbedBuilder builder = new EmbedBuilder()
+			.setAuthor("\uD83D\uDDD1️Cleared " + numSongs + " songs from the queue",
+				null,
+				ctx.getEventMember().getEffectiveAvatarUrl()
+			)
+			.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
+
+		musicManager.getTrackScheduler().queue.clear();
+
+		ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
+
+		ctx.getEvent().getMessage().delete().queue();
 	}
 
 	@Override

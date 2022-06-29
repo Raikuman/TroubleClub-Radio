@@ -7,6 +7,7 @@ import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.DateAndTime;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * Handles sending an embed of the current playing track and the state of the audio player
  *
- * @version 1.0 2020-20-06
+ * @version 1.1 2022-29-06
  * @since 1.0
  */
 public class NowPlaying implements CommandInterface {
@@ -63,7 +64,8 @@ public class NowPlaying implements CommandInterface {
 		}
 
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
-		AudioTrack audioTrack = musicManager.audioPlayer.getPlayingTrack();
+		final AudioPlayer audioPlayer = musicManager.getAudioPlayer();
+		AudioTrack audioTrack = audioPlayer.getPlayingTrack();
 
 		if (audioTrack == null) {
 			MessageResources.timedMessage(
@@ -75,7 +77,7 @@ public class NowPlaying implements CommandInterface {
 		}
 
 		String playerState;
-		if (musicManager.audioPlayer.isPaused())
+		if (audioPlayer.isPaused())
 			playerState = "⏸️ Paused ⏸️";
 		else
 			playerState = "\uD83C\uDFB6 Now Playing \uD83C\uDFB6";
@@ -90,7 +92,8 @@ public class NowPlaying implements CommandInterface {
 				DateAndTime.formatMilliseconds(audioTrack.getPosition())
 					+ "/" + DateAndTime.formatMilliseconds(audioTrack.getDuration()),
 				true
-			);
+			)
+			.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
 		channel.sendMessageEmbeds(builder.build()).queue();
 

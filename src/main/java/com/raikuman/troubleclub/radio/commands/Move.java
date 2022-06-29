@@ -6,6 +6,7 @@ import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.troubleclub.radio.music.TrackScheduler;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
@@ -18,7 +19,7 @@ import java.util.List;
  * Handles moving a selected song to the top of the queue, or moving the song to a certain position of the
  * queue
  *
- * @version 1.2 2020-24-06
+ * @version 1.3 2022-29-06
  * @since 1.0
  */
 public class Move implements CommandInterface {
@@ -72,12 +73,13 @@ public class Move implements CommandInterface {
 		}
 
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
+		final TrackScheduler trackScheduler = musicManager.getTrackScheduler();
 
 		if (ctx.getArgs().size() == 1) {
 			try {
 				int songNum = Integer.parseInt(ctx.getArgs().get(0));
 
-				if (songNum > musicManager.trackScheduler.queue.size()) {
+				if (songNum > trackScheduler.queue.size()) {
 					MessageResources.timedMessage(
 						"You must select a valid track number from the queue",
 						channel,
@@ -86,7 +88,7 @@ public class Move implements CommandInterface {
 					return;
 				}
 
-				AudioTrackInfo audioTrackInfo = musicManager.trackScheduler.moveTrack(songNum);
+				AudioTrackInfo audioTrackInfo = trackScheduler.moveTrack(songNum);
 				EmbedBuilder builder = new EmbedBuilder()
 					.setTitle(audioTrackInfo.title, audioTrackInfo.uri)
 					.setColor(RandomColor.getRandomColor())
@@ -94,7 +96,8 @@ public class Move implements CommandInterface {
 						"Moved song to position 1 in queue",
 						audioTrackInfo.uri,
 						ctx.getEventMember().getEffectiveAvatarUrl()
-					);
+					)
+					.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
 				ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
 			} catch (NumberFormatException e) {
@@ -111,7 +114,7 @@ public class Move implements CommandInterface {
 			try {
 				int songNum = Integer.parseInt(ctx.getArgs().get(0));
 
-				if (songNum > musicManager.trackScheduler.queue.size()) {
+				if (songNum > trackScheduler.queue.size()) {
 					MessageResources.timedMessage(
 						"You must select a valid track number from the queue",
 						channel,
@@ -122,7 +125,7 @@ public class Move implements CommandInterface {
 
 				int posNum = Integer.parseInt(ctx.getArgs().get(1));
 
-				if (posNum > musicManager.trackScheduler.queue.size()) {
+				if (posNum > trackScheduler.queue.size()) {
 					MessageResources.timedMessage(
 						"You must select a valid position number to add to the queue",
 						channel,
@@ -131,7 +134,7 @@ public class Move implements CommandInterface {
 					return;
 				}
 
-				AudioTrackInfo audioTrackInfo = musicManager.trackScheduler.moveTrack(songNum, posNum);
+				AudioTrackInfo audioTrackInfo = trackScheduler.moveTrack(songNum, posNum);
 				EmbedBuilder builder = new EmbedBuilder()
 					.setTitle(audioTrackInfo.title, audioTrackInfo.uri)
 					.setColor(RandomColor.getRandomColor())
@@ -139,7 +142,8 @@ public class Move implements CommandInterface {
 						"\uD83D\uDCE6 Moved song to position " + posNum + " in queue",
 						audioTrackInfo.uri,
 						ctx.getEventMember().getEffectiveAvatarUrl()
-					);
+					)
+					.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
 				ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
 			} catch (NumberFormatException e) {

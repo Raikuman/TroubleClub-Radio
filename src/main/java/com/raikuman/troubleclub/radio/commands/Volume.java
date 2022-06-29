@@ -7,6 +7,7 @@ import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.configs.ConfigIO;
 import com.raikuman.botutilities.helpers.MessageResources;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
@@ -15,7 +16,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles setting the volume of the bot
  *
- * @version 1.1 2020-23-06
+ * @version 1.2 2022-29-06
  * @since 1.0
  */
 public class Volume implements CommandInterface {
@@ -89,6 +90,7 @@ public class Volume implements CommandInterface {
 		}
 
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
+		final AudioPlayer audioPlayer = musicManager.getAudioPlayer();
 
 		if (ctx.getArgs().size() == 1) {
 			try {
@@ -111,7 +113,7 @@ public class Volume implements CommandInterface {
 					Integer.toString(volumeNum)
 				);
 
-				musicManager.audioPlayer.setVolume(calculateVolume);
+				audioPlayer.setVolume(calculateVolume);
 
 				EmbedBuilder builder = new EmbedBuilder()
 					.setAuthor(

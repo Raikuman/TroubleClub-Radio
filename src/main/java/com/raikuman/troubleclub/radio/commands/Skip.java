@@ -1,10 +1,15 @@
 package com.raikuman.troubleclub.radio.commands;
 
+import com.raikuman.botutilities.helpers.DateAndTime;
+import com.raikuman.botutilities.helpers.RandomColor;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
+import com.raikuman.troubleclub.radio.music.TrackScheduler;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -12,7 +17,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles skipping the current playing track of the music manager
  *
- * @version 1.0 2020-21-06
+ * @version 1.1 2022-29-06
  * @since 1.0
  */
 public class Skip implements CommandInterface {
@@ -57,9 +62,26 @@ public class Skip implements CommandInterface {
 		}
 
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
-		musicManager.trackScheduler.nextTrack();
+		final TrackScheduler trackScheduler = musicManager.getTrackScheduler();
 
-		ctx.getEvent().getMessage().addReaction("⏭️").queue();
+		AudioTrackInfo audioTrackInfo = musicManager.getAudioPlayer().getPlayingTrack()
+			.getInfo();
+
+		EmbedBuilder builder = new EmbedBuilder()
+			.setTitle(audioTrackInfo.title, audioTrackInfo.uri)
+			.setColor(RandomColor.getRandomColor())
+			.setAuthor("⏭️ Skipped to song:", audioTrackInfo.uri,
+				ctx.getEventMember().getEffectiveAvatarUrl())
+			.addField("Channel", audioTrackInfo.author, true)
+			.addField("Song Duration", DateAndTime.formatMilliseconds(audioTrackInfo.length), true)
+			.addField("Position in queue", "Now playing", true)
+			.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
+
+		trackScheduler.nextTrack();
+
+		ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
+
+		ctx.getEvent().getMessage().delete().queue();
 	}
 
 	@Override

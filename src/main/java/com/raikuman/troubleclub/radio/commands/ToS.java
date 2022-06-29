@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 /**
  * Handles sending bot tos embed
  *
- * @version 1.0 2020-27-06
+ * @version 1.1 2022-27-06
  * @since 1.0
  */
 public class ToS implements CommandInterface {
@@ -40,7 +40,7 @@ public class ToS implements CommandInterface {
 			.append("**Trouble Club Radio**\n")
 			.append("This bot will contain information about user ID and message information ")
 			.append("(will be encrypted on a local database) for playlist functionality ")
-			.append("(links will be saved from your message when invoking the command). ")
+			.append("by saving links when invoking a command. ")
 			.append("This information will not be shared to third parties.");
 
 		ctx.getChannel().sendMessageEmbeds(builder.build()).queue();

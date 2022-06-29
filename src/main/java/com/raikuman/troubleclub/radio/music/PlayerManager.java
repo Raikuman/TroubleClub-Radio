@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Handles loading and playing tracks for the guild music manager
  *
- * @version 1.3 2022-23-06
+ * @version 1.4 2022-29-06
  * @since 1.0
  */
 public class PlayerManager {
@@ -49,7 +49,7 @@ public class PlayerManager {
 	public GuildMusicManager getMusicManager(Guild guild) {
 		return this.musicManagerMap.computeIfAbsent(guild.getIdLong(), guildId -> {
 			final GuildMusicManager guildMusicManager = new GuildMusicManager(this.audioPlayerManager);
-			guild.getAudioManager().setSendingHandler(guildMusicManager.sendHandler);
+			guild.getAudioManager().setSendingHandler(guildMusicManager.mixingHandler);
 			return guildMusicManager;
 		});
 	}
@@ -62,20 +62,20 @@ public class PlayerManager {
 	 */
 	public void loadAndPlay(TextChannel channel, String trackUrl, User user) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
-
-		musicManager.audioPlayer.setVolume(loadVolume());
+		musicManager.getAudioPlayer().setVolume(loadVolume());
 
 		this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
 
 			@Override
 			public void trackLoaded(AudioTrack audioTrack) {
-				musicManager.trackScheduler.queue(audioTrack);
+				musicManager.getTrackScheduler().queue(audioTrack);
 
 				channel.sendMessageEmbeds(
 					trackEmbed(
-						musicManager.trackScheduler.queue.size(),
+						musicManager.getTrackScheduler().queue.size(),
 						audioTrack,
-						user
+						user,
+						musicManager.getCurrentAudioTrack()
 					).build()
 				).queue();
 			}
@@ -96,13 +96,14 @@ public class PlayerManager {
 						return;
 					}
 
-					musicManager.trackScheduler.queue(firstTrack);
+					musicManager.getTrackScheduler().queue(firstTrack);
 
 					channel.sendMessageEmbeds(
 						trackEmbed(
-							musicManager.trackScheduler.queue.size(),
+							musicManager.getTrackScheduler().queue.size(),
 							firstTrack,
-							user
+							user,
+							musicManager.getCurrentAudioTrack()
 						).build()
 					).queue();
 
@@ -111,7 +112,7 @@ public class PlayerManager {
 
 				// Queue playlist if provided a link
 				for (AudioTrack track : tracks)
-					musicManager.trackScheduler.queue(track);
+					musicManager.getTrackScheduler().queue(track);
 
 				EmbedBuilder builder = new EmbedBuilder()
 					.setAuthor("Adding playlist to queue:", null, user.getAvatarUrl())
@@ -152,23 +153,23 @@ public class PlayerManager {
 	 */
 	public void loadToTop(TextChannel channel, String trackUrl, User user, boolean playNow) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
-
-		musicManager.audioPlayer.setVolume(loadVolume());
+		musicManager.getAudioPlayer().setVolume(loadVolume());
 
 		this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
 
 			@Override
 			public void trackLoaded(AudioTrack audioTrack) {
-				musicManager.trackScheduler.addToTop(audioTrack);
+				musicManager.getTrackScheduler().addToTop(audioTrack);
 
 				if (playNow)
-					musicManager.trackScheduler.nextTrack();
+					musicManager.getTrackScheduler().nextTrack();
 
 				channel.sendMessageEmbeds(
 					topEmbed(
 						audioTrack,
 						user,
-						playNow
+						playNow,
+						musicManager.getCurrentAudioTrack()
 					).build()
 				).queue();
 			}
@@ -187,16 +188,17 @@ public class PlayerManager {
 						return;
 					}
 
-					musicManager.trackScheduler.addToTop(firstTrack);
+					musicManager.getTrackScheduler().addToTop(firstTrack);
 
 					if (playNow)
-						musicManager.trackScheduler.nextTrack();
+						musicManager.getTrackScheduler().nextTrack();
 
 					channel.sendMessageEmbeds(
 						topEmbed(
 							firstTrack,
 							user,
-							playNow
+							playNow,
+							musicManager.getCurrentAudioTrack()
 						).build()
 					).queue();
 				} else {
@@ -247,7 +249,7 @@ public class PlayerManager {
 	 * @param user The user to display on an embed
 	 * @return The embed builder with track information
 	 */
-	private EmbedBuilder trackEmbed(int queueSize, AudioTrack audioTrack, User user) {
+	private EmbedBuilder trackEmbed(int queueSize, AudioTrack audioTrack, User user, int currentAudioTrack) {
 		EmbedBuilder builder = new EmbedBuilder()
 			.setTitle(audioTrack.getInfo().title, audioTrack.getInfo().uri)
 			.setColor(RandomColor.getRandomColor());
@@ -266,7 +268,8 @@ public class PlayerManager {
 
 		builder
 			.setAuthor(title, audioTrack.getInfo().uri, user.getEffectiveAvatarUrl())
-			.addField("Position in queue", nowPlaying, true);
+			.addField("Position in queue", nowPlaying, true)
+			.setFooter("Audio track " + currentAudioTrack);
 
 		return builder;
 	}
@@ -278,7 +281,7 @@ public class PlayerManager {
 	 * @param playNow If the track was played immediately
 	 * @return The embed builder with track information
 	 */
-	private EmbedBuilder topEmbed(AudioTrack audioTrack, User user, boolean playNow) {
+	private EmbedBuilder topEmbed(AudioTrack audioTrack, User user, boolean playNow, int currentAudioTrack) {
 		String title, position;
 		if (playNow) {
 			title = "▶️ Playing song now:";
@@ -294,7 +297,8 @@ public class PlayerManager {
 			.setAuthor(title, audioTrack.getInfo().uri, user.getEffectiveAvatarUrl())
 			.addField("Channel", audioTrack.getInfo().author, true)
 			.addField("Song Duration", DateAndTime.formatMilliseconds(audioTrack.getDuration()), true)
-			.addField("Position in queue", position, true);
+			.addField("Position in queue", position, true)
+			.setFooter("Audio track " + currentAudioTrack);
 	}
 
 	/**

@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Handles sending a pagination of commands on the bot
  *
- * @version 1.0 2020-23-06
+ * @version 1.1 2022-23-06
  * @since 1.0
  */
 public class Help implements CommandInterface, PageCommandInterface {

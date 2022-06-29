@@ -16,7 +16,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles playing a random song immediately from the queue
  *
- * @version 1.0 2020-25-06
+ * @version 1.1 2022-29-06
  * @since 1.0
  */
 public class Random implements CommandInterface {
@@ -59,9 +59,8 @@ public class Random implements CommandInterface {
 			);
 			return;
 		}
-
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
-		AudioTrackInfo audioTrackInfo = musicManager.trackScheduler.random();
+		AudioTrackInfo audioTrackInfo = musicManager.getTrackScheduler().random();
 
 		EmbedBuilder builder = new EmbedBuilder()
 			.setTitle(audioTrackInfo.title, audioTrackInfo.uri)
@@ -70,7 +69,8 @@ public class Random implements CommandInterface {
 				ctx.getEventMember().getEffectiveAvatarUrl())
 			.addField("Channel", audioTrackInfo.author, true)
 			.addField("Song Duration", DateAndTime.formatMilliseconds(audioTrackInfo.length), true)
-			.addField("Position in queue", "Now playing", true);
+			.addField("Position in queue", "Now playing", true)
+			.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
 		ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
 

@@ -6,6 +6,8 @@ import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.troubleclub.radio.music.TrackScheduler;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
@@ -17,7 +19,7 @@ import java.util.List;
 /**
  * Handles the bot looping the current audio player queue
  *
- * @version 1.3 2022-24-06
+ * @version 1.4 2022-29-06
  * @since 1.0
  */
 public class Loop implements CommandInterface {
@@ -62,7 +64,9 @@ public class Loop implements CommandInterface {
 		}
 
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
-		if (musicManager.audioPlayer.getPlayingTrack() == null && musicManager.trackScheduler.queue.isEmpty()) {
+		final AudioPlayer audioPlayer = musicManager.getAudioPlayer();
+		final TrackScheduler trackScheduler = musicManager.getTrackScheduler();
+		if (audioPlayer.getPlayingTrack() == null && trackScheduler.queue.isEmpty()) {
 			MessageResources.timedMessage(
 				"There's currently nothing in the queue",
 				channel,
@@ -72,22 +76,23 @@ public class Loop implements CommandInterface {
 		}
 
 		String ifRepeat;
-		if (!musicManager.trackScheduler.repeatQueue) {
-			musicManager.trackScheduler.repeatQueue = true;
-			musicManager.trackScheduler.repeat = false;
+		if (!trackScheduler.repeatQueue) {
+			trackScheduler.repeatQueue = true;
+			trackScheduler.repeat = false;
 			ifRepeat = "\uD83D\uDD01 Now repeating queue:";
 		} else {
-			musicManager.trackScheduler.repeatQueue = false;
+			trackScheduler.repeatQueue = false;
 			ifRepeat = "\uD83D\uDEAB Stopped repeating queue:";
 		}
 
-		AudioTrack audioTrack = musicManager.audioPlayer.getPlayingTrack();
-		int totalSongs = musicManager.trackScheduler.queue.size() + 1;
+		AudioTrack audioTrack = audioPlayer.getPlayingTrack();
+		int totalSongs = trackScheduler.queue.size() + 1;
 
 		EmbedBuilder builder = new EmbedBuilder()
 			.setAuthor(ifRepeat, null, ctx.getEventMember().getEffectiveAvatarUrl())
 			.setTitle(audioTrack.getInfo().title, audioTrack.getInfo().uri)
-			.setColor(RandomColor.getRandomColor());
+			.setColor(RandomColor.getRandomColor())
+			.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 		builder
 			.addField("Songs in queue", "`" + totalSongs + "`songs", true);
 
