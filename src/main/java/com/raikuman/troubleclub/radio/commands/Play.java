@@ -1,5 +1,6 @@
 package com.raikuman.troubleclub.radio.commands;
 
+import com.raikuman.botutilities.helpers.RandomColor;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
@@ -17,7 +18,7 @@ import java.util.List;
 /**
  * Handles playing music in a user's voice channel
  *
- * @version 1.5 2022-29-06
+ * @version 1.6 2022-30-06
  * @since 1.0
  */
 public class Play implements CommandInterface {
@@ -50,6 +51,7 @@ public class Play implements CommandInterface {
 						null,
 						ctx.getEventMember().getEffectiveAvatarUrl()
 					)
+					.setColor(RandomColor.getRandomColor())
 					.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
 				ctx.getChannel().sendMessageEmbeds(builder.build()).queue();

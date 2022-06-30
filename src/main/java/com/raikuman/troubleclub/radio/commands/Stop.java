@@ -1,5 +1,6 @@
 package com.raikuman.troubleclub.radio.commands;
 
+import com.raikuman.botutilities.helpers.RandomColor;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
@@ -14,7 +15,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles the bot stopping the current playing song and clearing the queue
  *
- * @version 1.4 2022-29-06
+ * @version 1.5 2022-30-06
  * @since 1.0
  */
 public class Stop implements CommandInterface {
@@ -31,6 +32,7 @@ public class Stop implements CommandInterface {
 					null,
 					ctx.getEventMember().getEffectiveAvatarUrl()
 				)
+				.setColor(RandomColor.getRandomColor())
 				.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
 			ctx.getChannel().sendMessageEmbeds(builder.build()).queue();

@@ -3,6 +3,7 @@ package com.raikuman.troubleclub.radio.commands;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
+import com.raikuman.botutilities.helpers.RandomColor;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -15,7 +16,7 @@ import java.util.List;
 /**
  * Handles switching audio tracks of the guild music manager
  *
- * @version 1.1 2022-29-06
+ * @version 1.2 2022-30-06
  * @since 1.0
  */
 public class ChangeTrack implements CommandInterface {
@@ -75,7 +76,8 @@ public class ChangeTrack implements CommandInterface {
 				.setAuthor("\uD83C\uDFB6️Currently on audio track " + musicManager.getCurrentAudioTrack(),
 					null,
 					ctx.getEventMember().getEffectiveAvatarUrl()
-				);
+				)
+				.setColor(RandomColor.getRandomColor());
 
 			ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
 		} else if (ctx.getArgs().size() == 1) {
@@ -95,7 +97,8 @@ public class ChangeTrack implements CommandInterface {
 					.setAuthor("\uD83C\uDFB6️Switched to audio track " + trackNum,
 						null,
 						ctx.getEventMember().getEffectiveAvatarUrl()
-					);
+					)
+					.setColor(RandomColor.getRandomColor());
 
 				musicManager.setCurrentAudioTrack(trackNum);
 

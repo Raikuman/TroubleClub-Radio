@@ -3,6 +3,7 @@ package com.raikuman.troubleclub.radio.commands;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
+import com.raikuman.botutilities.helpers.RandomColor;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.troubleclub.radio.music.TrackScheduler;
@@ -18,7 +19,7 @@ import java.util.Map;
 /**
  * Handles clearing the current queue of all audio tracks of the music manager
  *
- * @version 1.0 2022-29-06
+ * @version 1.1 2022-30-06
  * @since 1.0
  */
 public class ClearTracks implements CommandInterface {
@@ -72,7 +73,8 @@ public class ClearTracks implements CommandInterface {
 			.setAuthor("\uD83D\uDDD1️Cleared " + numSongs + " songs from the queue of all audio tracks",
 				null,
 				ctx.getEventMember().getEffectiveAvatarUrl()
-			);
+			)
+			.setColor(RandomColor.getRandomColor());
 
 		ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
 

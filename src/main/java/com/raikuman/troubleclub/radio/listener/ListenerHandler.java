@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Handles creating a listener manager
  *
- * @version 1.7 2022-29-06
+ * @version 1.8 2022-30-06
  * @since 1.0
  */
 public class ListenerHandler {
@@ -61,6 +61,7 @@ public class ListenerHandler {
 			new Changelog(),
 			new ChangeTrack(),
 			new Clear(),
+			new ClearTracks(),
 			new Join(),
 			new Leave(),
 			new Loop(),
@@ -68,6 +69,7 @@ public class ListenerHandler {
 			new NowPlaying(),
 			new Pause(),
 			new Play(),
+			new PlayingTracks(),
 			new PlayNow(),
 			new PlayTop(),
 			new Prune(),
@@ -80,8 +82,10 @@ public class ListenerHandler {
 			new Skip(),
 			new SkipTo(),
 			new Stop(),
+			new StopTracks(),
 			new ToS(),
-			new Volume()
+			new Volume(),
+			new VolumeTracks()
 		);
 	}
 
@@ -93,7 +97,6 @@ public class ListenerHandler {
 		List<ButtonInterface> buttonInterfaces = new ArrayList<>();
 		buttonInterfaces.addAll(new PaginationButtonProvider(new Queue()).provideButtons());
 		buttonInterfaces.addAll(new PaginationButtonProvider(new Help(getCommands())).provideButtons());
-
 		return buttonInterfaces;
 	}
 

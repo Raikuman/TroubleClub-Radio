@@ -1,5 +1,6 @@
 package com.raikuman.troubleclub.radio.commands;
 
+import com.raikuman.botutilities.helpers.RandomColor;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
@@ -15,7 +16,7 @@ import java.util.List;
 /**
  * Handles clearing the current queue of the music manager
  *
- * @version 1.1 2022-29-06
+ * @version 1.2 2022-30-06
  * @since 1.0
  */
 public class Clear implements CommandInterface {
@@ -67,6 +68,7 @@ public class Clear implements CommandInterface {
 				null,
 				ctx.getEventMember().getEffectiveAvatarUrl()
 			)
+			.setColor(RandomColor.getRandomColor())
 			.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
 		musicManager.getTrackScheduler().queue.clear();

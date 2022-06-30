@@ -79,6 +79,7 @@ public class Shuffle implements CommandInterface {
 				null,
 				ctx.getEventMember().getEffectiveAvatarUrl()
 			)
+			.setColor(RandomColor.getRandomColor())
 			.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
 		ctx.getChannel().sendMessageEmbeds(builder.build()).queue();

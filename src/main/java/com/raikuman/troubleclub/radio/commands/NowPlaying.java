@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Handles sending an embed of the current playing track and the state of the audio player
  *
- * @version 1.1 2022-29-06
+ * @version 1.2 2022-30-06
  * @since 1.0
  */
 public class NowPlaying implements CommandInterface {
@@ -112,7 +112,7 @@ public class NowPlaying implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Shows information about the current playing track";
+		return "Shows information about the current playing song";
 	}
 
 	@Override

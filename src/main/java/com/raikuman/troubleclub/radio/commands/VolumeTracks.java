@@ -4,9 +4,11 @@ import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.configs.ConfigIO;
 import com.raikuman.botutilities.helpers.MessageResources;
+import com.raikuman.botutilities.helpers.RandomColor;
 import com.raikuman.troubleclub.radio.config.MusicConfig;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
+import com.raikuman.troubleclub.radio.music.TrackScheduler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
@@ -14,11 +16,12 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Handles setting the volume of all audio tracks of the bot
  *
- * @version 1.0 2022-30-06
+ * @version 1.1 2022-30-06
  * @since 1.0
  */
 public class VolumeTracks implements CommandInterface {
@@ -63,7 +66,6 @@ public class VolumeTracks implements CommandInterface {
 		}
 
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
-		final AudioPlayer audioPlayer = musicManager.getAudioPlayer();
 
 		if (ctx.getArgs().size() == 0) {
 
@@ -82,11 +84,11 @@ public class VolumeTracks implements CommandInterface {
 				}
 
 				stringBuilder
-					.append("Audio Track ")
+					.append("**Audio Track ")
 					.append(i)
-					.append(": ```")
+					.append("**: `")
 					.append(volumeNum)
-					.append("%```");
+					.append("%`");
 
 				if (i != 3)
 					stringBuilder.append("\n");
@@ -98,6 +100,7 @@ public class VolumeTracks implements CommandInterface {
 					null,
 					ctx.getEventMember().getEffectiveAvatarUrl()
 				)
+				.setColor(RandomColor.getRandomColor())
 				.setDescription(stringBuilder);
 
 			ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
@@ -138,14 +141,16 @@ public class VolumeTracks implements CommandInterface {
 					);
 				}
 
-				audioPlayer.setVolume(calculateVolume);
+				for (Map.Entry<AudioPlayer, TrackScheduler> entry : musicManager.getPlayerMap().entrySet())
+					entry.getValue().audioPlayer.setVolume(calculateVolume);
 
 				EmbedBuilder builder = new EmbedBuilder()
 					.setAuthor(
 						"\uD83D\uDD0A Set volume of all audio tracks to " + volumeNum + "%",
 						null,
 						ctx.getEventMember().getEffectiveAvatarUrl()
-					);
+					)
+					.setColor(RandomColor.getRandomColor());
 
 				ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
 			} catch (NumberFormatException e) {

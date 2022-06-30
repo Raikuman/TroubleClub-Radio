@@ -1,5 +1,6 @@
 package com.raikuman.troubleclub.radio.commands;
 
+import com.raikuman.botutilities.helpers.RandomColor;
 import com.raikuman.troubleclub.radio.config.MusicConfig;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
@@ -82,6 +83,7 @@ public class Volume implements CommandInterface {
 					null,
 					ctx.getEventMember().getEffectiveAvatarUrl()
 				)
+				.setColor(RandomColor.getRandomColor())
 				.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
 			ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
@@ -127,6 +129,7 @@ public class Volume implements CommandInterface {
 						null,
 						ctx.getEventMember().getEffectiveAvatarUrl()
 					)
+					.setColor(RandomColor.getRandomColor())
 					.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
 				ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
