@@ -5,6 +5,7 @@ import com.raikuman.botutilities.buttons.pagination.manager.PaginationButtonProv
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.listener.ListenerBuilder;
 import com.raikuman.botutilities.listener.ListenerManager;
+import com.raikuman.botutilities.selectmenus.manager.SelectInterface;
 import com.raikuman.troubleclub.radio.commands.*;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -15,7 +16,7 @@ import java.util.List;
 /**
  * Handles creating a listener manager
  *
- * @version 1.6 2022-27-06
+ * @version 1.7 2022-29-06
  * @since 1.0
  */
 public class ListenerHandler {
@@ -57,6 +58,7 @@ public class ListenerHandler {
 	 */
 	private static List<CommandInterface> getCommands() {
 		return Arrays.asList(
+			new Changelog(),
 			new ChangeTrack(),
 			new Clear(),
 			new Join(),
@@ -93,5 +95,10 @@ public class ListenerHandler {
 		buttonInterfaces.addAll(new PaginationButtonProvider(new Help(getCommands())).provideButtons());
 
 		return buttonInterfaces;
+	}
+
+	private static List<SelectInterface> provideSelects() {
+		List<SelectInterface> selectInterfaces = new ArrayList<>();
+		return selectInterfaces;
 	}
 }
