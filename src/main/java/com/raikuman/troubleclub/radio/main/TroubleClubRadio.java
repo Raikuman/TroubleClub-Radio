@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * The main class for the bot
  *
- * @version 1.1 2022-30-06
+ * @version 1.2 2022-30-06
  * @since 1.0
  */
 public class TroubleClubRadio {
@@ -73,7 +73,7 @@ public class TroubleClubRadio {
 				.enableCache(CacheFlag.VOICE_STATE)
 				.addEventListeners(ListenerHandler.getListenerManager().getListeners())
 				.setMemberCachePolicy(MemberCachePolicy.ALL)
-				.setMaxReconnectDelay(10)
+				.setMaxReconnectDelay(32)
 				.setAutoReconnect(true)
 				.setRequestTimeoutRetry(true)
 				.build();
