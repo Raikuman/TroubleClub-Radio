@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Handles playing music in a user's voice channel
  *
- * @version 1.4 2022-29-06
+ * @version 1.5 2022-29-06
  * @since 1.0
  */
 public class Play implements CommandInterface {
@@ -26,7 +26,7 @@ public class Play implements CommandInterface {
 	public void handle(CommandContext ctx) {
 		final TextChannel channel = ctx.getChannel();
 
-		boolean joined = new Join().joinChannel(ctx);
+		new Join().joinChannel(ctx);
 
 		if (ctx.getArgs().isEmpty()) {
 			final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
@@ -59,11 +59,6 @@ public class Play implements CommandInterface {
 				return;
 			}
 		}
-
-		if (joined)
-			ctx.getEvent().getMessage().addReaction("U+1F197").queue();
-		else
-			ctx.getEvent().getMessage().addReaction("U+1F6AB").queue();
 
 		String link = String.join(" ", ctx.getArgs());
 		if (!isUrl(link))

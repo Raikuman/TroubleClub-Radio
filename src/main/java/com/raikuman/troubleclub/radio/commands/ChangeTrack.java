@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Handles switching audio tracks of the guild music manager
  *
- * @version 1.0 2022-29-06
+ * @version 1.1 2022-29-06
  * @since 1.0
  */
 public class ChangeTrack implements CommandInterface {
@@ -119,12 +119,13 @@ public class ChangeTrack implements CommandInterface {
 
 	@Override
 	public String getUsage() {
-		return "<1-3>";
+		return "(<1-3>)";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Changes the audio track of the current music manager";
+		return "Changes the audio track of the current music manager or show which audio track you " +
+			"are currently on";
 	}
 
 	@Override
