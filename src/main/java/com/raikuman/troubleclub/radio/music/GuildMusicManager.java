@@ -5,10 +5,13 @@ import com.sedmelluq.discord.lavaplayer.format.Pcm16AudioDataFormat;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Builds an object containing information for the guild music manager
  *
- * @version 1.1 2022-25-06
+ * @version 1.2 2022-30-06
  * @since 1.0
  */
 public class GuildMusicManager {
@@ -84,5 +87,13 @@ public class GuildMusicManager {
 			default:
 				return this.primaryScheduler;
 		}
+	}
+
+	public HashMap<AudioPlayer, TrackScheduler> getPlayerMap() {
+		return new HashMap<>(Map.ofEntries(
+			Map.entry(primaryPlayer, primaryScheduler),
+			Map.entry(secondaryPlayer, secondaryScheduler),
+			Map.entry(tertiaryPlayer, tertiaryScheduler)
+		));
 	}
 }
