@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Handles loading and playing tracks for the guild music manager
  *
- * @version 1.4 2022-29-06
+ * @version 1.5 2022-30-06
  * @since 1.0
  */
 public class PlayerManager {
@@ -119,7 +119,8 @@ public class PlayerManager {
 					.setTitle(audioPlaylist.getName(), tracks.get(0).getInfo().uri)
 					.setColor(RandomColor.getRandomColor());
 				builder
-					.addField("Songs in Playlist", "`" + audioPlaylist.getTracks().size() + "`songs", true);
+					.addField("Songs in Playlist", "`" + audioPlaylist.getTracks().size() + "`songs", true)
+					.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
 				channel.sendMessageEmbeds(builder.build()).queue();
 			}
