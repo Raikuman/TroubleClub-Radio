@@ -1,8 +1,8 @@
 package com.raikuman.troubleclub.radio.commands;
 
+import com.raikuman.botutilities.buttons.pagination.manager.PageInvokeInterface;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
-import com.raikuman.botutilities.buttons.pagination.manager.PageCommandInterface;
 import com.raikuman.botutilities.buttons.pagination.manager.Pagination;
 import com.raikuman.botutilities.buttons.pagination.manager.PaginationBuilder;
 import com.raikuman.botutilities.commands.manager.CommandContext;
@@ -26,10 +26,10 @@ import java.util.List;
 /**
  * Handles sending a pagination of songs queued and playing, as well as the state of the audio player
  *
- * @version 1.1 2022-29-06
+ * @version 1.2 2022-29-06
  * @since 1.0
  */
-public class Queue implements CommandInterface, PageCommandInterface {
+public class Queue implements CommandInterface, PageInvokeInterface {
 
 	@Override
 	public void handle(CommandContext ctx) {

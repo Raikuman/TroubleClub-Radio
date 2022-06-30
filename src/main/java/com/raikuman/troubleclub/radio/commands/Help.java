@@ -1,6 +1,6 @@
 package com.raikuman.troubleclub.radio.commands;
 
-import com.raikuman.botutilities.buttons.pagination.manager.PageCommandInterface;
+import com.raikuman.botutilities.buttons.pagination.manager.PageInvokeInterface;
 import com.raikuman.botutilities.buttons.pagination.manager.Pagination;
 import com.raikuman.botutilities.buttons.pagination.manager.PaginationBuilder;
 import com.raikuman.botutilities.commands.manager.CommandContext;
@@ -16,10 +16,10 @@ import java.util.List;
 /**
  * Handles sending a pagination of commands on the bot
  *
- * @version 1.1 2022-23-06
+ * @version 1.2 2022-29-06
  * @since 1.0
  */
-public class Help implements CommandInterface, PageCommandInterface {
+public class Help implements CommandInterface, PageInvokeInterface {
 
 	private final List<CommandInterface> commands;
 
@@ -82,6 +82,9 @@ public class Help implements CommandInterface, PageCommandInterface {
 			builder.append("```asciidoc\n");
 
 			for (int j = 0; j < commandsPerPage; j++) {
+				if (currentCommand >= commandStrings.size())
+					break;
+
 				builder
 					.append(commandStrings.get(currentCommand))
 					.append("\n\n");
