@@ -17,13 +17,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Handles sending an embed of the playing songs and size of queue from all audio tracks
- * player
+ * Handles pausing all audio tracks
  *
- * @version 1.1 2022-03-07
+ * @version 1.0 2022-03-07
  * @since 1.0
  */
-public class PlayingTracks implements CommandInterface {
+public class PauseTracks implements CommandInterface {
 
 	@Override
 	public void handle(CommandContext ctx) {
@@ -66,9 +65,38 @@ public class PlayingTracks implements CommandInterface {
 
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
 
+		boolean trackPlaying = false, allPaused = true;
+		for (Map.Entry<AudioPlayer, TrackScheduler> entry : musicManager.getPlayerMap().entrySet()) {
+			if (entry.getKey().getPlayingTrack() != null) {
+				trackPlaying = true;
+				continue;
+			}
+
+			if (!entry.getKey().isPaused())
+				allPaused = false;
+		}
+
+		if (!trackPlaying) {
+			MessageResources.timedMessage(
+				"There's currently no song playing",
+				channel,
+				5
+			);
+			return;
+		}
+
+		if (allPaused) {
+			MessageResources.timedMessage(
+				"The player is already paused",
+				channel,
+				5
+			);
+			return;
+		}
+
 		EmbedBuilder builder = new EmbedBuilder()
-			.setAuthor("\uD83C\uDFA7 Current state of audio tracks:")
-			.setColor(RandomColor.getRandomColor());
+			.setColor(RandomColor.getRandomColor())
+			.setAuthor("⏸️Paused all audio tracks:");
 		StringBuilder descriptionBuilder = builder.getDescriptionBuilder();
 
 		int numTrack = 1;
@@ -78,25 +106,21 @@ public class PlayingTracks implements CommandInterface {
 				.append(numTrack)
 				.append("**\n");
 
-			if (entry.getValue().repeat)
-				descriptionBuilder.append("\uD83D\uDD01 *Repeating current track*\n");
-			else if (entry.getValue().repeatQueue)
-				descriptionBuilder.append("\uD83D\uDD03 *Repeating queue*\n");
-
 			if (entry.getKey().getPlayingTrack() != null) {
 				descriptionBuilder
-					.append("*Playing*: `")
+					.append("*Paused song*: `")
 					.append(entry.getKey().getPlayingTrack().getInfo().title)
 					.append("`\n");
 			} else {
 				descriptionBuilder
-					.append("*Playing*: `Nothing`\n");
+					.append("*Paused song*: `Nothing`\n");
 			}
 
 			descriptionBuilder
-				.append("*Songs in queue*: `")
-				.append(entry.getValue().queue.size())
-				.append("`\n\n");
+				.append("\n");
+
+			if (!entry.getKey().isPaused())
+				entry.getKey().setPaused(true);
 
 			numTrack++;
 		}
@@ -108,7 +132,7 @@ public class PlayingTracks implements CommandInterface {
 
 	@Override
 	public String getInvoke() {
-		return "playingtracks";
+		return "pausetracks";
 	}
 
 	@Override
@@ -118,17 +142,15 @@ public class PlayingTracks implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Shows current playing songs and size of queue from all audio tracks";
+		return "Pauses all audio tracks (if a song is playing)";
 	}
 
 	@Override
 	public List<String> getAliases() {
 		return List.of(
-			"playingt",
-			"ptracks",
-			"pt",
-			"tracks",
-			"playingall"
+			"pauset",
+			"pauseall",
+			"pall"
 		);
 	}
 }
