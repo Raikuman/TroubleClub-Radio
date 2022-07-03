@@ -1,27 +1,28 @@
 package com.raikuman.troubleclub.radio.commands;
 
-import com.raikuman.botutilities.helpers.DateAndTime;
-import com.raikuman.botutilities.helpers.RandomColor;
-import com.raikuman.troubleclub.radio.music.GuildMusicManager;
-import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
+import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.troubleclub.radio.music.GuildMusicManager;
+import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.troubleclub.radio.music.TrackScheduler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.util.List;
+import java.util.Map;
+
 /**
- * Handles rewinding the current playing song to the beginning of the song
+ * Handles rewinding playing songs on all audio tracks to the beginning of the song
  *
- * @version 1.3 2020-03-07
+ * @version 1.2 2020-03-07
  * @since 1.0
  */
-public class Rewind implements CommandInterface {
+public class RewindTracks implements CommandInterface {
 
 	@Override
 	public void handle(CommandContext ctx) {
@@ -63,10 +64,17 @@ public class Rewind implements CommandInterface {
 		}
 
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
-		final AudioPlayer audioPlayer = musicManager.getAudioPlayer();
-		final TrackScheduler trackScheduler = musicManager.getTrackScheduler();
 
-		if (audioPlayer.getPlayingTrack() == null) {
+		boolean trackPlaying = false;
+		for (Map.Entry<AudioPlayer, TrackScheduler> entry : musicManager.getPlayerMap().entrySet()) {
+			if (entry.getKey().getPlayingTrack() != null) {
+				trackPlaying = true;
+				break;
+			}
+
+		}
+
+		if (!trackPlaying) {
 			MessageResources.timedMessage(
 				"There's currently no song playing",
 				channel,
@@ -75,19 +83,35 @@ public class Rewind implements CommandInterface {
 			return;
 		}
 
-		AudioTrackInfo audioTrackInfo = musicManager.getAudioPlayer().getPlayingTrack()
-			.getInfo();
-
 		EmbedBuilder builder = new EmbedBuilder()
-			.setTitle(audioTrackInfo.title, audioTrackInfo.uri)
 			.setColor(RandomColor.getRandomColor())
-			.setAuthor("⏪️ Rewinding song:", audioTrackInfo.uri, ctx.getEventMember().getEffectiveAvatarUrl())
-			.addField("Channel", audioTrackInfo.author, true)
-			.addField("Song Duration", DateAndTime.formatMilliseconds(audioTrackInfo.length), true)
-			.addField("Position in queue", "Now playing", true)
-			.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
+			.setAuthor("⏪️ Rewinding tracks:");
+		StringBuilder descriptionBuilder = builder.getDescriptionBuilder();
 
-		trackScheduler.rewind();
+		int numTrack = 1;
+		for (Map.Entry<AudioPlayer, TrackScheduler> entry : musicManager.getPlayerMap().entrySet()) {
+			descriptionBuilder
+				.append("**Audio Track #")
+				.append(numTrack)
+				.append("**\n");
+
+			if (entry.getKey().getPlayingTrack() != null) {
+				descriptionBuilder
+					.append("*Rewinding song*: `")
+					.append(entry.getKey().getPlayingTrack().getInfo().title)
+					.append("`\n");
+			} else {
+				descriptionBuilder
+					.append("*Rewinding song*: `Nothing`\n");
+			}
+
+			descriptionBuilder
+				.append("\n");
+
+			entry.getValue().rewind();
+
+			numTrack++;
+		}
 
 		ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
 
@@ -96,7 +120,7 @@ public class Rewind implements CommandInterface {
 
 	@Override
 	public String getInvoke() {
-		return "rewind";
+		return "rewindtracks";
 	}
 
 	@Override
@@ -106,6 +130,14 @@ public class Rewind implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Rewinds the current playing song to the beginning";
+		return "Rewinds all playing songs on all audio tracks to the beginning";
+	}
+
+	@Override
+	public List<String> getAliases() {
+		return List.of(
+			"rewindt",
+			"rewindall"
+		);
 	}
 }

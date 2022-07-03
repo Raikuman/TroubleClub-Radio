@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Handles resuming all audio tracks
  *
- * @version 1.0 2022-03-07
+ * @version 1.1 2022-03-07
  * @since 1.0
  */
 public class ResumeTracks implements CommandInterface {
@@ -132,17 +132,17 @@ public class ResumeTracks implements CommandInterface {
 
 	@Override
 	public String getInvoke() {
-		return null;
+		return "resumetracks";
 	}
 
 	@Override
 	public String getUsage() {
-		return null;
+		return "";
 	}
 
 	@Override
 	public String getDescription() {
-		return null;
+		return "Resumes all audio tracks (if a song is playing)";
 	}
 
 	@Override
