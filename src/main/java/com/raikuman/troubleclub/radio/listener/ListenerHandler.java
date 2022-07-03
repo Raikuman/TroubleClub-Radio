@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Handles creating a listener manager
  *
- * @version 1.8 2022-30-06
+ * @version 1.9 2022-03-07
  * @since 1.0
  */
 public class ListenerHandler {
@@ -84,7 +84,8 @@ public class ListenerHandler {
 			new StopTracks(),
 			new ToS(),
 			new Volume(),
-			new VolumeTracks()
+			new VolumeTracks(),
+			new RepeatTracks()
 		);
 	}
 
