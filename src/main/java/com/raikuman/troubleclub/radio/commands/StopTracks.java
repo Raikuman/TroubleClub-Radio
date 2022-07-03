@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Handles stopping all current playing songs and clears the queue of all audio tracks
  *
- * @version 1.1 2022-30-06
+ * @version 1.2 2022-03-07
  * @since 1.0
  */
 public class StopTracks implements CommandInterface {
@@ -109,7 +109,9 @@ public class StopTracks implements CommandInterface {
 		return List.of(
 			"stopt",
 			"stracks",
-			"st"
+			"st",
+			"stopall",
+			"sall"
 		);
 	}
 }

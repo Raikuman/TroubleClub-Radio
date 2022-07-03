@@ -14,10 +14,12 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.util.List;
+
 /**
  * Handles setting the volume of the bot
  *
- * @version 1.3 2022-29-06
+ * @version 1.4 2022-03-07
  * @since 1.0
  */
 public class Volume implements CommandInterface {
@@ -159,5 +161,12 @@ public class Volume implements CommandInterface {
 	@Override
 	public String getDescription() {
 		return "Shows the current volume of the bot or set the volume of the bot";
+	}
+
+	@Override
+	public List<String> getAliases() {
+		return List.of(
+			"v"
+		);
 	}
 }

@@ -12,10 +12,12 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.util.List;
+
 /**
  * Handles pausing the music player
  *
- * @version 1.3 2022-30-06
+ * @version 1.4 2022-03-07
  * @since 1.0
  */
 public class Pause implements CommandInterface {
@@ -64,7 +66,7 @@ public class Pause implements CommandInterface {
 
 		if (audioPlayer.getPlayingTrack() == null) {
 			MessageResources.timedMessage(
-				"There's currently no track playing",
+				"There's currently no song playing",
 				channel,
 				5
 			);
@@ -88,8 +90,7 @@ public class Pause implements CommandInterface {
 				null,
 				ctx.getEventMember().getEffectiveAvatarUrl()
 			)
-			.setColor(RandomColor.getRandomColor())
-			.setFooter("Audio track " + currentAudioTrack);
+			.setColor(RandomColor.getRandomColor());
 
 		ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
 
@@ -108,6 +109,11 @@ public class Pause implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Pauses the current playing song";
+		return "Pauses the current audio track (if a song is playing)";
+	}
+
+	@Override
+	public List<String> getAliases() {
+		return List.of("p");
 	}
 }

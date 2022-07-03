@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Handles sending an embed of the current playing track and the state of the audio player
  *
- * @version 1.2 2022-30-06
+ * @version 1.3 2022-03-07
  * @since 1.0
  */
 public class NowPlaying implements CommandInterface {
@@ -69,7 +69,7 @@ public class NowPlaying implements CommandInterface {
 
 		if (audioTrack == null) {
 			MessageResources.timedMessage(
-				"There is no track playing",
+				"There's currently no song playing",
 				channel,
 				5
 			);
@@ -117,6 +117,10 @@ public class NowPlaying implements CommandInterface {
 
 	@Override
 	public List<String> getAliases() {
-		return List.of("np");
+		return List.of(
+			"np",
+			"playing",
+			"song"
+		);
 	}
 }

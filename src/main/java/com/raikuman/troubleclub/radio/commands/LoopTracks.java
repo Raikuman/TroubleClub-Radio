@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Handles the bot looping the queue of all audio tracks
  *
- * @version 1.0 2022-03-07
+ * @version 1.1 2022-03-07
  * @since 1.0
  */
 public class LoopTracks implements CommandInterface {
@@ -163,7 +163,7 @@ public class LoopTracks implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Loops all songs in the queue of all audio tracks by moving a finished playing track to the " +
+		return "Loops all songs in the queue of all audio tracks by moving a finished playing song to the " +
 			"end of the queue (invoke command again to stop looping the queues)";
 	}
 
@@ -172,7 +172,9 @@ public class LoopTracks implements CommandInterface {
 		return List.of(
 			"loopt",
 			"ltracks",
-			"lt"
+			"lt",
+			"loopall",
+			"lall"
 		);
 	}
 }

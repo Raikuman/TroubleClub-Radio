@@ -20,7 +20,7 @@ import java.util.Map;
  * Handles sending an embed of the playing songs and size of queue from all audio tracks
  * player
  *
- * @version 1.0 2022-30-06
+ * @version 1.1 2022-03-07
  * @since 1.0
  */
 public class PlayingTracks implements CommandInterface {
@@ -126,7 +126,10 @@ public class PlayingTracks implements CommandInterface {
 		return List.of(
 			"playingt",
 			"ptracks",
-			"pt"
+			"pt",
+			"tracks",
+			"playingall",
+			"pall"
 		);
 	}
 }

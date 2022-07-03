@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Handles playing a new song, skipping the current track
  *
- * @version 1.3 2022-29-06
+ * @version 1.4 2022-03-07
  * @since 1.0
  */
 public class PlayNow implements CommandInterface {
@@ -137,7 +137,11 @@ public class PlayNow implements CommandInterface {
 
 	@Override
 	public List<String> getAliases() {
-		return List.of("pn");
+		return List.of(
+			"pn",
+			"playn",
+			"now"
+		);
 	}
 
 	/**

@@ -86,7 +86,11 @@ public class PlayTop implements CommandInterface {
 
 	@Override
 	public List<String> getAliases() {
-		return List.of("pt");
+		return List.of(
+			"pt",
+			"playt",
+			"top"
+		);
 	}
 
 	/**

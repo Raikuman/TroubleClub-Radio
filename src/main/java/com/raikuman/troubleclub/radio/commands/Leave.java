@@ -42,6 +42,9 @@ public class Leave implements CommandInterface {
 
 	@Override
 	public List<String> getAliases() {
-		return List.of("fuckoff");
+		return List.of(
+			"fuckoff",
+			"exit"
+		);
 	}
 }

@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Handles skipping to a position in the queue
  *
- * @version 1.2 2022-29-06
+ * @version 1.3 2022-03-07
  * @since 1.0
  */
 public class SkipTo implements CommandInterface {
@@ -81,7 +81,7 @@ public class SkipTo implements CommandInterface {
 
 				if (posNum > trackScheduler.queue.size()) {
 					MessageResources.timedMessage(
-						"You must select a valid track number from the queue",
+						"You must select a valid song number from the queue",
 						channel,
 						5
 					);

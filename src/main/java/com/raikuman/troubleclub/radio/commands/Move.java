@@ -19,7 +19,7 @@ import java.util.List;
  * Handles moving a selected song to the top of the queue, or moving the song to a certain position of the
  * queue
  *
- * @version 1.3 2022-29-06
+ * @version 1.4 2022-03-07
  * @since 1.0
  */
 public class Move implements CommandInterface {
@@ -81,7 +81,7 @@ public class Move implements CommandInterface {
 
 				if (songNum > trackScheduler.queue.size()) {
 					MessageResources.timedMessage(
-						"You must select a valid track number from the queue",
+						"You must select a valid song number from the queue",
 						channel,
 						5
 					);
@@ -116,7 +116,7 @@ public class Move implements CommandInterface {
 
 				if (songNum > trackScheduler.queue.size()) {
 					MessageResources.timedMessage(
-						"You must select a valid track number from the queue",
+						"You must select a valid song number from the queue",
 						channel,
 						5
 					);

@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Handles the bot looping the current audio player queue
  *
- * @version 1.4 2022-29-06
+ * @version 1.5 2022-03-07
  * @since 1.0
  */
 public class Loop implements CommandInterface {
@@ -94,7 +94,7 @@ public class Loop implements CommandInterface {
 			.setColor(RandomColor.getRandomColor())
 			.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 		builder
-			.addField("Songs in queue", "`" + totalSongs + "`songs", true);
+			.addField("Songs in queue", "`" + totalSongs + "` songs", true);
 
 		channel.sendMessageEmbeds(builder.build()).queue();
 		ctx.getEvent().getMessage().delete().queue();
@@ -112,12 +112,16 @@ public class Loop implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Loops all songs in the queue by moving a finished playing track to the end of the queue " +
+		return "Loops all songs in the queue by moving a finished playing song to the end of the queue " +
 			"(invoke command again to stop looping the queue)";
 	}
 
 	@Override
 	public List<String> getAliases() {
-		return List.of("repeatqueue");
+		return List.of(
+			"repeatqueue",
+			"rq",
+			"l"
+		);
 	}
 }

@@ -13,10 +13,12 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.util.List;
+
 /**
  * Handles playing a random song immediately from the queue
  *
- * @version 1.1 2022-29-06
+ * @version 1.2 2022-03-07
  * @since 1.0
  */
 public class Random implements CommandInterface {
@@ -89,7 +91,14 @@ public class Random implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Randomly chooses a song from the queue and play immediately, skipping the current playing " +
-			"track";
+		return "Randomly chooses a song from the queue and play it immediately, skipping the current " +
+			"playing song";
+	}
+
+	@Override
+	public List<String> getAliases() {
+		return List.of(
+			"rand"
+		);
 	}
 }

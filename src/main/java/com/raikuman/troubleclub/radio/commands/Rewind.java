@@ -18,7 +18,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles rewinding the current playing track to the beginning of the track
  *
- * @version 1.1 2020-24-06
+ * @version 1.2 2020-03-07
  * @since 1.0
  */
 public class Rewind implements CommandInterface {
@@ -68,7 +68,7 @@ public class Rewind implements CommandInterface {
 
 		if (audioPlayer.getPlayingTrack() == null) {
 			MessageResources.timedMessage(
-				"There's currently no track playing",
+				"There's currently no song playing",
 				channel,
 				5
 			);

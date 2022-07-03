@@ -14,10 +14,12 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.util.List;
+
 /**
  * Handles skipping the current playing track of the music manager
  *
- * @version 1.2 2022-03-07
+ * @version 1.3 2022-03-07
  * @since 1.0
  */
 public class Skip implements CommandInterface {
@@ -116,6 +118,11 @@ public class Skip implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Skips the current playing track";
+		return "Skips the current playing song";
+	}
+
+	@Override
+	public List<String> getAliases() {
+		return List.of("sk");
 	}
 }

@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Handles the bot repeating the currently playing song of all audio tracks
  *
- * @version 1.0 2022-03-07
+ * @version 1.1 2022-03-07
  * @since 1.0
  */
 public class RepeatTracks implements CommandInterface {
@@ -84,7 +84,7 @@ public class RepeatTracks implements CommandInterface {
 
 		if (!trackPlaying) {
 			MessageResources.timedMessage(
-				"There's currently no track playing",
+				"There's currently no song playing",
 				channel,
 				5
 			);
@@ -126,6 +126,7 @@ public class RepeatTracks implements CommandInterface {
 				descriptionBuilder
 					.append("*")
 					.append(repeatString)
+					.append(" song")
 					.append("*: `")
 					.append(entry.getKey().getPlayingTrack().getInfo().title)
 					.append("`\n");
@@ -140,6 +141,7 @@ public class RepeatTracks implements CommandInterface {
 				.append("\n");
 
 			entry.getValue().repeat = repeatTrack;
+			entry.getValue().repeatQueue = false;
 
 			numTrack++;
 		}
@@ -170,7 +172,9 @@ public class RepeatTracks implements CommandInterface {
 		return List.of(
 			"repeatt",
 			"rtracks",
-			"rt"
+			"rt",
+			"repeatall",
+			"rall"
 		);
 	}
 }

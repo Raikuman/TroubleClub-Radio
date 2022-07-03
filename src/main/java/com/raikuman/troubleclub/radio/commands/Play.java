@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Handles playing music in a user's voice channel
  *
- * @version 1.6 2022-30-06
+ * @version 1.7 2022-03-07
  * @since 1.0
  */
 public class Play implements CommandInterface {
@@ -51,8 +51,7 @@ public class Play implements CommandInterface {
 						null,
 						ctx.getEventMember().getEffectiveAvatarUrl()
 					)
-					.setColor(RandomColor.getRandomColor())
-					.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
+					.setColor(RandomColor.getRandomColor());
 
 				ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
 
@@ -84,11 +83,6 @@ public class Play implements CommandInterface {
 	@Override
 	public String getDescription() {
 		return "Plays a song or playlist from a link, or search for a song to play";
-	}
-
-	@Override
-	public List<String> getAliases() {
-		return List.of("p");
 	}
 
 	/**

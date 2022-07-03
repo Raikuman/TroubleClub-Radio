@@ -135,7 +135,7 @@ public class ChangeTrack implements CommandInterface {
 	public List<String> getAliases() {
 		return List.of(
 			"track",
-			"ct"
+			"t"
 		);
 	}
 }

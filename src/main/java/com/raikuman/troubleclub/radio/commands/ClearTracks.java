@@ -101,7 +101,8 @@ public class ClearTracks implements CommandInterface {
 		return List.of(
 			"cleart",
 			"ctracks",
-			"ct"
+			"ct",
+			"clearall"
 		);
 	}
 }

@@ -12,10 +12,12 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.util.List;
+
 /**
  * Handles the bot stopping the current playing song and clearing the queue
  *
- * @version 1.5 2022-30-06
+ * @version 1.6 2022-03-07
  * @since 1.0
  */
 public class Stop implements CommandInterface {
@@ -32,8 +34,7 @@ public class Stop implements CommandInterface {
 					null,
 					ctx.getEventMember().getEffectiveAvatarUrl()
 				)
-				.setColor(RandomColor.getRandomColor())
-				.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
+				.setColor(RandomColor.getRandomColor());
 
 			ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
 
@@ -106,5 +107,10 @@ public class Stop implements CommandInterface {
 		trackScheduler.audioPlayer.stopTrack();
 
 		return true;
+	}
+
+	@Override
+	public List<String> getAliases() {
+		return List.of("s");
 	}
 }

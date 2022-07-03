@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles the bot repeating the currently playing audio track
  *
- * @version 1.3 2022-29-06
+ * @version 1.4 2022-03-07
  * @since 1.0
  */
 public class Repeat implements CommandInterface {
@@ -67,7 +67,7 @@ public class Repeat implements CommandInterface {
 
 		if (audioPlayer.getPlayingTrack() == null) {
 			MessageResources.timedMessage(
-				"There's currently no track playing",
+				"There's currently no song playing",
 				channel,
 				5
 			);
@@ -78,10 +78,10 @@ public class Repeat implements CommandInterface {
 		if (!trackScheduler.repeat) {
 			trackScheduler.repeat = true;
 			trackScheduler.repeatQueue = false;
-			ifRepeat = "\uD83D\uDD01 Now repeating track:";
+			ifRepeat = "\uD83D\uDD01 Now repeating song:";
 		} else {
 			trackScheduler.repeat = false;
-			ifRepeat = "\uD83D\uDEAB Stopped repeating track:";
+			ifRepeat = "\uD83D\uDEAB Stopped repeating song:";
 		}
 
 		AudioTrack audioTrack = audioPlayer.getPlayingTrack();

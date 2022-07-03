@@ -15,7 +15,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles resuming the music player
  *
- * @version 1.3 2022-29-06
+ * @version 1.4 2022-03-07
  * @since 1.0
  */
 public class Resume implements CommandInterface {
@@ -64,7 +64,7 @@ public class Resume implements CommandInterface {
 
 		if (audioPlayer.getPlayingTrack() == null) {
 			MessageResources.timedMessage(
-				"There's currently no track playing",
+				"There's currently no song playing",
 				channel,
 				5
 			);
@@ -87,8 +87,7 @@ public class Resume implements CommandInterface {
 				null,
 				ctx.getEventMember().getEffectiveAvatarUrl()
 			)
-			.setColor(RandomColor.getRandomColor())
-			.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
+			.setColor(RandomColor.getRandomColor());
 
 		ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
 
@@ -107,6 +106,6 @@ public class Resume implements CommandInterface {
 
 	@Override
 	public String getDescription() {
-		return "Resumes the current playing song";
+		return "Resumes the current audio track (if a song is paused)";
 	}
 }

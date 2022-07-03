@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Handles setting the volume of all audio tracks of the bot
  *
- * @version 1.1 2022-30-06
+ * @version 1.2 2022-03-07
  * @since 1.0
  */
 public class VolumeTracks implements CommandInterface {
@@ -187,7 +187,9 @@ public class VolumeTracks implements CommandInterface {
 		return List.of(
 			"volumet",
 			"vtracks",
-			"vt"
+			"vt",
+			"volumeall",
+			"vall"
 		);
 	}
 }
