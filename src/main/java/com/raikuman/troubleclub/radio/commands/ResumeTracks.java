@@ -17,12 +17,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Handles the bot repeating the currently playing song of all audio tracks
+ * Handles resuming all audio tracks
  *
- * @version 1.2 2022-03-07
+ * @version 1.0 2022-03-07
  * @since 1.0
  */
-public class RepeatTracks implements CommandInterface {
+public class ResumeTracks implements CommandInterface {
 
 	@Override
 	public void handle(CommandContext ctx) {
@@ -63,23 +63,17 @@ public class RepeatTracks implements CommandInterface {
 			return;
 		}
 
-		if ((ctx.getArgs().size() == 0) || ctx.getArgs().size() > 1) {
-			MessageResources.timedMessage(
-				"You must provide a valid argument for this command: `" + getUsage() + "`",
-				channel,
-				5
-			);
-			return;
-		}
-
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
 
-		boolean trackPlaying = false;
+		boolean trackPlaying = false, allPlaying = true;
 		for (Map.Entry<AudioPlayer, TrackScheduler> entry : musicManager.getPlayerMap().entrySet()) {
 			if (entry.getKey().getPlayingTrack() != null) {
 				trackPlaying = true;
-				break;
+				continue;
 			}
+
+			if (entry.getKey().isPaused())
+				allPlaying = false;
 		}
 
 		if (!trackPlaying) {
@@ -91,19 +85,9 @@ public class RepeatTracks implements CommandInterface {
 			return;
 		}
 
-		String argument = ctx.getArgs().get(0), repeatString, repeatEmoji;
-		boolean repeatTrack;
-		if (argument.equalsIgnoreCase("on")) {
-			repeatString = "Repeating";
-			repeatEmoji = "\uD83D\uDD01";
-			repeatTrack = true;
-		} else if (argument.equalsIgnoreCase("off")) {
-			repeatString = "Stopped repeating";
-			repeatEmoji = "\uD83D\uDEAB";
-			repeatTrack = false;
-		} else {
+		if (allPlaying) {
 			MessageResources.timedMessage(
-				"You must provide a valid argument for this command: `" + getUsage() + "`",
+				"The player is already playing",
 				channel,
 				5
 			);
@@ -112,7 +96,7 @@ public class RepeatTracks implements CommandInterface {
 
 		EmbedBuilder builder = new EmbedBuilder()
 			.setColor(RandomColor.getRandomColor())
-			.setAuthor(repeatEmoji + " " + repeatString + " all audio tracks:");
+			.setAuthor("▶️Resuming all audio tracks:");
 		StringBuilder descriptionBuilder = builder.getDescriptionBuilder();
 
 		int numTrack = 1;
@@ -124,24 +108,19 @@ public class RepeatTracks implements CommandInterface {
 
 			if (entry.getKey().getPlayingTrack() != null) {
 				descriptionBuilder
-					.append("*")
-					.append(repeatString)
-					.append(" song")
-					.append("*: `")
+					.append("*Resuming song*: `")
 					.append(entry.getKey().getPlayingTrack().getInfo().title)
 					.append("`\n");
 			} else {
 				descriptionBuilder
-					.append("*")
-					.append(repeatString)
-					.append("*: `Nothing`\n");
+					.append("*Resuming song*: `Nothing`\n");
 			}
 
 			descriptionBuilder
 				.append("\n");
 
-			entry.getValue().repeat = repeatTrack;
-			entry.getValue().repeatQueue = false;
+			if (!entry.getKey().isPaused())
+				entry.getKey().setPaused(false);
 
 			numTrack++;
 		}
@@ -153,28 +132,25 @@ public class RepeatTracks implements CommandInterface {
 
 	@Override
 	public String getInvoke() {
-		return "repeattracks";
+		return null;
 	}
 
 	@Override
 	public String getUsage() {
-		return "<on/off>";
+		return null;
 	}
 
 	@Override
 	public String getDescription() {
-		return "Repeats the current playing song on all audio tracks (invoke command again to stop " +
-			"repeating the songs";
+		return null;
 	}
 
 	@Override
 	public List<String> getAliases() {
 		return List.of(
-			"repeatt",
-			"rtracks",
-			"rt",
-			"repeatall",
-			"reall"
+			"resumet",
+			"resumeall",
+			"rall"
 		);
 	}
 }
