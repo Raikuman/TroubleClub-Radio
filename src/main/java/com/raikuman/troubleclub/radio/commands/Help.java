@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Handles sending a pagination of commands on the bot
  *
- * @version 1.2 2022-29-06
+ * @version 1.3 2022-03-07
  * @since 1.0
  */
 public class Help implements CommandInterface, PageInvokeInterface {
@@ -71,7 +71,7 @@ public class Help implements CommandInterface, PageInvokeInterface {
 		List<String> stringList = new ArrayList<>();
 		StringBuilder builder = new StringBuilder();
 
-		int commandsPerPage = 10;
+		int commandsPerPage = 7;
 		List<String> commandStrings = buildCommandStrings();
 		int numPages = commandStrings.size() / commandsPerPage;
 		if ((commandStrings.size() % commandsPerPage) > 0)
