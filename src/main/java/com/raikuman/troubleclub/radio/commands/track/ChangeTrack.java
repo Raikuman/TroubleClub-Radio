@@ -1,9 +1,11 @@
 package com.raikuman.troubleclub.radio.commands.track;
 
+import com.raikuman.botutilities.commands.manager.CategoryInterface;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.troubleclub.radio.category.TrackCategory;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -16,8 +18,8 @@ import java.util.List;
 /**
  * Handles switching audio tracks of the guild music manager
  *
- * @version 1.2 2022-30-06
- * @since 1.0
+ * @version 1.3 2022-09-07
+ * @since 1.1
  */
 public class ChangeTrack implements CommandInterface {
 
@@ -137,5 +139,10 @@ public class ChangeTrack implements CommandInterface {
 			"track",
 			"t"
 		);
+	}
+
+	@Override
+	public CategoryInterface getCategory() {
+		return new TrackCategory();
 	}
 }

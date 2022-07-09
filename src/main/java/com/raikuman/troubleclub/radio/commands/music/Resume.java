@@ -1,6 +1,8 @@
 package com.raikuman.troubleclub.radio.commands.music;
 
+import com.raikuman.botutilities.commands.manager.CategoryInterface;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.troubleclub.radio.category.MusicCategory;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
@@ -15,8 +17,8 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles resuming the music player
  *
- * @version 1.4 2022-03-07
- * @since 1.0
+ * @version 1.5 2022-09-07
+ * @since 1.1
  */
 public class Resume implements CommandInterface {
 
@@ -107,5 +109,10 @@ public class Resume implements CommandInterface {
 	@Override
 	public String getDescription() {
 		return "Resumes the current audio track (if a song is paused)";
+	}
+
+	@Override
+	public CategoryInterface getCategory() {
+		return new MusicCategory();
 	}
 }

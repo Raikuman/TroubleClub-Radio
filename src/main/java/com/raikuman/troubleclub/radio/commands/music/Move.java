@@ -1,5 +1,7 @@
 package com.raikuman.troubleclub.radio.commands.music;
 
+import com.raikuman.botutilities.commands.manager.CategoryInterface;
+import com.raikuman.troubleclub.radio.category.MusicCategory;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
@@ -19,8 +21,8 @@ import java.util.List;
  * Handles moving a selected song to the top of the queue, or moving the song to a certain position of the
  * queue
  *
- * @version 1.4 2022-03-07
- * @since 1.0
+ * @version 1.5 2022-09-07
+ * @since 1.1
  */
 public class Move implements CommandInterface {
 
@@ -177,5 +179,10 @@ public class Move implements CommandInterface {
 	@Override
 	public List<String> getAliases() {
 		return List.of("m");
+	}
+
+	@Override
+	public CategoryInterface getCategory() {
+		return new MusicCategory();
 	}
 }

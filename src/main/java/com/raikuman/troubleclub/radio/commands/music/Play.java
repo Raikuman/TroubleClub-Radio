@@ -1,6 +1,8 @@
 package com.raikuman.troubleclub.radio.commands.music;
 
+import com.raikuman.botutilities.commands.manager.CategoryInterface;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.troubleclub.radio.category.MusicCategory;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
@@ -17,8 +19,8 @@ import java.net.URISyntaxException;
 /**
  * Handles playing music in a user's voice channel
  *
- * @version 1.7 2022-03-07
- * @since 1.0
+ * @version 1.8 2022-09-07
+ * @since 1.1
  */
 public class Play implements CommandInterface {
 
@@ -82,6 +84,11 @@ public class Play implements CommandInterface {
 	@Override
 	public String getDescription() {
 		return "Plays a song or playlist from a link, or search for a song to play";
+	}
+
+	@Override
+	public CategoryInterface getCategory() {
+		return new MusicCategory();
 	}
 
 	/**

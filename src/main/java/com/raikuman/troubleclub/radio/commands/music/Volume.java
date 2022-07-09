@@ -1,6 +1,8 @@
 package com.raikuman.troubleclub.radio.commands.music;
 
+import com.raikuman.botutilities.commands.manager.CategoryInterface;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.troubleclub.radio.category.MusicCategory;
 import com.raikuman.troubleclub.radio.config.MusicConfig;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
@@ -19,8 +21,8 @@ import java.util.List;
 /**
  * Handles setting the volume of the bot
  *
- * @version 1.4 2022-03-07
- * @since 1.0
+ * @version 1.5 2022-09-07
+ * @since 1.1
  */
 public class Volume implements CommandInterface {
 
@@ -168,5 +170,10 @@ public class Volume implements CommandInterface {
 		return List.of(
 			"v"
 		);
+	}
+
+	@Override
+	public CategoryInterface getCategory() {
+		return new MusicCategory();
 	}
 }

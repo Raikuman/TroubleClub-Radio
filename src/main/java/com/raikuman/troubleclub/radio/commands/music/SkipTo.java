@@ -1,5 +1,7 @@
 package com.raikuman.troubleclub.radio.commands.music;
 
+import com.raikuman.botutilities.commands.manager.CategoryInterface;
+import com.raikuman.troubleclub.radio.category.MusicCategory;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
@@ -19,8 +21,8 @@ import java.util.List;
 /**
  * Handles skipping to a position in the queue
  *
- * @version 1.3 2022-03-07
- * @since 1.0
+ * @version 1.4 2022-09-07
+ * @since 1.1
  */
 public class SkipTo implements CommandInterface {
 
@@ -133,5 +135,10 @@ public class SkipTo implements CommandInterface {
 	@Override
 	public List<String> getAliases() {
 		return List.of("st");
+	}
+
+	@Override
+	public CategoryInterface getCategory() {
+		return new MusicCategory();
 	}
 }

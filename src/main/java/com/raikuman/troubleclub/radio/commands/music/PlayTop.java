@@ -1,5 +1,7 @@
 package com.raikuman.troubleclub.radio.commands.music;
 
+import com.raikuman.botutilities.commands.manager.CategoryInterface;
+import com.raikuman.troubleclub.radio.category.MusicCategory;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
@@ -15,8 +17,8 @@ import java.util.List;
 /**
  * Handles adding a new song to the top of the queue
  *
- * @version 1.3 2022-29-06
- * @since 1.0
+ * @version 1.4 2022-09-07
+ * @since 1.1
  */
 public class PlayTop implements CommandInterface {
 
@@ -91,6 +93,11 @@ public class PlayTop implements CommandInterface {
 			"playt",
 			"top"
 		);
+	}
+
+	@Override
+	public CategoryInterface getCategory() {
+		return new MusicCategory();
 	}
 
 	/**

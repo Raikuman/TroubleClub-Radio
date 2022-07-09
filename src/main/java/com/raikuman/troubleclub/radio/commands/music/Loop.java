@@ -1,5 +1,7 @@
 package com.raikuman.troubleclub.radio.commands.music;
 
+import com.raikuman.botutilities.commands.manager.CategoryInterface;
+import com.raikuman.troubleclub.radio.category.MusicCategory;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
@@ -19,8 +21,8 @@ import java.util.List;
 /**
  * Handles the bot looping the current audio player queue
  *
- * @version 1.5 2022-03-07
- * @since 1.0
+ * @version 1.6 2022-09-07
+ * @since 1.1
  */
 public class Loop implements CommandInterface {
 
@@ -123,5 +125,10 @@ public class Loop implements CommandInterface {
 			"rq",
 			"l"
 		);
+	}
+
+	@Override
+	public CategoryInterface getCategory() {
+		return new MusicCategory();
 	}
 }

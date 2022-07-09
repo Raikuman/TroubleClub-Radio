@@ -1,8 +1,10 @@
 package com.raikuman.troubleclub.radio.commands.music;
 
+import com.raikuman.botutilities.commands.manager.CategoryInterface;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
+import com.raikuman.troubleclub.radio.category.MusicCategory;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
@@ -13,8 +15,8 @@ import java.util.List;
 /**
  * Handles the bot joining the voice channel of a user
  *
- * @version 1.2 2022-23-06
- * @since 1.0
+ * @version 1.3 2022-09-07
+ * @since 1.1
  */
 public class Join implements CommandInterface {
 
@@ -109,5 +111,10 @@ public class Join implements CommandInterface {
 		ctx.getGuild().getAudioManager().setSelfDeafened(true);
 
 		return true;
+	}
+
+	@Override
+	public CategoryInterface getCategory() {
+		return new MusicCategory();
 	}
 }

@@ -1,6 +1,8 @@
 package com.raikuman.troubleclub.radio.commands.music;
 
+import com.raikuman.botutilities.commands.manager.CategoryInterface;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.troubleclub.radio.category.MusicCategory;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
@@ -16,8 +18,8 @@ import java.util.List;
 /**
  * Handles clearing the current queue of the music manager
  *
- * @version 1.2 2022-30-06
- * @since 1.0
+ * @version 1.3 2022-09-07
+ * @since 1.1
  */
 public class Clear implements CommandInterface {
 
@@ -96,5 +98,10 @@ public class Clear implements CommandInterface {
 	@Override
 	public List<String> getAliases() {
 		return List.of("c");
+	}
+
+	@Override
+	public CategoryInterface getCategory() {
+		return new MusicCategory();
 	}
 }

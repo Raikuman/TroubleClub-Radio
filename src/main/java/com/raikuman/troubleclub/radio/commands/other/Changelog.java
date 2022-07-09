@@ -1,8 +1,10 @@
 package com.raikuman.troubleclub.radio.commands.other;
 
+import com.raikuman.botutilities.commands.manager.CategoryInterface;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.troubleclub.radio.category.OtherCategory;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -12,8 +14,8 @@ import java.util.List;
 /**
  * Handles sending an embed with informational links about the bot
  *
- * @version 1.0 2022-29-06
- * @since 1.0
+ * @version 1.1 2022-09-07
+ * @since 1.1
  */
 public class Changelog implements CommandInterface {
 
@@ -57,5 +59,10 @@ public class Changelog implements CommandInterface {
 			"log",
 			"cl"
 		);
+	}
+
+	@Override
+	public CategoryInterface getCategory() {
+		return new OtherCategory();
 	}
 }

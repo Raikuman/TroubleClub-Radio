@@ -1,9 +1,11 @@
 package com.raikuman.troubleclub.radio.commands.track;
 
+import com.raikuman.botutilities.commands.manager.CategoryInterface;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.troubleclub.radio.category.TrackCategory;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.troubleclub.radio.music.TrackScheduler;
@@ -19,8 +21,8 @@ import java.util.Map;
 /**
  * Handles removing duplicate songs from the queue of all audio tracks
  *
- * @version 1.0 2022-03-07
- * @since 1.0
+ * @version 1.1 2022-09-07
+ * @since 1.1
  */
 public class PruneTracks implements CommandInterface {
 
@@ -119,5 +121,10 @@ public class PruneTracks implements CommandInterface {
 			"snipall",
 			"cutall"
 		);
+	}
+
+	@Override
+	public CategoryInterface getCategory() {
+		return new TrackCategory();
 	}
 }

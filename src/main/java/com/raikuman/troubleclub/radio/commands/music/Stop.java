@@ -1,6 +1,8 @@
 package com.raikuman.troubleclub.radio.commands.music;
 
+import com.raikuman.botutilities.commands.manager.CategoryInterface;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.troubleclub.radio.category.MusicCategory;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
@@ -17,8 +19,8 @@ import java.util.List;
 /**
  * Handles the bot stopping the current playing song and clearing the queue
  *
- * @version 1.6 2022-03-07
- * @since 1.0
+ * @version 1.7 2022-09-07
+ * @since 1.1
  */
 public class Stop implements CommandInterface {
 
@@ -112,5 +114,10 @@ public class Stop implements CommandInterface {
 	@Override
 	public List<String> getAliases() {
 		return List.of("s");
+	}
+
+	@Override
+	public CategoryInterface getCategory() {
+		return new MusicCategory();
 	}
 }

@@ -1,5 +1,7 @@
 package com.raikuman.troubleclub.radio.commands.music;
 
+import com.raikuman.botutilities.commands.manager.CategoryInterface;
+import com.raikuman.troubleclub.radio.category.MusicCategory;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
@@ -15,8 +17,8 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles shuffling the current queue of songs
  *
- * @version 1.1 2022-29-06
- * @since 1.0
+ * @version 1.2 2022-09-07
+ * @since 1.1
  */
 public class Shuffle implements CommandInterface {
 
@@ -100,5 +102,10 @@ public class Shuffle implements CommandInterface {
 	@Override
 	public String getDescription() {
 		return "Shuffles the current queue of songs";
+	}
+
+	@Override
+	public CategoryInterface getCategory() {
+		return new MusicCategory();
 	}
 }

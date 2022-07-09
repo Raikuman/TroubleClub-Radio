@@ -1,5 +1,7 @@
 package com.raikuman.troubleclub.radio.commands.music;
 
+import com.raikuman.botutilities.commands.manager.CategoryInterface;
+import com.raikuman.troubleclub.radio.category.MusicCategory;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
@@ -17,8 +19,8 @@ import net.dv8tion.jda.api.entities.TextChannel;
 /**
  * Handles the bot repeating the currently playing audio track
  *
- * @version 1.4 2022-03-07
- * @since 1.0
+ * @version 1.5 2022-09-07
+ * @since 1.1
  */
 public class Repeat implements CommandInterface {
 
@@ -109,5 +111,10 @@ public class Repeat implements CommandInterface {
 	@Override
 	public String getDescription() {
 		return "Repeats the current playing song (invoke command again to stop repeating the song)";
+	}
+
+	@Override
+	public CategoryInterface getCategory() {
+		return new MusicCategory();
 	}
 }
