@@ -19,7 +19,7 @@ import java.net.URISyntaxException;
 /**
  * Handles playing music in a user's voice channel
  *
- * @version 1.8 2022-09-07
+ * @version 1.9 2022-10-07
  * @since 1.1
  */
 public class Play implements CommandInterface {
@@ -78,12 +78,13 @@ public class Play implements CommandInterface {
 
 	@Override
 	public String getUsage() {
-		return "<link>";
+		return "(<link>)";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Plays a song or playlist from a link, or search for a song to play";
+		return "Plays a song or playlist from a link, or search for a song to play. Also can resume a " +
+			"paused audio track provided no link";
 	}
 
 	@Override

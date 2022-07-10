@@ -6,7 +6,6 @@ import com.raikuman.troubleclub.radio.category.MusicCategory;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.buttons.pagination.manager.Pagination;
-import com.raikuman.botutilities.buttons.pagination.manager.PaginationBuilder;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.context.EventContext;
@@ -28,7 +27,7 @@ import java.util.List;
 /**
  * Handles sending a pagination of songs queued and playing, as well as the state of the audio player
  *
- * @version 1.3 2022-09-07
+ * @version 1.4 2022-10-07
  * @since 1.1
  */
 public class Queue implements CommandInterface, PageInvokeInterface {
@@ -85,15 +84,15 @@ public class Queue implements CommandInterface, PageInvokeInterface {
 			return;
 		}
 
-		PaginationBuilder paginationBuilder = new PaginationBuilder(
+		Pagination pagination = new Pagination(
 			ctx.getEventMember(),
 			getInvoke(),
+			pageName(),
 			pageStrings(ctx),
 			itemsPerPage(),
 			loopPagination()
 		);
 
-		Pagination pagination = paginationBuilder.build();
 		List<ItemComponent> componentList = Arrays.asList(
 			pagination.provideLeft(),
 			pagination.provideFirst(),
@@ -101,7 +100,7 @@ public class Queue implements CommandInterface, PageInvokeInterface {
 		);
 
 		ctx.getChannel().sendMessageEmbeds(
-			paginationBuilder.buildEmbeds().get(0).build()
+			pagination.buildEmbeds().get(0).build()
 		).setActionRow(componentList).queue();
 
 		ctx.getEvent().getMessage().delete().queue();
@@ -130,6 +129,11 @@ public class Queue implements CommandInterface, PageInvokeInterface {
 	@Override
 	public CategoryInterface getCategory() {
 		return new MusicCategory();
+	}
+
+	@Override
+	public String pageName() {
+		return "Music Queue";
 	}
 
 	@Override
