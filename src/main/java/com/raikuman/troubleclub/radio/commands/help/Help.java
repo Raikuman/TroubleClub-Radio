@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Handles sending a pagination of commands on the bot
  *
- * @version 2.0 2022-09-07
+ * @version 2.1 2022-13-07
  * @since 1.1
  */
 public class Help implements CommandInterface, PageInvokeInterface {
@@ -45,7 +45,7 @@ public class Help implements CommandInterface, PageInvokeInterface {
 
 	@Override
 	public List<String> pageStrings(EventContext eventContext) {
-		return HelpResources.homePageStrings();
+		return HelpResources.homePageStrings(eventContext.getGuild().getIdLong());
 	}
 
 	@Override

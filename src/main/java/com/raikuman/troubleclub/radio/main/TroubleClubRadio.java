@@ -1,5 +1,6 @@
 package com.raikuman.troubleclub.radio.main;
 
+import com.raikuman.botutilities.database.DatabaseManager;
 import com.raikuman.troubleclub.radio.config.MusicConfig;
 import com.raikuman.troubleclub.radio.listener.ListenerHandler;
 import com.raikuman.botutilities.configs.ConfigFileWriter;
@@ -26,13 +27,15 @@ import java.util.List;
 /**
  * The main class for the bot
  *
- * @version 1.2 2022-30-06
+ * @version 1.3 2022-13-07
  * @since 1.0
  */
 public class TroubleClubRadio {
 	private static final Logger logger = LoggerFactory.getLogger(TroubleClubRadio.class);
 
 	public static void main(String[] args) {
+		DatabaseManager.executeConfigStatements(List.of(new MusicConfig()));
+
 		List<GatewayIntent> gatewayIntents = Arrays.asList(
 			GatewayIntent.GUILD_MEMBERS,
 			GatewayIntent.GUILD_MESSAGES

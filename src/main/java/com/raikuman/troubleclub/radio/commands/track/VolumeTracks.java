@@ -3,11 +3,10 @@ package com.raikuman.troubleclub.radio.commands.track;
 import com.raikuman.botutilities.commands.manager.CategoryInterface;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
-import com.raikuman.botutilities.configs.ConfigIO;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
 import com.raikuman.troubleclub.radio.category.TrackCategory;
-import com.raikuman.troubleclub.radio.config.MusicConfig;
+import com.raikuman.troubleclub.radio.config.MusicDB;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.troubleclub.radio.music.TrackScheduler;
@@ -23,7 +22,7 @@ import java.util.Map;
 /**
  * Handles setting the volume of all audio tracks of the bot
  *
- * @version 1.3 2022-09-07
+ * @version 1.4 2022-13-07
  * @since 1.1
  */
 public class VolumeTracks implements CommandInterface {
@@ -73,10 +72,9 @@ public class VolumeTracks implements CommandInterface {
 
 			StringBuilder stringBuilder = new StringBuilder();
 
-			String volumeConfig, volume;
+			String volume;
 			for (int i = 1; i < 4; i++) {
-				volumeConfig = "volumetrack" + i;
-				volume = ConfigIO.readConfig(new MusicConfig().fileName(), volumeConfig);
+				volume = MusicDB.getTrackVolume(ctx.getGuild().getIdLong(), i);
 
 				int volumeNum;
 				try {
@@ -132,14 +130,11 @@ public class VolumeTracks implements CommandInterface {
 
 				int calculateVolume = (int) Math.ceil((double) volumeNum / 4);
 
-				String volumeConfig;
 				for (int i = 1; i < 4; i++) {
-					volumeConfig = "volumetrack" + i;
-
-					ConfigIO.overwriteConfig(
-						new MusicConfig().fileName(),
-						volumeConfig,
-						Integer.toString(volumeNum)
+					MusicDB.updateTrackVolume(
+						ctx.getGuild().getIdLong(),
+						i,
+						volumeNum
 					);
 				}
 
@@ -190,6 +185,8 @@ public class VolumeTracks implements CommandInterface {
 			"volumet",
 			"vtracks",
 			"vt",
+			"voltracks",
+			"volt",
 			"volumeall",
 			"vall"
 		);

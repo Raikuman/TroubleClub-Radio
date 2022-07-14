@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Handles adding a new song to the top of the queue
  *
- * @version 1.4 2022-09-07
+ * @version 1.5 2022-13-07
  * @since 1.1
  */
 public class PlayTop implements CommandInterface {
@@ -65,7 +65,7 @@ public class PlayTop implements CommandInterface {
 		if (!isUrl(link))
 			link = "ytsearch:" + link;
 
-		PlayerManager.getInstance().loadToTop(channel, link, ctx.getEvent().getAuthor(), false);
+		PlayerManager.getInstance().loadToTop(channel, link, ctx.getEvent().getAuthor(), false, ctx.getGuild().getIdLong());
 
 		ctx.getEvent().getMessage().delete().queue();
 	}

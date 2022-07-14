@@ -3,12 +3,11 @@ package com.raikuman.troubleclub.radio.commands.music;
 import com.raikuman.botutilities.commands.manager.CategoryInterface;
 import com.raikuman.botutilities.helpers.RandomColor;
 import com.raikuman.troubleclub.radio.category.MusicCategory;
-import com.raikuman.troubleclub.radio.config.MusicConfig;
+import com.raikuman.troubleclub.radio.config.MusicDB;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
-import com.raikuman.botutilities.configs.ConfigIO;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -21,7 +20,7 @@ import java.util.List;
 /**
  * Handles setting the volume of the bot
  *
- * @version 1.5 2022-09-07
+ * @version 1.6 2022-13-07
  * @since 1.1
  */
 public class Volume implements CommandInterface {
@@ -69,10 +68,8 @@ public class Volume implements CommandInterface {
 		final AudioPlayer audioPlayer = musicManager.getAudioPlayer();
 
 		if (ctx.getArgs().size() == 0) {
-
-			String volumeConfig = "volumetrack" + musicManager.getCurrentAudioTrack();
-
-			String volume = ConfigIO.readConfig(new MusicConfig().fileName(), volumeConfig);
+			String volume = MusicDB.getTrackVolume(ctx.getGuild().getIdLong(),
+				musicManager.getCurrentAudioTrack());
 
 			int volumeNum;
 			try {
@@ -115,15 +112,13 @@ public class Volume implements CommandInterface {
 					return;
 				}
 
-				int calculateVolume = (int) Math.ceil((double) volumeNum / 4);
-
-				String volumeConfig = "volumetrack" + musicManager.getCurrentAudioTrack();
-
-				ConfigIO.overwriteConfig(
-					new MusicConfig().fileName(),
-					volumeConfig,
-					Integer.toString(volumeNum)
+				MusicDB.updateTrackVolume(
+					ctx.getGuild().getIdLong(),
+					musicManager.getCurrentAudioTrack(),
+					volumeNum
 				);
+
+				int calculateVolume = (int) Math.ceil((double) volumeNum / 4);
 
 				audioPlayer.setVolume(calculateVolume);
 
@@ -168,7 +163,8 @@ public class Volume implements CommandInterface {
 	@Override
 	public List<String> getAliases() {
 		return List.of(
-			"v"
+			"v",
+			"vol"
 		);
 	}
 

@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Handles showing the description of music commands
  *
- * @version 1.0 2022-10-07
+ * @version 1.1 2022-13-07
  * @since 1.1
  */
 public class MusicSelect implements SelectInterface, PageInvokeInterface {
@@ -71,7 +71,7 @@ public class MusicSelect implements SelectInterface, PageInvokeInterface {
 
 	@Override
 	public List<String> pageStrings(EventContext eventContext) {
-		return HelpResources.buildPages(commands);
+		return HelpResources.buildPages(commands, eventContext.getGuild().getIdLong());
 	}
 
 	@Override

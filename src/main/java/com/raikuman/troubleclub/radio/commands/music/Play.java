@@ -19,7 +19,7 @@ import java.net.URISyntaxException;
 /**
  * Handles playing music in a user's voice channel
  *
- * @version 1.9 2022-10-07
+ * @version 1.10 2022-13-07
  * @since 1.1
  */
 public class Play implements CommandInterface {
@@ -66,7 +66,7 @@ public class Play implements CommandInterface {
 		if (!isUrl(link))
 			link = "ytsearch:" + link;
 
-		PlayerManager.getInstance().loadAndPlay(channel, link, ctx.getEvent().getAuthor());
+		PlayerManager.getInstance().loadAndPlay(channel, link, ctx.getEvent().getAuthor(), ctx.getGuild().getIdLong());
 
 		ctx.getEvent().getMessage().delete().queue();
 	}

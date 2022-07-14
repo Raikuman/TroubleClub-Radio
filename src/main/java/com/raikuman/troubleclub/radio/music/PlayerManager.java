@@ -1,9 +1,9 @@
 package com.raikuman.troubleclub.radio.music;
 
-import com.raikuman.botutilities.configs.ConfigIO;
 import com.raikuman.botutilities.helpers.DateAndTime;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.troubleclub.radio.config.MusicDB;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Handles loading and playing tracks for the guild music manager
  *
- * @version 1.5 2022-30-06
+ * @version 1.6 2022-13-07
  * @since 1.0
  */
 public class PlayerManager {
@@ -60,9 +60,9 @@ public class PlayerManager {
 	 * @param trackUrl The track url to get the audio track from
 	 * @param user The user to display on an embed
 	 */
-	public void loadAndPlay(TextChannel channel, String trackUrl, User user) {
+	public void loadAndPlay(TextChannel channel, String trackUrl, User user, long guildId) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
-		musicManager.getAudioPlayer().setVolume(loadVolume());
+		musicManager.getAudioPlayer().setVolume(loadVolume(guildId, musicManager.getCurrentAudioTrack()));
 
 		this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
 
@@ -152,9 +152,9 @@ public class PlayerManager {
 	 * @param user The user to display on an embed
 	 * @param playNow If the top track should be played immediately
 	 */
-	public void loadToTop(TextChannel channel, String trackUrl, User user, boolean playNow) {
+	public void loadToTop(TextChannel channel, String trackUrl, User user, boolean playNow, long guildId) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
-		musicManager.getAudioPlayer().setVolume(loadVolume());
+		musicManager.getAudioPlayer().setVolume(loadVolume(guildId, musicManager.getCurrentAudioTrack()));
 
 		this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
 
@@ -306,8 +306,8 @@ public class PlayerManager {
 	 * Returns the volume setting from the music config
 	 * @return The volume setting normalized for the bot
 	 */
-	private int loadVolume() {
-		String volume = ConfigIO.readConfig("musicSettings", "volume");
+	private int loadVolume(long guildId, int trackNum) {
+		String volume = MusicDB.getTrackVolume(guildId, trackNum);
 		int calculateVolume;
 		try {
 			int volumeNum = Integer.parseInt(volume);

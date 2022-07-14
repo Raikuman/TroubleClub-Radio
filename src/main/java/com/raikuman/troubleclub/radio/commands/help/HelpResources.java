@@ -4,6 +4,7 @@ import com.raikuman.botutilities.buttons.pagination.manager.Pagination;
 import com.raikuman.botutilities.commands.manager.CategoryInterface;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.configs.ConfigIO;
+import com.raikuman.botutilities.configs.Prefix;
 import com.raikuman.botutilities.context.EventContext;
 import com.raikuman.troubleclub.radio.category.MusicCategory;
 import com.raikuman.troubleclub.radio.category.OtherCategory;
@@ -26,7 +27,7 @@ import java.util.List;
 /**
  * A class with helpful methods for the help command
  *
- * @version 1.0 2022-10-07
+ * @version 1.1 2022-13-07
  * @since 1.1
  */
 public class HelpResources {
@@ -83,7 +84,7 @@ public class HelpResources {
 	 * Returns a list of strings for the home page embeds
 	 * @return The list of strings
 	 */
-	public static List<String> homePageStrings() {
+	public static List<String> homePageStrings(long guildId) {
 		final List<CommandInterface> commandInterfaces = InvokeInterfaceProvider.getCommands();
 		List<String> pageStrings = new ArrayList<>();
 		StringBuilder builder = new StringBuilder();
@@ -121,7 +122,7 @@ public class HelpResources {
 		Stop stop = new Stop();
 		builder
 			.append("A command that has multiple aliases will be listed with parenthesis.\n***")
-			.append(ConfigIO.readConfig("settings", "prefix"))
+			.append(Prefix.getPrefix(guildId))
 			.append(stop.getInvoke())
 			.append(" (")
 			.append(String.join(", ", stop.getAliases()))
@@ -132,7 +133,7 @@ public class HelpResources {
 
 		SkipTo skipTo = new SkipTo();
 		builder
-			.append(ConfigIO.readConfig("settings", "prefix"))
+			.append(Prefix.getPrefix(guildId))
 			.append(skipTo.getInvoke())
 			.append(" ")
 			.append(skipTo.getUsage())
@@ -144,7 +145,7 @@ public class HelpResources {
 
 		Play play = new Play();
 		builder
-			.append(ConfigIO.readConfig("settings", "prefix"))
+			.append(Prefix.getPrefix(guildId))
 			.append(play.getInvoke())
 			.append(" ")
 			.append(play.getUsage())
@@ -191,11 +192,11 @@ public class HelpResources {
 	 * @param commandList The list of command interfaces
 	 * @return The list of strings for pagination
 	 */
-	public static List<String> buildPages(List<CommandInterface> commandList) {
+	public static List<String> buildPages(List<CommandInterface> commandList, long guildId) {
 		List<String> stringList = new ArrayList<>();
 		StringBuilder builder = new StringBuilder();
 
-		List<String> commandStrings = buildCommandStrings(commandList);
+		List<String> commandStrings = buildCommandStrings(commandList, guildId);
 		int commandsPerPage = 5;
 		int numPages = commandStrings.size() / commandsPerPage;
 		if ((commandStrings.size() % commandsPerPage) > 0)
@@ -229,7 +230,7 @@ public class HelpResources {
 	 * @param commandList The list of command interfaces
 	 * @return The list of strings for pagination
 	 */
-	private static List<String> buildCommandStrings(List<CommandInterface> commandList) {
+	private static List<String> buildCommandStrings(List<CommandInterface> commandList, long guildId) {
 		List<String> commandStrings = new ArrayList<>();
 
 		StringBuilder aliases = new StringBuilder();
@@ -243,7 +244,7 @@ public class HelpResources {
 			}
 
 			commandInfo
-				.append(ConfigIO.readConfig("settings", "prefix"))
+				.append(Prefix.getPrefix(guildId))
 				.append(command.getInvoke())
 				.append(" ");
 
