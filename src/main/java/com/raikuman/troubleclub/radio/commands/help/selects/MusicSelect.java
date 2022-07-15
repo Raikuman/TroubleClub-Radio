@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Handles showing the description of music commands
  *
- * @version 1.1 2022-13-07
+ * @version 1.2 2022-15-07
  * @since 1.1
  */
 public class MusicSelect implements SelectInterface, PageInvokeInterface {
@@ -47,7 +47,7 @@ public class MusicSelect implements SelectInterface, PageInvokeInterface {
 			pagination.provideRight()
 		);
 
-		ctx.getEvent().getMessage().editMessageEmbeds(pagination.buildEmbeds().get(0).build())
+		ctx.getEvent().getHook().editOriginalEmbeds(pagination.buildEmbeds().get(0).build())
 			.setActionRow(componentList)
 			.queue();
 
