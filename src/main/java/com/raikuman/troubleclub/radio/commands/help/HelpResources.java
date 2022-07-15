@@ -3,7 +3,6 @@ package com.raikuman.troubleclub.radio.commands.help;
 import com.raikuman.botutilities.buttons.pagination.manager.Pagination;
 import com.raikuman.botutilities.commands.manager.CategoryInterface;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
-import com.raikuman.botutilities.configs.ConfigIO;
 import com.raikuman.botutilities.configs.Prefix;
 import com.raikuman.botutilities.context.EventContext;
 import com.raikuman.troubleclub.radio.category.MusicCategory;
@@ -27,7 +26,7 @@ import java.util.List;
 /**
  * A class with helpful methods for the help command
  *
- * @version 1.1 2022-13-07
+ * @version 1.2 2022-15-07
  * @since 1.1
  */
 public class HelpResources {
@@ -62,9 +61,9 @@ public class HelpResources {
 			pagination.provideRight()
 		);
 
-		final MusicSelect musicSelect = new MusicSelect(InvokeInterfaceProvider.getCommands());
-		final TrackSelect trackSelect = new TrackSelect(InvokeInterfaceProvider.getCommands());
-		final OtherSelect otherSelect = new OtherSelect(InvokeInterfaceProvider.getCommands());
+		final MusicSelect musicSelect = new MusicSelect(InvokeInterfaceProvider.provideCommands());
+		final TrackSelect trackSelect = new TrackSelect(InvokeInterfaceProvider.provideCommands());
+		final OtherSelect otherSelect = new OtherSelect(InvokeInterfaceProvider.provideCommands());
 
 		SelectMenu selectMenu = SelectMenu.create(ctx.getEventMember().getId() + ":" + new Help().getInvoke())
 			.setPlaceholder("View commands in category")
@@ -85,7 +84,7 @@ public class HelpResources {
 	 * @return The list of strings
 	 */
 	public static List<String> homePageStrings(long guildId) {
-		final List<CommandInterface> commandInterfaces = InvokeInterfaceProvider.getCommands();
+		final List<CommandInterface> commandInterfaces = InvokeInterfaceProvider.provideCommands();
 		List<String> pageStrings = new ArrayList<>();
 		StringBuilder builder = new StringBuilder();
 

@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Handles creating a listener manager
  *
- * @version 2.0 2022-09-07
+ * @version 2.1 2022-15-07
  * @since 1.1
  */
 public class ListenerHandler {
@@ -24,6 +24,7 @@ public class ListenerHandler {
 			.setCommands(InvokeInterfaceProvider.provideCommands())
 			.setButtons(InvokeInterfaceProvider.provideButtons())
 			.setSelects(InvokeInterfaceProvider.provideSelects())
+			.setSlashes(InvokeInterfaceProvider.provideSlashes())
 			.build();
 	}
 

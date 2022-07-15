@@ -4,11 +4,13 @@ import com.raikuman.botutilities.buttons.manager.ButtonInterface;
 import com.raikuman.botutilities.buttons.pagination.manager.PaginationButtonProvider;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.selectmenus.manager.SelectInterface;
+import com.raikuman.botutilities.slashcommands.manager.SlashInterface;
 import com.raikuman.troubleclub.radio.commands.help.Help;
 import com.raikuman.troubleclub.radio.commands.help.selects.MusicSelect;
 import com.raikuman.troubleclub.radio.commands.help.selects.OtherSelect;
 import com.raikuman.troubleclub.radio.commands.help.selects.TrackSelect;
 import com.raikuman.troubleclub.radio.commands.music.*;
+import com.raikuman.troubleclub.radio.commands.other.ChangePrefix;
 import com.raikuman.troubleclub.radio.commands.other.Changelog;
 import com.raikuman.troubleclub.radio.commands.other.ToS;
 import com.raikuman.troubleclub.radio.commands.track.*;
@@ -20,27 +22,16 @@ import java.util.List;
 /**
  * Provides commands, buttons, and selects for the ListenerHandler
  *
- * @version 1.0 2022-09-07
+ * @version 1.1 2022-14-07
  * @since 1.1
  */
 public class InvokeInterfaceProvider {
 
 	/**
-	 * Returns all command interfaces
-	 * @return The list of command interfaces
-	 */
-	public static List<CommandInterface> provideCommands() {
-		List<CommandInterface> commands = new ArrayList<>(getCommands());
-		commands.add(new Help());
-
-		return commands;
-	}
-
-	/**
 	 * Returns an array of commands
 	 * @return The array of commands
 	 */
-	public static List<CommandInterface> getCommands() {
+	public static List<CommandInterface> provideCommands() {
 		return Arrays.asList(
 			new Join(),
 			new Leave(),
@@ -76,6 +67,7 @@ public class InvokeInterfaceProvider {
 			new PruneTracks(),
 			new VolumeTracks(),
 
+			new ChangePrefix(),
 			new ToS(),
 			new Changelog()
 		);
@@ -90,9 +82,9 @@ public class InvokeInterfaceProvider {
 
 		buttonInterfaces.addAll(PaginationButtonProvider.provideButtons(new Queue()));
 		buttonInterfaces.addAll(PaginationButtonProvider.provideButtons(new Help()));
-		buttonInterfaces.addAll(PaginationButtonProvider.provideButtons(new MusicSelect(getCommands())));
-		buttonInterfaces.addAll(PaginationButtonProvider.provideButtons(new TrackSelect(getCommands())));
-		buttonInterfaces.addAll(PaginationButtonProvider.provideButtons(new OtherSelect(getCommands())));
+		buttonInterfaces.addAll(PaginationButtonProvider.provideButtons(new MusicSelect(provideCommands())));
+		buttonInterfaces.addAll(PaginationButtonProvider.provideButtons(new TrackSelect(provideCommands())));
+		buttonInterfaces.addAll(PaginationButtonProvider.provideButtons(new OtherSelect(provideCommands())));
 
 		return buttonInterfaces;
 	}
@@ -103,10 +95,17 @@ public class InvokeInterfaceProvider {
 	 */
 	public static List<SelectInterface> provideSelects() {
 		List<SelectInterface> selectInterfaces = new ArrayList<>();
-		selectInterfaces.add(new MusicSelect(getCommands()));
-		selectInterfaces.add(new TrackSelect(getCommands()));
-		selectInterfaces.add(new OtherSelect(getCommands()));
+		selectInterfaces.add(new MusicSelect(provideCommands()));
+		selectInterfaces.add(new TrackSelect(provideCommands()));
+		selectInterfaces.add(new OtherSelect(provideCommands()));
 
 		return selectInterfaces;
+	}
+
+	public static List<SlashInterface> provideSlashes() {
+		List<SlashInterface> slashInterfaces = new ArrayList<>();
+		slashInterfaces.add(new Help());
+
+		return slashInterfaces;
 	}
 }
