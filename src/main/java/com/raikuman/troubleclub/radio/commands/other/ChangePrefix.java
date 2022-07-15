@@ -8,12 +8,13 @@ import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
 import com.raikuman.troubleclub.radio.category.OtherCategory;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 /**
  * Handles setting the prefix of the bot
  *
- * @version 1.0 2022-15-07
+ * @version 1.1 2022-15-07
  * @since 1.2
  */
 public class ChangePrefix implements CommandInterface {
@@ -21,6 +22,15 @@ public class ChangePrefix implements CommandInterface {
 	@Override
 	public void handle(CommandContext ctx) {
 		final TextChannel channel = ctx.getChannel();
+
+		if (!ctx.getEventMember().hasPermission(Permission.ADMINISTRATOR)) {
+			MessageResources.timedMessage(
+				"You must be an administrator to use this command",
+				channel,
+				5
+			);
+			return;
+		}
 
 		if (ctx.getArgs().isEmpty() || ctx.getArgs().size() > 1) {
 			MessageResources.timedMessage(
