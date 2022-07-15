@@ -1,11 +1,9 @@
 package com.raikuman.troubleclub.radio.main;
 
-import com.raikuman.botutilities.configs.Prefix;
 import com.raikuman.botutilities.database.DatabaseManager;
 import com.raikuman.troubleclub.radio.config.MusicConfig;
 import com.raikuman.troubleclub.radio.listener.ListenerHandler;
 import com.raikuman.botutilities.configs.ConfigFileWriter;
-import com.raikuman.botutilities.configs.ConfigIO;
 import com.raikuman.botutilities.configs.EnvLoader;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -28,7 +26,7 @@ import java.util.List;
 /**
  * The main class for the bot
  *
- * @version 1.4 2022-15-07
+ * @version 1.5 2022-15-07
  * @since 1.0
  */
 public class TroubleClubRadio {
@@ -98,7 +96,7 @@ public class TroubleClubRadio {
 	private static void setPresence(JDA jda) {
 		jda.getPresence().setPresence(
 			OnlineStatus.ONLINE,
-			Activity.playing("music | /help")
+			Activity.playing("some tunes \uD83C\uDFB6 | /music")
 		);
 	}
 

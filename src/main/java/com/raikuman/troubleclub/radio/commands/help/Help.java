@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Handles sending a pagination of commands on the bot
  *
- * @version 2.2 2022-15-07
+ * @version 2.3 2022-15-07
  * @since 1.1
  */
 public class Help implements SlashInterface, PageInvokeInterface {
@@ -25,12 +25,12 @@ public class Help implements SlashInterface, PageInvokeInterface {
 
 	@Override
 	public String getInvoke() {
-		return "help";
+		return "music";
 	}
 
 	@Override
 	public String getDescription() {
-		return "A little help for the uninitiated";
+		return "Shows commands for music";
 	}
 
 	@Override
