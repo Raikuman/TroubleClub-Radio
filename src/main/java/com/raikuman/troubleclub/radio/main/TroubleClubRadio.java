@@ -1,7 +1,7 @@
 package com.raikuman.troubleclub.radio.main;
 
 import com.raikuman.botutilities.database.DatabaseManager;
-import com.raikuman.troubleclub.radio.config.MusicConfig;
+import com.raikuman.troubleclub.radio.config.music.MusicConfig;
 import com.raikuman.troubleclub.radio.listener.ListenerHandler;
 import com.raikuman.botutilities.configs.ConfigFileWriter;
 import com.raikuman.botutilities.configs.EnvLoader;
@@ -33,7 +33,9 @@ public class TroubleClubRadio {
 	private static final Logger logger = LoggerFactory.getLogger(TroubleClubRadio.class);
 
 	public static void main(String[] args) {
-		DatabaseManager.executeConfigStatements(List.of(new MusicConfig()));
+		DatabaseManager.executeConfigStatements(List.of(
+			new MusicConfig()
+		));
 
 		List<GatewayIntent> gatewayIntents = Arrays.asList(
 			GatewayIntent.GUILD_MEMBERS,

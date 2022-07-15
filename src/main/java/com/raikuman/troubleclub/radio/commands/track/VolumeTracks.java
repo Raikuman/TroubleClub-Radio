@@ -6,7 +6,7 @@ import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
 import com.raikuman.troubleclub.radio.category.TrackCategory;
-import com.raikuman.troubleclub.radio.config.MusicDB;
+import com.raikuman.troubleclub.radio.config.music.MusicDB;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.troubleclub.radio.music.TrackScheduler;

@@ -1,7 +1,6 @@
-package com.raikuman.troubleclub.radio.config;
+package com.raikuman.troubleclub.radio.config.music;
 
 import com.raikuman.botutilities.configs.ConfigIO;
-import com.raikuman.botutilities.configs.defaults.DefaultConfig;
 import com.raikuman.botutilities.database.DatabaseIO;
 import com.raikuman.botutilities.database.DatabaseManager;
 import org.slf4j.Logger;
@@ -19,8 +18,6 @@ import java.sql.SQLException;
 public class MusicDB {
 
 	private static final Logger logger = LoggerFactory.getLogger(MusicDB.class);
-	private static final String SETTING_TABLE = new DefaultConfig().tableName();
-	private static final MusicConfig MUSIC_CONFIG = new MusicConfig();
 
 	/**
 	 * Returns the track volume from the database
@@ -33,10 +30,10 @@ public class MusicDB {
 
 		// language=SQLITE-SQL
 		String config = DatabaseIO.getConfig(
-			"SELECT " + MUSIC_CONFIG.tableName() + "." + track + " " +
-				"FROM " + SETTING_TABLE + ", " + MUSIC_CONFIG.tableName() + " " +
-				"WHERE " + SETTING_TABLE + ".guild_id = " + MUSIC_CONFIG.tableName() + ".guild_id" + " " +
-				"AND " + SETTING_TABLE + ".guild_id = ?",
+			"SELECT music_settings." + track + " " +
+				"FROM settings, music_settings " +
+				"WHERE settings.guild_id = music_settings.guild_id " +
+				"AND settings.guild_id = ?",
 			guildId,
 			track
 		);
@@ -46,7 +43,7 @@ public class MusicDB {
 
 		setDefault(guildId);
 
-		return ConfigIO.readConfig(MUSIC_CONFIG.fileName(), track);
+		return ConfigIO.readConfig("music_settings", track);
 	}
 
 	/**
@@ -60,9 +57,9 @@ public class MusicDB {
 
 		// language=SQLITE-SQL
 		boolean updated = DatabaseIO.updateConfig(
-			"UPDATE " + MUSIC_CONFIG.tableName() + " " +
+			"UPDATE music_settings " +
 				"SET " + track + " = ? " +
-				"WHERE " + MUSIC_CONFIG.tableName() + ".guild_id = ?",
+				"WHERE music_settings.guild_id = ?",
 			guildId,
 			String.valueOf(trackVolume)
 		);
@@ -87,7 +84,7 @@ public class MusicDB {
 			preparedStatement.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			logger.warn("Could not insert " + MUSIC_CONFIG + " to database");
+			logger.warn("Could not insert " + new MusicConfig() + " to database");
 		}
 	}
 }

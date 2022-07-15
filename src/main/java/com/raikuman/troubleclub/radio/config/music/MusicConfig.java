@@ -1,4 +1,4 @@
-package com.raikuman.troubleclub.radio.config;
+package com.raikuman.troubleclub.radio.config.music;
 
 import com.raikuman.botutilities.configs.ConfigInterface;
 import com.raikuman.botutilities.configs.DatabaseConfigInterface;
@@ -15,7 +15,7 @@ public class MusicConfig implements ConfigInterface, DatabaseConfigInterface {
 
 	@Override
 	public String fileName() {
-		return "musicSettings";
+		return "music_settings";
 	}
 
 	@Override
@@ -29,14 +29,9 @@ public class MusicConfig implements ConfigInterface, DatabaseConfigInterface {
 	}
 
 	@Override
-	public String tableName() {
-		return "music_settings";
-	}
-
-	@Override
 	public String tableStatement() {
 		// language=SQLITE-SQL
-		return "CREATE TABLE IF NOT EXISTS " + tableName() + "(" +
+		return "CREATE TABLE IF NOT EXISTS music_settings(" +
 			"guild_id VARCHAR(20) NOT NULL," +
 			"volumetrack1 INTEGER NOT NULL DEFAULT '50'," +
 			"volumetrack2 INTEGER NOT NULL DEFAULT '50'," +

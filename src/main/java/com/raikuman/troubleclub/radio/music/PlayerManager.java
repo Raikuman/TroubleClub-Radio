@@ -3,7 +3,7 @@ package com.raikuman.troubleclub.radio.music;
 import com.raikuman.botutilities.helpers.DateAndTime;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
-import com.raikuman.troubleclub.radio.config.MusicDB;
+import com.raikuman.troubleclub.radio.config.music.MusicDB;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Handles loading and playing tracks for the guild music manager
  *
- * @version 1.6 2022-13-07
+ * @version 1.7 2022-15-07
  * @since 1.0
  */
 public class PlayerManager {
