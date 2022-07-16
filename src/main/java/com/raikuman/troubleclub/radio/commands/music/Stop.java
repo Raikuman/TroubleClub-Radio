@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Handles the bot stopping the current playing song and clearing the queue
  *
- * @version 1.7 2022-09-07
+ * @version 1.8 2022-16-07
  * @since 1.1
  */
 public class Stop implements CommandInterface {
@@ -107,6 +107,9 @@ public class Stop implements CommandInterface {
 		final TrackScheduler trackScheduler = musicManager.getTrackScheduler();
 		trackScheduler.queue.clear();
 		trackScheduler.audioPlayer.stopTrack();
+
+		trackScheduler.repeat = false;
+		trackScheduler.repeatQueue = false;
 
 		return true;
 	}

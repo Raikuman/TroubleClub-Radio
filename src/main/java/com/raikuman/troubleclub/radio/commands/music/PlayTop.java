@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Handles adding a new song to the top of the queue
  *
- * @version 1.5 2022-13-07
+ * @version 1.6 2022-16-07
  * @since 1.1
  */
 public class PlayTop implements CommandInterface {
@@ -89,7 +89,6 @@ public class PlayTop implements CommandInterface {
 	@Override
 	public List<String> getAliases() {
 		return List.of(
-			"pt",
 			"playt",
 			"top"
 		);

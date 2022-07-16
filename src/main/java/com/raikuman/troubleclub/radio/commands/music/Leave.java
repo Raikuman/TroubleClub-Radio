@@ -4,13 +4,16 @@ import com.raikuman.botutilities.commands.manager.CategoryInterface;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.troubleclub.radio.category.MusicCategory;
+import com.raikuman.troubleclub.radio.music.GuildMusicManager;
+import com.raikuman.troubleclub.radio.music.PlayerManager;
+import com.raikuman.troubleclub.radio.music.TrackScheduler;
 
 import java.util.List;
 
 /**
  * Handles the bot leaving the voice channel of a user
  *
- * @version 1.3 2022-09-07
+ * @version 1.4 2022-16-07
  * @since 1.1
  */
 public class Leave implements CommandInterface {
@@ -25,6 +28,11 @@ public class Leave implements CommandInterface {
 		} else {
 			ctx.getEvent().getMessage().addReaction("U+1F6AB").queue();
 		}
+
+		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
+		final TrackScheduler trackScheduler = musicManager.getTrackScheduler();
+		trackScheduler.repeat = false;
+		trackScheduler.repeatQueue = false;
 	}
 
 	@Override
