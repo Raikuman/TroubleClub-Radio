@@ -19,7 +19,7 @@ import java.net.URISyntaxException;
 /**
  * Handles playing music in a user's voice channel
  *
- * @version 1.10 2022-13-07
+ * @version 1.11 2022-29-07
  * @since 1.1
  */
 public class Play implements CommandInterface {
@@ -58,8 +58,14 @@ public class Play implements CommandInterface {
 
 				ctx.getEvent().getMessage().delete().queue();
 
-				return;
+			} else {
+				MessageResources.timedMessage(
+					"The player is already playing",
+					channel,
+					5
+				);
 			}
+			return;
 		}
 
 		String link = String.join(" ", ctx.getArgs());
