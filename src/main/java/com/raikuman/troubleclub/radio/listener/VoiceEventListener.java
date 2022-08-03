@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
  * Provides an event listener for voice channels, detecting if any users leave. The bot will leave
  * after there are no more users.
  *
- * @version 1.1 2022-13-07
+ * @version 1.2 2022-03-08
  * @since 1.0
  */
 public class VoiceEventListener extends ListenerAdapter {
@@ -58,5 +58,6 @@ public class VoiceEventListener extends ListenerAdapter {
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(event.getGuild());
 		musicManager.getTrackScheduler().repeat = false;
 		musicManager.getTrackScheduler().repeatQueue = false;
+		musicManager.getAudioPlayer().setPaused(false);
 	}
 }
