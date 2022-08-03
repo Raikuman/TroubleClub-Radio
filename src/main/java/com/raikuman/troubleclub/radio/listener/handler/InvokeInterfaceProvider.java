@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Provides commands, buttons, and selects for the ListenerHandler
  *
- * @version 1.2 2022-02-08
+ * @version 1.3 2022-03-08
  * @since 1.1
  */
 public class InvokeInterfaceProvider {
@@ -48,6 +48,7 @@ public class InvokeInterfaceProvider {
 			new SkipTo(),
 			new Repeat(),
 			new Loop(),
+			new Remove(),
 			new Move(),
 			new Rewind(),
 			new Random(),
