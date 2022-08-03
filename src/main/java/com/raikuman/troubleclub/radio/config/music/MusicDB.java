@@ -12,7 +12,7 @@ import java.sql.SQLException;
 /**
  * Handles getting and updating values of the music table in the database
  *
- * @version 1.0 2022-13-07
+ * @version 1.1 2022-03-08
  * @since 1.2
  */
 public class MusicDB {
@@ -34,8 +34,8 @@ public class MusicDB {
 				"FROM settings, music_settings " +
 				"WHERE settings.guild_id = music_settings.guild_id " +
 				"AND settings.guild_id = ?",
-			guildId,
-			track
+			track,
+			String.valueOf(guildId)
 		);
 
 		if (config != null)
@@ -60,8 +60,8 @@ public class MusicDB {
 			"UPDATE music_settings " +
 				"SET " + track + " = ? " +
 				"WHERE music_settings.guild_id = ?",
-			guildId,
-			String.valueOf(trackVolume)
+			String.valueOf(trackVolume),
+			String.valueOf(guildId)
 		);
 
 		if (!updated)

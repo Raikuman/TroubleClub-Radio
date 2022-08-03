@@ -4,11 +4,12 @@ import com.raikuman.botutilities.configs.ConfigInterface;
 import com.raikuman.botutilities.configs.DatabaseConfigInterface;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  *  Provides configuration for music
  *
- * @version 1.4 2022-13-07
+ * @version 1.5 2022-03-08
  * @since 1.0
  */
 public class MusicConfig implements ConfigInterface, DatabaseConfigInterface {
@@ -29,13 +30,15 @@ public class MusicConfig implements ConfigInterface, DatabaseConfigInterface {
 	}
 
 	@Override
-	public String tableStatement() {
+	public List<String> tableStatements() {
 		// language=SQLITE-SQL
-		return "CREATE TABLE IF NOT EXISTS music_settings(" +
+		return List.of(
+			"CREATE TABLE IF NOT EXISTS music_settings(" +
 			"guild_id VARCHAR(20) NOT NULL," +
 			"volumetrack1 INTEGER NOT NULL DEFAULT '50'," +
 			"volumetrack2 INTEGER NOT NULL DEFAULT '50'," +
 			"volumetrack3 INTEGER NOT NULL DEFAULT '50'," +
-			"FOREIGN KEY(guild_id) REFERENCES guild_settings(guild_id));";
+			"FOREIGN KEY(guild_id) REFERENCES guild_settings(guild_id));"
+		);
 	}
 }
