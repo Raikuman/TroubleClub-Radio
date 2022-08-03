@@ -14,7 +14,7 @@ import com.raikuman.troubleclub.radio.commands.help.selects.TrackSelect;
 import com.raikuman.troubleclub.radio.commands.music.Play;
 import com.raikuman.troubleclub.radio.commands.music.SkipTo;
 import com.raikuman.troubleclub.radio.commands.music.Stop;
-import com.raikuman.troubleclub.radio.listener.InvokeInterfaceProvider;
+import com.raikuman.troubleclub.radio.listener.handler.InvokeInterfaceProvider;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;

@@ -1,7 +1,9 @@
-package com.raikuman.troubleclub.radio.listener;
+package com.raikuman.troubleclub.radio.listener.handler;
 
 import com.raikuman.botutilities.listener.ListenerBuilder;
 import com.raikuman.botutilities.listener.ListenerManager;
+import com.raikuman.troubleclub.radio.listener.MemberEventListener;
+import com.raikuman.troubleclub.radio.listener.VoiceEventListener;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.List;
@@ -9,7 +11,7 @@ import java.util.List;
 /**
  * Handles creating a listener manager
  *
- * @version 2.1 2022-15-07
+ * @version 2.2 2022-02-08
  * @since 1.1
  */
 public class ListenerHandler {
@@ -33,6 +35,9 @@ public class ListenerHandler {
 	 * @return The list of listener adapters
 	 */
 	private static List<ListenerAdapter> provideListeners() {
-		return List.of(new VoiceEventListener());
+		return List.of(
+			new VoiceEventListener(),
+			new MemberEventListener()
+		);
 	}
 }
