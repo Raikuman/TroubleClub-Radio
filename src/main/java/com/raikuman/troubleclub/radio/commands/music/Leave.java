@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Handles the bot leaving the voice channel of a user
  *
- * @version 1.4 2022-16-07
+ * @version 1.6 2022-24-08
  * @since 1.1
  */
 public class Leave implements CommandInterface {
@@ -31,8 +31,12 @@ public class Leave implements CommandInterface {
 
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
 		final TrackScheduler trackScheduler = musicManager.getTrackScheduler();
+		trackScheduler.queue.clear();
+		trackScheduler.audioPlayer.stopTrack();
 		trackScheduler.repeat = false;
 		trackScheduler.repeatQueue = false;
+
+		musicManager.getAudioPlayer().setPaused(false);
 	}
 
 	@Override

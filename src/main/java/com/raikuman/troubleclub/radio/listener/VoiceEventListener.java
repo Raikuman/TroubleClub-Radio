@@ -2,6 +2,7 @@ package com.raikuman.troubleclub.radio.listener;
 
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
+import com.raikuman.troubleclub.radio.music.TrackScheduler;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.ReadyEvent;
@@ -17,7 +18,7 @@ import javax.annotation.Nonnull;
  * Provides an event listener for voice channels, detecting if any users leave. The bot will leave
  * after there are no more users.
  *
- * @version 1.2 2022-03-08
+ * @version 1.3 2022-24-08
  * @since 1.0
  */
 public class VoiceEventListener extends ListenerAdapter {
@@ -56,8 +57,12 @@ public class VoiceEventListener extends ListenerAdapter {
 		event.getGuild().getAudioManager().closeAudioConnection();
 
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(event.getGuild());
-		musicManager.getTrackScheduler().repeat = false;
-		musicManager.getTrackScheduler().repeatQueue = false;
+		final TrackScheduler trackScheduler = musicManager.getTrackScheduler();
+		trackScheduler.queue.clear();
+		trackScheduler.audioPlayer.stopTrack();
+		trackScheduler.repeat = false;
+		trackScheduler.repeatQueue = false;
+
 		musicManager.getAudioPlayer().setPaused(false);
 	}
 }
