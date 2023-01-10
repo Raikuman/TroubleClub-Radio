@@ -9,7 +9,7 @@ import java.util.List;
 /**
  *  Provides configuration for music
  *
- * @version 1.5 2022-03-08
+ * @version 1.6 2023-10-01
  * @since 1.0
  */
 public class MusicConfig implements ConfigInterface, DatabaseConfigInterface {
@@ -34,7 +34,7 @@ public class MusicConfig implements ConfigInterface, DatabaseConfigInterface {
 		// language=SQLITE-SQL
 		return List.of(
 			"CREATE TABLE IF NOT EXISTS music_settings(" +
-			"guild_id VARCHAR(20) NOT NULL," +
+			"guild_id VARCHAR(20) NOT NULL UNIQUE," +
 			"volumetrack1 INTEGER NOT NULL DEFAULT '50'," +
 			"volumetrack2 INTEGER NOT NULL DEFAULT '50'," +
 			"volumetrack3 INTEGER NOT NULL DEFAULT '50'," +

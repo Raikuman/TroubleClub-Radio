@@ -6,13 +6,14 @@ import com.raikuman.botutilities.database.DatabaseManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
  * Handles getting and updating values of the music table in the database
  *
- * @version 1.1 2022-03-08
+ * @version 1.2 2023-10-01
  * @since 1.2
  */
 public class MusicDB {
@@ -31,9 +32,8 @@ public class MusicDB {
 		// language=SQLITE-SQL
 		String config = DatabaseIO.getConfig(
 			"SELECT music_settings." + track + " " +
-				"FROM settings, music_settings " +
-				"WHERE settings.guild_id = music_settings.guild_id " +
-				"AND settings.guild_id = ?",
+				"FROM music_settings " +
+				"WHERE music_settings.guild_id = ?",
 			track,
 			String.valueOf(guildId)
 		);
@@ -73,12 +73,12 @@ public class MusicDB {
 	 * @param guildId The guild id to set the default entry to
 	 */
 	private static void setDefault(long guildId) {
-		try (final PreparedStatement preparedStatement = DatabaseManager
-			.getConnection()
-			// language=SQLITE-SQL
-			.prepareStatement(
-				"INSERT INTO music_settings(guild_id) VALUES(?)"
-			)) {
+		try (
+			Connection connection = DatabaseManager.getConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(
+				// language=SQLITE-SQL
+				"INSERT OR IGNORE INTO music_settings(guild_id) VALUES(?)")
+			) {
 
 			preparedStatement.setString(1, String.valueOf(guildId));
 			preparedStatement.execute();
