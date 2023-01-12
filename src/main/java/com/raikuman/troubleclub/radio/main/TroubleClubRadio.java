@@ -1,8 +1,13 @@
 package com.raikuman.troubleclub.radio.main;
 
+import com.raikuman.botutilities.crypto.keystore.KeyStoreManager;
 import com.raikuman.botutilities.database.DatabaseManager;
+import com.raikuman.troubleclub.radio.config.keystore.TCRadioKeyStore;
 import com.raikuman.troubleclub.radio.config.music.MusicConfig;
-import com.raikuman.troubleclub.radio.listener.ListenerHandler;
+import com.raikuman.troubleclub.radio.config.playlist.PlaylistConfig;
+import com.raikuman.troubleclub.radio.config.member.MemberConfig;
+import com.raikuman.troubleclub.radio.config.member.MemberDB;
+import com.raikuman.troubleclub.radio.listener.handler.ListenerHandler;
 import com.raikuman.botutilities.configs.ConfigFileWriter;
 import com.raikuman.botutilities.configs.EnvLoader;
 import net.dv8tion.jda.api.JDA;
@@ -33,9 +38,13 @@ public class TroubleClubRadio {
 	private static final Logger logger = LoggerFactory.getLogger(TroubleClubRadio.class);
 
 	public static void main(String[] args) {
-		DatabaseManager.executeConfigStatements(List.of(
-			new MusicConfig()
-		));
+		ConfigFileWriter.handleConfigs(true, new MusicConfig());
+
+		KeyStoreManager.initializeKeyStore(
+			List.of(
+				new TCRadioKeyStore()
+			)
+		);
 
 		List<GatewayIntent> gatewayIntents = Arrays.asList(
 			GatewayIntent.GUILD_MEMBERS,
@@ -45,20 +54,21 @@ public class TroubleClubRadio {
 		JDA jda = buildJDA(gatewayIntents);
 
 		if (jda == null) {
-			logger.info("Could not create JDA object");
-		} else {
-			logger.info("Successfully created JDA object");
-
-			try {
-				jda.awaitStatus(JDA.Status.CONNECTED);
-				logger.info("Bot connected to Discord");
-			} catch (InterruptedException var4) {
-				var4.printStackTrace();
-				logger.info("Bot could not connect to Discord");
-			}
-
-			writeConfigs();
+			logger.info("Could not create JDA object" );
+			return;
 		}
+
+		logger.info("Successfully created JDA object");
+
+		try {
+			jda.awaitStatus(JDA.Status.CONNECTED);
+			logger.info("Bot connected to Discord");
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			logger.info("Bot could not connect to Discord");
+		}
+
+		setDatabase(jda);
 	}
 
 	/**
@@ -124,9 +134,16 @@ public class TroubleClubRadio {
 	}
 
 	/**
-	 * Writes all config files
+	 * Handle database methods
+	 * @param jda The jda object to set database with
 	 */
-	private static void writeConfigs() {
-		ConfigFileWriter.writeConfigFiles(new MusicConfig());
+	private static void setDatabase(JDA jda) {
+		DatabaseManager.executeConfigStatements(List.of(
+			new MusicConfig(),
+			new MemberConfig(),
+			new PlaylistConfig()
+		));
+
+		MemberDB.populateMemberTable(jda.getGuilds());
 	}
 }

@@ -8,11 +8,13 @@ import com.raikuman.botutilities.slashcommands.manager.SlashInterface;
 import com.raikuman.troubleclub.radio.commands.help.Help;
 import com.raikuman.troubleclub.radio.commands.help.selects.MusicSelect;
 import com.raikuman.troubleclub.radio.commands.help.selects.OtherSelect;
+import com.raikuman.troubleclub.radio.commands.help.selects.PlaylistSelect;
 import com.raikuman.troubleclub.radio.commands.help.selects.TrackSelect;
 import com.raikuman.troubleclub.radio.commands.music.*;
 import com.raikuman.troubleclub.radio.commands.other.ChangePrefix;
 import com.raikuman.troubleclub.radio.commands.other.Changelog;
 import com.raikuman.troubleclub.radio.commands.other.ToS;
+import com.raikuman.troubleclub.radio.commands.playlist.*;
 import com.raikuman.troubleclub.radio.commands.track.*;
 
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ import java.util.List;
 /**
  * Provides commands, buttons, and selects for the ListenerHandler
  *
- * @version 1.3 2022-03-08
+ * @version 1.4 2023-11-01
  * @since 1.1
  */
 public class InvokeInterfaceProvider {
@@ -68,6 +70,12 @@ public class InvokeInterfaceProvider {
 			new PruneTracks(),
 			new VolumeTracks(),
 
+			new Playlist(),
+			new PlayPlaylist(),
+			new CreatePlaylist(),
+			new RenamePlaylist(),
+			new DeletePlaylist(),
+
 			new ChangePrefix(),
 			new ToS(),
 			new Changelog()
@@ -85,6 +93,7 @@ public class InvokeInterfaceProvider {
 		buttonInterfaces.addAll(PaginationButtonProvider.provideButtons(new Help()));
 		buttonInterfaces.addAll(PaginationButtonProvider.provideButtons(new MusicSelect(provideCommands())));
 		buttonInterfaces.addAll(PaginationButtonProvider.provideButtons(new TrackSelect(provideCommands())));
+		buttonInterfaces.addAll(PaginationButtonProvider.provideButtons(new PlaylistSelect(provideCommands())));
 		buttonInterfaces.addAll(PaginationButtonProvider.provideButtons(new OtherSelect(provideCommands())));
 
 		return buttonInterfaces;
@@ -98,6 +107,7 @@ public class InvokeInterfaceProvider {
 		List<SelectInterface> selectInterfaces = new ArrayList<>();
 		selectInterfaces.add(new MusicSelect(provideCommands()));
 		selectInterfaces.add(new TrackSelect(provideCommands()));
+		selectInterfaces.add(new PlaylistSelect(provideCommands()));
 		selectInterfaces.add(new OtherSelect(provideCommands()));
 
 		return selectInterfaces;

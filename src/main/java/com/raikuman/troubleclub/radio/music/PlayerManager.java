@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Handles loading and playing tracks for the guild music manager
  *
- * @version 1.7 2022-15-07
+ * @version 1.8 2023-11-01
  * @since 1.0
  */
 public class PlayerManager {
@@ -59,6 +59,7 @@ public class PlayerManager {
 	 * @param channel The channel to send messages to
 	 * @param trackUrl The track url to get the audio track from
 	 * @param user The user to display on an embed
+	 * @param guildId The guild id to get the volume from
 	 */
 	public void loadAndPlay(TextChannel channel, String trackUrl, User user, long guildId) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
@@ -115,11 +116,11 @@ public class PlayerManager {
 					musicManager.getTrackScheduler().queue(track);
 
 				EmbedBuilder builder = new EmbedBuilder()
-					.setAuthor("Adding playlist to queue:", null, user.getAvatarUrl())
+					.setAuthor("\uD83C\uDFA7 Adding playlist to queue:", null, user.getEffectiveAvatarUrl())
 					.setTitle(audioPlaylist.getName(), tracks.get(0).getInfo().uri)
 					.setColor(RandomColor.getRandomColor());
 				builder
-					.addField("Songs in Playlist", "`" + audioPlaylist.getTracks().size() + "`songs", true)
+					.addField("Songs in Playlist", "`" + audioPlaylist.getTracks().size() + "` songs", true)
 					.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
 				channel.sendMessageEmbeds(builder.build()).queue();
@@ -151,6 +152,7 @@ public class PlayerManager {
 	 * @param trackUrl The track url to get the audio track from
 	 * @param user The user to display on an embed
 	 * @param playNow If the top track should be played immediately
+	 * @param guildId The guild id to get the volume from
 	 */
 	public void loadToTop(TextChannel channel, String trackUrl, User user, boolean playNow, long guildId) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
@@ -232,6 +234,75 @@ public class PlayerManager {
 	}
 
 	/**
+	 *
+	 * @param channel The channel to send messages to
+	 * @param playlistInfo The playlist info object to provide name and song urls
+	 * @param user The user to display on an embed
+	 * @param guildId The guild id to get the volume from
+	 */
+	public void loadFromDatabase(TextChannel channel, PlaylistInfo playlistInfo, User user, long guildId) {
+		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+		musicManager.getAudioPlayer().setVolume(loadVolume(guildId, musicManager.getCurrentAudioTrack()));
+
+		StringBuilder grabVideos = new StringBuilder("http://www.youtube.com/watch_videos?video_ids=");
+		for (int i = 0; i < playlistInfo.getSongs().size(); i++) {
+			grabVideos.append(playlistInfo.getSongs().get(i));
+
+			if (i < playlistInfo.getSongs().size() - 1) {
+				grabVideos.append(",");
+			}
+		}
+
+		this.audioPlayerManager.loadItemOrdered(musicManager, String.valueOf(grabVideos), new AudioLoadResultHandler() {
+
+			@Override
+			public void trackLoaded(AudioTrack audioTrack) {
+				MessageResources.timedMessage(
+					"Could not retrieve given cassette",
+					channel,
+					5
+				);
+			}
+
+			@Override
+			public void playlistLoaded(AudioPlaylist audioPlaylist) {
+				for (AudioTrack audioTrack : audioPlaylist.getTracks()) {
+					musicManager.getTrackScheduler().queue(audioTrack);
+				}
+
+				EmbedBuilder builder = new EmbedBuilder()
+					.setAuthor("\uD83D\uDCFC Adding cassette to queue:")
+					.setTitle(playlistInfo.getName())
+					.setColor(RandomColor.getRandomColor());
+
+				builder
+					.addField("Songs in Cassette", "`" + audioPlaylist.getTracks().size() + "` songs", true)
+					.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
+
+				channel.sendMessageEmbeds(builder.build()).queue();
+			}
+
+			@Override
+			public void noMatches() {
+				MessageResources.timedMessage(
+					"Could not retrieve given cassette",
+					channel,
+					5
+				);
+			}
+
+			@Override
+			public void loadFailed(FriendlyException e) {
+				MessageResources.timedMessage(
+					"Could not retrieve given cassette",
+					channel,
+					5
+				);
+			}
+		});
+	}
+
+	/**
 	 * Returns the current instance of the player manager
 	 * @return The player manager instance
 	 */
@@ -248,6 +319,7 @@ public class PlayerManager {
 	 * @param queueSize The size of the current queue
 	 * @param audioTrack The track that was added to the queue
 	 * @param user The user to display on an embed
+	 * @param currentAudioTrack The current audio track the manager is on
 	 * @return The embed builder with track information
 	 */
 	private EmbedBuilder trackEmbed(int queueSize, AudioTrack audioTrack, User user, int currentAudioTrack) {
@@ -280,6 +352,7 @@ public class PlayerManager {
 	 * @param audioTrack The track that was added to the top of the queue
 	 * @param user The user to display on an embed
 	 * @param playNow If the track was played immediately
+	 * @param currentAudioTrack The current audio track the manager is on
 	 * @return The embed builder with track information
 	 */
 	private EmbedBuilder topEmbed(AudioTrack audioTrack, User user, boolean playNow, int currentAudioTrack) {
@@ -304,6 +377,8 @@ public class PlayerManager {
 
 	/**
 	 * Returns the volume setting from the music config
+	 * @param guildId The guild id to get the volume from
+	 * @param trackNum The track number the manager is on
 	 * @return The volume setting normalized for the bot
 	 */
 	private int loadVolume(long guildId, int trackNum) {

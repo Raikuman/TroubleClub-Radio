@@ -7,9 +7,11 @@ import com.raikuman.botutilities.configs.Prefix;
 import com.raikuman.botutilities.context.EventContext;
 import com.raikuman.troubleclub.radio.category.MusicCategory;
 import com.raikuman.troubleclub.radio.category.OtherCategory;
+import com.raikuman.troubleclub.radio.category.PlaylistCategory;
 import com.raikuman.troubleclub.radio.category.TrackCategory;
 import com.raikuman.troubleclub.radio.commands.help.selects.MusicSelect;
 import com.raikuman.troubleclub.radio.commands.help.selects.OtherSelect;
+import com.raikuman.troubleclub.radio.commands.help.selects.PlaylistSelect;
 import com.raikuman.troubleclub.radio.commands.help.selects.TrackSelect;
 import com.raikuman.troubleclub.radio.commands.music.Play;
 import com.raikuman.troubleclub.radio.commands.music.SkipTo;
@@ -26,7 +28,7 @@ import java.util.List;
 /**
  * A class with helpful methods for the help command
  *
- * @version 1.2 2022-15-07
+ * @version 1.3 2022-04-08
  * @since 1.1
  */
 public class HelpResources {
@@ -63,6 +65,7 @@ public class HelpResources {
 
 		final MusicSelect musicSelect = new MusicSelect(InvokeInterfaceProvider.provideCommands());
 		final TrackSelect trackSelect = new TrackSelect(InvokeInterfaceProvider.provideCommands());
+		final PlaylistSelect playlistSelect = new PlaylistSelect(InvokeInterfaceProvider.provideCommands());
 		final OtherSelect otherSelect = new OtherSelect(InvokeInterfaceProvider.provideCommands());
 
 		SelectMenu selectMenu = SelectMenu.create(ctx.getEventMember().getId() + ":" + new Help().getInvoke())
@@ -70,6 +73,7 @@ public class HelpResources {
 			.setRequiredRange(1, 1)
 			.addOption(musicSelect.getLabel(), ctx.getEventMember().getId() + ":" + musicSelect.getMenuValue())
 			.addOption(trackSelect.getLabel(), ctx.getEventMember().getId() + ":" + trackSelect.getMenuValue())
+			.addOption(playlistSelect.getLabel(), ctx.getEventMember().getId() + ":" + playlistSelect.getMenuValue())
 			.addOption(otherSelect.getLabel(), ctx.getEventMember().getId() + ":" + otherSelect.getMenuValue())
 			.build();
 
@@ -162,6 +166,7 @@ public class HelpResources {
 		return Arrays.asList(
 			new MusicCategory(),
 			new TrackCategory(),
+			new PlaylistCategory(),
 			new OtherCategory()
 		);
 	}
