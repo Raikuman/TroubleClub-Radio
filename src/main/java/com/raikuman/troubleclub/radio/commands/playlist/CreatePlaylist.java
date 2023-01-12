@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 /**
  * Handles creating a playlist from tracks from the queue, or a YouTube playlist link
  *
- * @version 1.0 2023-11-01
+ * @version 1.1 2023-11-01
  * @since 1.2
  */
 public class CreatePlaylist implements CommandInterface {
@@ -111,8 +111,8 @@ public class CreatePlaylist implements CommandInterface {
 			return;
 		}
 
-		int playlistState = PlaylistDB.createPlaylist(new PlaylistInfo(playlistName, songUrls,
-			ctx.getEventMember().getIdLong()));
+		int playlistState = PlaylistDB.createPlaylist(new PlaylistInfo(playlistName, songUrls.size(),
+			songUrls, ctx.getEventMember().getIdLong()));
 
 		if (playlistState == 1 || playlistState == 2) {
 			MessageResources.timedMessage(

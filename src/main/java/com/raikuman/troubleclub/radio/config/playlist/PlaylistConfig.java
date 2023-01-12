@@ -20,6 +20,7 @@ public class PlaylistConfig implements DatabaseConfigInterface {
 			"playlist_id INTEGER PRIMARY KEY AUTOINCREMENT," +
 			"member_id INTEGER NOT NULL," +
 			"playlist_name VARCHAR(20)," +
+			"song_count INTEGER NOT NULL," +
 			"FOREIGN KEY(member_id) REFERENCES members(member_id));",
 
 			"CREATE TABLE IF NOT EXISTS songs(" +

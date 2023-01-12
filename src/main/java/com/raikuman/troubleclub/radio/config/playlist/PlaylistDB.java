@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * Handles getting and updating values of the playlist tables in the database
  *
- * @version 1.0 2023-11-01
+ * @version 1.1 2023-11-01
  * @since 1.2
  */
 public class PlaylistDB {
@@ -151,7 +151,7 @@ public class PlaylistDB {
 			Connection connection = DatabaseManager.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(
 				// language=SQLITE-SQL
-				"INSERT OR IGNORE INTO playlists(member_id, playlist_name) VALUES(?, ?)");
+				"INSERT OR IGNORE INTO playlists(member_id, playlist_name, song_count) VALUES(?, ?, ?)");
 
 			PreparedStatement lastInsertStatement = connection.prepareStatement(
 				// language=SQLITE-SQL
@@ -161,6 +161,7 @@ public class PlaylistDB {
 			// Insert to playlists table
 			preparedStatement.setString(1, memberId);
 			preparedStatement.setString(2, playlistInfo.getName());
+			preparedStatement.setString(3, String.valueOf(playlistInfo.getSongs().size()));
 			preparedStatement.execute();
 
 			// Get playlist id of recently inserted playlist
@@ -277,7 +278,7 @@ public class PlaylistDB {
 				playlistName = "Cassette #" + playlistNum;
 			}
 
-			return new PlaylistInfo(playlistName, songLinks, memberId);
+			return new PlaylistInfo(playlistName, songLinks.size(), songLinks, memberId);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			logger.error("Could not retrieve song links from ids");
@@ -480,6 +481,7 @@ public class PlaylistDB {
 			updateStatement.setString(1, String.valueOf(playlistName));
 			updateStatement.setString(2, String.valueOf(memberId));
 			updateStatement.setString(2, String.valueOf(playlistId));
+			updateStatement.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			logger.error("Could not rename the playlist given playlist num and member id");
@@ -487,5 +489,48 @@ public class PlaylistDB {
 		}
 
 		return true;
+	}
+
+	public static List<PlaylistInfo> getMemberPlaylistInfo(long memberId) {
+		try (
+			Connection connection = DatabaseManager.getConnection();
+
+			PreparedStatement playlistStatement = connection.prepareStatement(
+				// language=SQLITE-SQL
+				"SELECT playlists.song_count, playlists.playlist_name " +
+					"FROM playlists " +
+					"INNER JOIN members ON playlists.member_id=members.member_id " +
+					"WHERE members.member_long=?")
+		) {
+
+			playlistStatement.setString(1, String.valueOf(memberId));
+
+			List<PlaylistInfo> playlistInfoList = new ArrayList<>();
+			try (ResultSet resultSet = playlistStatement.executeQuery()) {
+				int songCount = 0;
+				while (resultSet.next()) {
+					try {
+						songCount = Integer.parseInt(resultSet.getString("song_count"));
+					} catch (NumberFormatException e) {
+						logger.error("Couldn't get current playlist song count");
+					}
+
+					playlistInfoList.add(
+						new PlaylistInfo(
+							resultSet.getString("playlist_name"),
+							songCount,
+							new ArrayList<>(),
+							memberId
+						)
+					);
+				}
+			}
+
+			return playlistInfoList;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			logger.error("Could not retrieve member `" + memberId + "` playlist information");
+			return new ArrayList<>();
+		}
 	}
 }

@@ -5,18 +5,20 @@ import java.util.List;
 /**
  * Provides an object to move around playlist information
  *
- * @version 1.0 2023-11-01
+ * @version 1.1 2023-11-01
  * @since 1.2
  */
 public class PlaylistInfo {
 
 	private final String name;
+	private final int numSongs;
 	private final List<String> songs;
 	private final long memberId;
 
-	public PlaylistInfo(String name, List<String> songs, long memberId) {
+	public PlaylistInfo(String name, int numSongs, List<String> songs, long memberId) {
 		this.name = name;
 		this.songs = songs;
+		this.numSongs = numSongs;
 		this.memberId = memberId;
 	}
 
@@ -26,6 +28,8 @@ public class PlaylistInfo {
 		else
 			return name;
 	}
+
+	public int getNumSongs() { return numSongs; }
 
 	public List<String> getSongs() {
 		return songs;
