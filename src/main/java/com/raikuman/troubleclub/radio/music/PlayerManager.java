@@ -13,8 +13,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Handles loading and playing tracks for the guild music manager
  *
- * @version 1.8 2023-11-01
+ * @version 1.9 2023-11-01
  * @since 1.0
  */
 public class PlayerManager {

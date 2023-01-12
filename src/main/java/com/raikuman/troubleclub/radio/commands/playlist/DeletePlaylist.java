@@ -6,21 +6,21 @@ import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.troubleclub.radio.category.PlaylistCategory;
 import com.raikuman.troubleclub.radio.config.playlist.PlaylistDB;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import java.util.List;
 
 /**
  * Handles deleting a playlist from a user's playlist collection
  *
- * @version 1.0 2023-11-01
+ * @version 1.1 2023-11-01
  * @since 1.2
  */
 public class DeletePlaylist implements CommandInterface {
 
 	@Override
 	public void handle(CommandContext ctx) {
-		final TextChannel channel = ctx.getChannel();
+		final TextChannel channel = ctx.getChannel().asTextChannel();
 
 		// Check args
 		if (ctx.getArgs().size() != 1) {

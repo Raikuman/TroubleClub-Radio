@@ -11,7 +11,7 @@ import com.raikuman.botutilities.helpers.MessageResources;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -19,14 +19,14 @@ import java.net.URISyntaxException;
 /**
  * Handles playing music in a user's voice channel
  *
- * @version 1.11 2022-29-07
+ * @version 1.12 2023-11-01
  * @since 1.1
  */
 public class Play implements CommandInterface {
 
 	@Override
 	public void handle(CommandContext ctx) {
-		final TextChannel channel = ctx.getChannel();
+		final TextChannel channel = ctx.getChannel().asTextChannel();
 
 		new Join().joinChannel(ctx);
 
@@ -38,7 +38,7 @@ public class Play implements CommandInterface {
 			if (currentTrack == null) {
 				MessageResources.timedMessage(
 					"You must enter a valid link or search for a video",
-					ctx.getChannel(),
+					channel,
 					10
 				);
 				return;

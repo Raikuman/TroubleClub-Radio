@@ -6,7 +6,7 @@ import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.RandomColor;
 import com.raikuman.troubleclub.radio.category.OtherCategory;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Emoji;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Handles sending an embed with informational links about the bot
  *
- * @version 1.1 2022-09-07
+ * @version 1.2 2023-11-01
  * @since 1.1
  */
 public class Changelog implements CommandInterface {
@@ -30,9 +30,9 @@ public class Changelog implements CommandInterface {
 		ctx.getChannel().sendMessageEmbeds(builder.build())
 			.setActionRow(
 				Button.link("https://github.com/Raikuman/TroubleClub-Radio", "GitHub")
-					.withEmoji(Emoji.fromMarkdown("<:github:849286315580719104>")),
+					.withEmoji(Emoji.fromFormatted("<:github:849286315580719104>")),
 				Button.link("https://trello.com/b/7MGa3xQO/trouble-club-radio", "Trello")
-					.withEmoji(Emoji.fromMarkdown("📃"))
+					.withEmoji(Emoji.fromFormatted("📃"))
 			).queue();
 
 		ctx.getEvent().getMessage().delete().queue();

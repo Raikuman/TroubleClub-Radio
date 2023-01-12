@@ -14,7 +14,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import java.util.List;
 import java.util.Map;
@@ -22,14 +22,14 @@ import java.util.Map;
 /**
  * Handles setting the volume of all audio tracks of the bot
  *
- * @version 1.4 2022-13-07
+ * @version 1.5 2023-11-01
  * @since 1.1
  */
 public class VolumeTracks implements CommandInterface {
 
 	@Override
 	public void handle(CommandContext ctx) {
-		final TextChannel channel = ctx.getChannel();
+		final TextChannel channel = ctx.getChannel().asTextChannel();
 		final Member self = ctx.getGuild().getSelfMember();
 		final GuildVoiceState selfVoiceState = self.getVoiceState();
 		if (selfVoiceState == null) {

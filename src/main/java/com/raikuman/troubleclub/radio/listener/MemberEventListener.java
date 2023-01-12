@@ -2,20 +2,17 @@ package com.raikuman.troubleclub.radio.listener;
 
 import com.raikuman.troubleclub.radio.config.member.MemberDB;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-
 /**
  * Provides an event listener for member joining and leaving
  *
- * @version 1.0 2022-03-08
+ * @version 1.1 2023-11-01
  * @since 1.2
  */
 public class MemberEventListener extends ListenerAdapter {
@@ -29,7 +26,7 @@ public class MemberEventListener extends ListenerAdapter {
 	}
 
 	@Override
-	public void onGuildMemberJoin(@Nonnull GuildMemberJoinEvent event) {
+	public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
 		Member member = event.getMember();
 
 		if (member.getUser().isBot())
@@ -38,6 +35,7 @@ public class MemberEventListener extends ListenerAdapter {
 		MemberDB.addMember(member);
 	}
 
+	/*
 	@Override
 	public void onGuildMemberRemove(@Nonnull GuildMemberRemoveEvent event) {
 		Member member = event.getMember();
@@ -50,4 +48,5 @@ public class MemberEventListener extends ListenerAdapter {
 
 		MemberDB.removeMember(member);
 	}
+	 */
 }

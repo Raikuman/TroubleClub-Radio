@@ -9,19 +9,19 @@ import com.raikuman.botutilities.helpers.RandomColor;
 import com.raikuman.troubleclub.radio.category.OtherCategory;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 /**
  * Handles setting the prefix of the bot
  *
- * @version 1.1 2022-15-07
+ * @version 1.2 2023-11-01
  * @since 1.2
  */
 public class ChangePrefix implements CommandInterface {
 
 	@Override
 	public void handle(CommandContext ctx) {
-		final TextChannel channel = ctx.getChannel();
+		final TextChannel channel = ctx.getChannel().asTextChannel();
 
 		if (!ctx.getEventMember().hasPermission(Permission.ADMINISTRATOR)) {
 			MessageResources.timedMessage(

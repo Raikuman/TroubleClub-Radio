@@ -16,7 +16,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +25,14 @@ import java.util.stream.Collectors;
 /**
  * Handles creating a playlist from tracks from the queue, or a YouTube playlist link
  *
- * @version 1.1 2023-11-01
+ * @version 1.2 2023-11-01
  * @since 1.2
  */
 public class CreatePlaylist implements CommandInterface {
 
 	@Override
 	public void handle(CommandContext ctx) {
-		final TextChannel channel = ctx.getChannel();
+		final TextChannel channel = ctx.getChannel().asTextChannel();
 		final Member self = ctx.getGuild().getSelfMember();
 		final GuildVoiceState selfVoiceState = self.getVoiceState();
 

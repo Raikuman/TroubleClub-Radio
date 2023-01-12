@@ -14,7 +14,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,14 +23,14 @@ import java.util.List;
 /**
  * Handles playing a new song, skipping the current track
  *
- * @version 1.6 2022-13-07
+ * @version 1.7 2023-11-01
  * @since 1.1
  */
 public class PlayNow implements CommandInterface {
 
 	@Override
 	public void handle(CommandContext ctx) {
-		final TextChannel channel = ctx.getChannel();
+		final TextChannel channel = ctx.getChannel().asTextChannel();
 		final Member self = ctx.getGuild().getSelfMember();
 		final GuildVoiceState selfVoiceState = self.getVoiceState();
 		if (selfVoiceState == null) {

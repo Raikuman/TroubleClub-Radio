@@ -17,7 +17,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
 
 import java.util.ArrayList;
@@ -27,14 +27,14 @@ import java.util.List;
 /**
  * Handles sending a pagination of songs queued and playing, as well as the state of the audio player
  *
- * @version 1.4 2022-10-07
+ * @version 1.5 2023-11-01
  * @since 1.1
  */
 public class Queue implements CommandInterface, PageInvokeInterface {
 
 	@Override
 	public void handle(CommandContext ctx) {
-		final TextChannel channel = ctx.getChannel();
+		final TextChannel channel = ctx.getChannel().asTextChannel();
 		final Member self = ctx.getGuild().getSelfMember();
 		final GuildVoiceState selfVoiceState = self.getVoiceState();
 		if (selfVoiceState == null) {

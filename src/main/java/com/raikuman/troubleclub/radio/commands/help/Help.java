@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Handles sending a pagination of commands on the bot
  *
- * @version 2.3 2022-15-07
+ * @version 2.4 2023-11-01
  * @since 1.1
  */
 public class Help implements SlashInterface, PageInvokeInterface {
@@ -20,7 +20,7 @@ public class Help implements SlashInterface, PageInvokeInterface {
 	@Override
 	public void handle(SlashContext ctx) {
 		ctx.getEvent().replyEmbeds(HelpResources.getHomePagination(ctx).buildEmbeds().get(0).build())
-			.addActionRows(HelpResources.getHomeActionRows(ctx)).setEphemeral(true).queue();
+			.addComponents(HelpResources.getHomeActionRows(ctx)).setEphemeral(true).queue();
 	}
 
 	@Override

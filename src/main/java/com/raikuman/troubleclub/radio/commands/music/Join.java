@@ -8,14 +8,15 @@ import com.raikuman.troubleclub.radio.category.MusicCategory;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 import java.util.List;
 
 /**
  * Handles the bot joining the voice channel of a user
  *
- * @version 1.3 2022-09-07
+ * @version 1.4 2023-11-01
  * @since 1.1
  */
 public class Join implements CommandInterface {
@@ -25,9 +26,9 @@ public class Join implements CommandInterface {
 		boolean joined = joinChannel(ctx);
 
 		if (joined)
-			ctx.getEvent().getMessage().addReaction("U+1F197").queue();
+			ctx.getEvent().getMessage().addReaction(Emoji.fromUnicode("U+1F197")).queue();
 		else
-			ctx.getEvent().getMessage().addReaction("U+1F6AB").queue();
+			ctx.getEvent().getMessage().addReaction(Emoji.fromUnicode("U+1F6AB")).queue();
 	}
 
 	@Override
@@ -56,7 +57,7 @@ public class Join implements CommandInterface {
 	 * @return If joined channel
 	 */
 	public boolean joinChannel(CommandContext ctx) {
-		final TextChannel channel = ctx.getChannel();
+		final TextChannel channel = ctx.getChannel().asTextChannel();
 		final Member self = ctx.getGuild().getSelfMember();
 		final GuildVoiceState selfVoiceState = self.getVoiceState();
 		if (selfVoiceState == null) {

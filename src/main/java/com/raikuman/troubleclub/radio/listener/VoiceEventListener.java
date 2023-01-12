@@ -5,20 +5,18 @@ import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.troubleclub.radio.music.TrackScheduler;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.events.ReadyEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-
 /**
  * Provides an event listener for voice channels, detecting if any users leave. The bot will leave
  * after there are no more users.
  *
- * @version 1.3 2022-24-08
+ * @version 1.4 2023-11-01
  * @since 1.0
  */
 public class VoiceEventListener extends ListenerAdapter {
@@ -32,7 +30,7 @@ public class VoiceEventListener extends ListenerAdapter {
 	}
 
 	@Override
-	public void onGuildVoiceLeave(@Nonnull GuildVoiceLeaveEvent event) {
+	public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
 		Member self = event.getGuild().getSelfMember();
 		GuildVoiceState selfVoiceState = self.getVoiceState();
 
@@ -43,6 +41,9 @@ public class VoiceEventListener extends ListenerAdapter {
 			return;
 
 		if (event.getChannelLeft() != selfVoiceState.getChannel())
+			return;
+
+		if (event.getChannelLeft() == null)
 			return;
 
 		int numPeople = 0;

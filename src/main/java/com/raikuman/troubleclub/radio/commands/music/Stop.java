@@ -12,14 +12,14 @@ import com.raikuman.troubleclub.radio.music.TrackScheduler;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import java.util.List;
 
 /**
  * Handles the bot stopping the current playing song and clearing the queue
  *
- * @version 1.9 2022-03-08
+ * @version 1.10 2023-11-01
  * @since 1.1
  */
 public class Stop implements CommandInterface {
@@ -65,7 +65,7 @@ public class Stop implements CommandInterface {
 	 * @return If stopped track/queue
 	 */
 	public boolean stopMusic(CommandContext ctx) {
-		final TextChannel channel = ctx.getChannel();
+		final TextChannel channel = ctx.getChannel().asTextChannel();
 		final Member self = ctx.getGuild().getSelfMember();
 		final GuildVoiceState selfVoiceState = self.getVoiceState();
 		if (selfVoiceState == null) {

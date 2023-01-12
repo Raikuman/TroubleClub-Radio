@@ -22,7 +22,6 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -31,7 +30,7 @@ import java.util.List;
 /**
  * The main class for the bot
  *
- * @version 1.5 2022-15-07
+ * @version 1.7 2023-11-01
  * @since 1.0
  */
 public class TroubleClubRadio {
@@ -48,7 +47,8 @@ public class TroubleClubRadio {
 
 		List<GatewayIntent> gatewayIntents = Arrays.asList(
 			GatewayIntent.GUILD_MEMBERS,
-			GatewayIntent.GUILD_MESSAGES
+			GatewayIntent.GUILD_MESSAGES,
+			GatewayIntent.MESSAGE_CONTENT
 		);
 
 		JDA jda = buildJDA(gatewayIntents);
@@ -94,7 +94,7 @@ public class TroubleClubRadio {
 
 			setPresence(jda);
 			setAvatarPicture(jda);
-		} catch (IllegalArgumentException | LoginException e) {
+		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		}
 

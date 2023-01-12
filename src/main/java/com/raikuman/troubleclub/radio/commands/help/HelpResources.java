@@ -19,7 +19,7 @@ import com.raikuman.troubleclub.radio.commands.music.Stop;
 import com.raikuman.troubleclub.radio.listener.handler.InvokeInterfaceProvider;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
-import net.dv8tion.jda.api.interactions.components.selections.SelectMenu;
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * A class with helpful methods for the help command
  *
- * @version 1.3 2022-04-08
+ * @version 1.4 2023-11-01
  * @since 1.1
  */
 public class HelpResources {
@@ -68,7 +68,8 @@ public class HelpResources {
 		final PlaylistSelect playlistSelect = new PlaylistSelect(InvokeInterfaceProvider.provideCommands());
 		final OtherSelect otherSelect = new OtherSelect(InvokeInterfaceProvider.provideCommands());
 
-		SelectMenu selectMenu = SelectMenu.create(ctx.getEventMember().getId() + ":" + new Help().getInvoke())
+		StringSelectMenu selectMenu =
+			StringSelectMenu.create(ctx.getEventMember().getId() + ":" + new Help().getInvoke())
 			.setPlaceholder("View commands in category")
 			.setRequiredRange(1, 1)
 			.addOption(musicSelect.getLabel(), ctx.getEventMember().getId() + ":" + musicSelect.getMenuValue())
