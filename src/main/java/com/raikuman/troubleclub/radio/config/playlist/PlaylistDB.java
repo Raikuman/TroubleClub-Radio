@@ -1,0 +1,491 @@
+package com.raikuman.troubleclub.radio.config.playlist;
+
+import com.raikuman.botutilities.database.DatabaseIO;
+import com.raikuman.botutilities.database.DatabaseManager;
+import com.raikuman.troubleclub.radio.music.PlaylistInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * Handles getting and updating values of the playlist tables in the database
+ *
+ * @version 1.0 2023-11-01
+ * @since 1.2
+ */
+public class PlaylistDB {
+
+	private static final Logger logger = LoggerFactory.getLogger(PlaylistDB.class);
+
+	/**
+	 * Creates a playlist, propagating the playlist tables with relevant playlist information
+	 * @param playlistInfo The PlaylistInfo object with playlist information
+	 */
+	public static int createPlaylist(PlaylistInfo playlistInfo) {
+		// Add songs to song table
+		addSongs(playlistInfo.getSongs());
+
+		// Get song ids from songs table
+		List<String> songIds = getSongIds(playlistInfo.getSongs());
+		if (songIds.isEmpty()) {
+			removeSongs(playlistInfo.getSongs());
+			return 1;
+		}
+
+		List<Integer> integerIds = songIds.stream()
+			.map(Integer::parseInt).sorted().collect(Collectors.toList());
+
+		songIds = integerIds.stream().map(s -> Integer.toString(s)).collect(Collectors.toList());
+
+		// Add playlist to playlist table and get its id
+		int playlistId = addPlaylist(playlistInfo);
+		if (playlistId < 1) {
+			// Prompt error
+			removeSongs(playlistInfo.getSongs());
+			return 2;
+		}
+
+		// Create playlist song entry in playlist song table
+		if (!addPlaylistsSongs(playlistId, songIds)) {
+			removeSongs(playlistInfo.getSongs());
+			removePlaylist(playlistId);
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Adds song urls to the songs table
+	 * @param songUrls The list of song urls to add to the database
+	 */
+	private static void addSongs(List<String> songUrls) {
+		try (
+			Connection connection = DatabaseManager.getConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(
+				// language=SQLITE-SQL
+				"INSERT OR IGNORE INTO songs(song_link) VALUES(?)")
+			) {
+
+			for (String url : songUrls) {
+				preparedStatement.setString(1, url);
+				preparedStatement.addBatch();
+				preparedStatement.clearParameters();
+			}
+
+			preparedStatement.executeBatch();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			logger.error("Could not add song to the songs table");
+		}
+	}
+
+	/**
+	 * Retrieves song ids from the songs table using song urls
+	 * @param songUrls The list of song urls to query the database
+	 * @return The list of song ids
+	 */
+	private static List<String> getSongIds(List<String> songUrls) {
+		// Generate IN clause to get recent Ids
+		StringBuilder inClause = new StringBuilder("IN(");
+		int count = 1;
+		for (String url : songUrls) {
+			inClause
+				.append("'")
+				.append(url)
+				.append("'");
+			if (count < songUrls.size())
+				inClause.append(", ");
+
+			count++;
+		}
+		inClause.append(");");
+
+		try (
+			Connection connection = DatabaseManager.getConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(
+				// language=SQLITE-SQL
+				"SELECT song_id FROM songs WHERE song_link " + inClause)
+		) {
+			List<String> songIds = new ArrayList<>();
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				while (resultSet.next()) {
+					songIds.add(resultSet.getString("song_id"));
+				}
+			}
+
+			return songIds;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			logger.error("Could not retrieve song links from ids");
+		}
+
+		return new ArrayList<>();
+	}
+
+	/**
+	 * Add playlist information to the playlists table
+	 * @param playlistInfo The PlaylistInfo object with playlist information
+	 * @return The playlist id
+	 */
+	private static int addPlaylist(PlaylistInfo playlistInfo) {
+		// Get member id from members table
+		// language=SQLITE-SQL
+		String memberId = DatabaseIO.getConfig(
+			"SELECT members.member_id " +
+				"FROM members " +
+				"WHERE members.member_long = ?",
+			"member_id",
+			String.valueOf(playlistInfo.getMemberId())
+		);
+
+		if (memberId.isEmpty())
+			return 0;
+
+		// Create playlist entry in playlist table
+		String playlistId = "";
+		try (
+			Connection connection = DatabaseManager.getConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(
+				// language=SQLITE-SQL
+				"INSERT OR IGNORE INTO playlists(member_id, playlist_name) VALUES(?, ?)");
+
+			PreparedStatement lastInsertStatement = connection.prepareStatement(
+				// language=SQLITE-SQL
+				"SELECT last_insert_rowid();")
+		) {
+
+			// Insert to playlists table
+			preparedStatement.setString(1, memberId);
+			preparedStatement.setString(2, playlistInfo.getName());
+			preparedStatement.execute();
+
+			// Get playlist id of recently inserted playlist
+			try (ResultSet resultSet = lastInsertStatement.executeQuery()) {
+				playlistId = resultSet.getString("last_insert_rowid()");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			logger.error("Could not add entry to the playlists table");
+		}
+
+		try {
+			return Integer.parseInt(playlistId);
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			logger.error("Could not parse result of playlist id");
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Adds song ids relevant to the playlist id to the playlists_songs table
+	 * @param playlistId The id of the playlist
+	 * @param songIds The list of song ids related to the playlist
+	 */
+	private static boolean addPlaylistsSongs(int playlistId, List<String> songIds) {
+		try (
+			Connection connection = DatabaseManager.getConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(
+				// language=SQLITE-SQL
+				"INSERT OR IGNORE INTO playlists_songs(playlist_number, song_id) VALUES(?, ?)")
+		) {
+			for (String ids : songIds) {
+				preparedStatement.setString(1, String.valueOf(playlistId));
+				preparedStatement.setString(2, ids);
+				preparedStatement.addBatch();
+				preparedStatement.clearParameters();
+			}
+
+			preparedStatement.executeBatch();
+
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			logger.error("Could not add song/playlist pair to the playlists_songs table");
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns the playlist information of a given playlist from a user
+	 * @param memberId The user id to query the database
+	 * @param playlistNum The playlist number given by the user
+	 * @return The PlaylistInfo object with playlist information
+	 */
+	public static PlaylistInfo getPlaylist(long memberId, int playlistNum) {
+		try (
+			Connection connection = DatabaseManager.getConnection();
+
+			PreparedStatement playlistStatement = connection.prepareStatement(
+				// language=SQLITE-SQL
+				"SELECT playlists.playlist_id, playlists.playlist_name " +
+				"FROM playlists " +
+				"INNER JOIN members ON playlists.member_id=members.member_id " +
+				"WHERE members.member_long=?");
+
+			PreparedStatement songStatement = connection.prepareStatement(
+				// language=SQLITE-SQL
+				"SELECT song_link " +
+				"FROM songs " +
+				"INNER JOIN playlists_songs ON songs.song_id=playlists_songs.song_id " +
+				"WHERE playlists_songs.playlist_number=?")
+			) {
+
+			playlistStatement.setString(1, String.valueOf(memberId));
+
+			List<String> playlistIds = new ArrayList<>();
+			List<String> playlistNames = new ArrayList<>();
+			try (ResultSet resultSet = playlistStatement.executeQuery()) {
+				while (resultSet.next()) {
+					playlistIds.add(resultSet.getString("playlist_id"));
+					playlistNames.add(resultSet.getString("playlist_name"));
+				}
+			}
+
+			if (playlistIds.size() != playlistNames.size()) {
+				logger.error("Could not retrieve song links from playlist id");
+				return null;
+			}
+
+			if (playlistNum > playlistIds.size()) {
+				logger.error("Playlist num does not exist in user's playlists");
+				return null;
+			}
+
+			songStatement.setString(1, playlistIds.get(playlistNum - 1));
+
+			List<String> songLinks = new ArrayList<>();
+			try (ResultSet resultSet = songStatement.executeQuery()) {
+				while (resultSet.next()) {
+					songLinks.add(resultSet.getString("song_link"));
+				}
+			}
+
+			if (songLinks.isEmpty()) {
+				logger.error("Could not retrieve song links from playlist id");
+				return null;
+			}
+
+			String playlistName = playlistNames.get(playlistNum - 1);
+			if (playlistNames.get(playlistNum - 1).equalsIgnoreCase("Unnamed Cassette")) {
+				playlistName = "Cassette #" + playlistNum;
+			}
+
+			return new PlaylistInfo(playlistName, songLinks, memberId);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			logger.error("Could not retrieve song links from ids");
+		}
+
+		return null;
+	}
+
+	/**
+	 * Removes songs from the database using a list of urls
+	 * @param songUrls The list of song urls to delete from the database
+	 */
+	private static void removeSongs(List<String> songUrls) {
+		// Generate IN clause to get recent Ids
+		StringBuilder inClause = new StringBuilder("IN(");
+		int count = 1;
+		for (String url : songUrls) {
+			inClause
+				.append("'")
+				.append(url)
+				.append("'");
+			if (count < songUrls.size())
+				inClause.append(", ");
+
+			count++;
+		}
+		inClause.append(");");
+
+		try (
+			Connection connection = DatabaseManager.getConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(
+				// language=SQLITE-SQL
+				"DELETE FROM songs " +
+				"WHERE song_link " + inClause)
+			) {
+			preparedStatement.executeBatch();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			logger.error("Could not remove songs to the songs table");
+		}
+	}
+
+	/**
+	 * Removes a playlist from the database using the playlist id
+	 * @param playlistId The playlist id to remove from the database
+	 */
+	private static void removePlaylist(int playlistId) {
+		try (
+			Connection connection = DatabaseManager.getConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(
+				// language=SQLITE-SQL
+				"DELETE FROM playlists " +
+					"WHERE playlist_id " + playlistId)
+		) {
+			preparedStatement.executeBatch();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			logger.error("Could not add song to the songs table");
+		}
+	}
+
+	/**
+	 * Removes song ids relevant to the playlist id from the playlists_songs table
+	 * @param playlistId The playlist id to remove from the database
+	 */
+	private static void removePlaylistsSongs(int playlistId) {
+		try (
+			Connection connection = DatabaseManager.getConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(
+				// language=SQLITE-SQL
+				"DELETE FROM playlists_songs " +
+					"WHERE playlist_number=?")
+			) {
+			preparedStatement.setString(1, String.valueOf(playlistId));
+
+			preparedStatement.executeBatch();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			logger.error("Could not remove songs from playlists songs table");
+		}
+	}
+
+	/**
+	 * Deletes a playlist and its relevant information from the database tables
+	 * @param playlistNum The playlist number given by the user
+	 * @param memberId The member id to delete the playlist from
+	 * @return True if the playlist and information was deleted, false otherwise
+	 */
+	public static boolean deletePlaylist(int playlistNum, long memberId) {
+		int playlistId = 0;
+
+		try (
+			Connection connection = DatabaseManager.getConnection();
+
+			PreparedStatement playlistStatement = connection.prepareStatement(
+				// language=SQLITE-SQL
+				"SELECT playlists.playlist_id, playlists.playlist_name " +
+					"FROM playlists " +
+					"INNER JOIN members ON playlists.member_id=members.member_id " +
+					"WHERE members.member_long=?")
+			) {
+
+			playlistStatement.setString(1, String.valueOf(memberId));
+
+			List<String> playlistIds = new ArrayList<>();
+			List<String> playlistNames = new ArrayList<>();
+			try (ResultSet resultSet = playlistStatement.executeQuery()) {
+				while (resultSet.next()) {
+					playlistIds.add(resultSet.getString("playlist_id"));
+					playlistNames.add(resultSet.getString("playlist_name"));
+				}
+			}
+
+			if (playlistIds.size() != playlistNames.size()) {
+				logger.error("Could not retrieve song links from playlist id");
+				return false;
+			}
+
+			if (playlistNum > playlistIds.size()) {
+				logger.error("Playlist num does not exist in user's playlists");
+				return false;
+			}
+
+			try {
+				playlistId = Integer.parseInt(playlistIds.get(playlistNum - 1));
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+				logger.error("Could not retrieve playlist id from array");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			logger.error("Could not retrieve playlist id from the database");
+			return false;
+		}
+
+		if (playlistId == 0) {
+			logger.error("Could not obtain playlist id");
+			return false;
+		}
+
+		// Remove playlist from database
+		removePlaylist(playlistId);
+		removePlaylistsSongs(playlistId);
+
+		return true;
+	}
+
+	public static boolean renamePlaylist(int playlistNum, long memberId, String playlistName) {
+		try (
+			Connection connection = DatabaseManager.getConnection();
+
+			PreparedStatement playlistStatement = connection.prepareStatement(
+				// language=SQLITE-SQL
+				"SELECT playlists.playlist_id, playlists.playlist_name " +
+					"FROM playlists " +
+					"INNER JOIN members ON playlists.member_id=members.member_id " +
+					"WHERE members.member_long=?");
+
+			PreparedStatement updateStatement = connection.prepareStatement(
+				// language=SQLITE-SQL
+				"UPDATE playlists SET playlist_name=? " +
+				"FROM playlists " +
+				"INNER JOIN members ON playlists.member_id=members.member_id " +
+				"WHERE members.member_long=? " +
+				"AND playlists.playlist_id=?")
+			) {
+
+			playlistStatement.setString(1, String.valueOf(memberId));
+
+			List<String> playlistIds = new ArrayList<>();
+			List<String> playlistNames = new ArrayList<>();
+			try (ResultSet resultSet = playlistStatement.executeQuery()) {
+				while (resultSet.next()) {
+					playlistIds.add(resultSet.getString("playlist_id"));
+					playlistNames.add(resultSet.getString("playlist_name"));
+				}
+			}
+
+			if (playlistIds.size() != playlistNames.size()) {
+				logger.error("Could not retrieve song links from playlist id");
+				return false;
+			}
+
+			if (playlistNum > playlistIds.size()) {
+				logger.error("Playlist num does not exist in user's playlists");
+				return false;
+			}
+
+			int playlistId = 0;
+			try {
+				playlistId = Integer.parseInt(playlistIds.get(playlistNum - 1));
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+				logger.error("Could not retrieve playlist id from array");
+			}
+
+			if (playlistId == 0)
+				return false;
+
+			updateStatement.setString(1, String.valueOf(playlistName));
+			updateStatement.setString(2, String.valueOf(memberId));
+			updateStatement.setString(2, String.valueOf(playlistId));
+		} catch (SQLException e) {
+			e.printStackTrace();
+			logger.error("Could not rename the playlist given playlist num and member id");
+			return false;
+		}
+
+		return true;
+	}
+}
