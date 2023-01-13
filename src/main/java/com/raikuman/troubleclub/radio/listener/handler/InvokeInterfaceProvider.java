@@ -3,6 +3,7 @@ package com.raikuman.troubleclub.radio.listener.handler;
 import com.raikuman.botutilities.buttons.manager.ButtonInterface;
 import com.raikuman.botutilities.buttons.pagination.manager.PaginationButtonProvider;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
+import com.raikuman.botutilities.modals.manager.ModalInterface;
 import com.raikuman.botutilities.selectmenus.manager.SelectInterface;
 import com.raikuman.botutilities.slashcommands.manager.SlashInterface;
 import com.raikuman.troubleclub.radio.commands.help.Help;
@@ -14,7 +15,12 @@ import com.raikuman.troubleclub.radio.commands.music.*;
 import com.raikuman.troubleclub.radio.commands.other.ChangePrefix;
 import com.raikuman.troubleclub.radio.commands.other.Changelog;
 import com.raikuman.troubleclub.radio.commands.other.ToS;
+import com.raikuman.troubleclub.radio.commands.other.trello.RequestFeature;
+import com.raikuman.troubleclub.radio.commands.other.trello.SubmitBug;
 import com.raikuman.troubleclub.radio.commands.playlist.*;
+import com.raikuman.troubleclub.radio.commands.playlist.deleteplaylist.CancelDeletePlaylist;
+import com.raikuman.troubleclub.radio.commands.playlist.deleteplaylist.ConfirmDeletePlaylist;
+import com.raikuman.troubleclub.radio.commands.playlist.deleteplaylist.DeletePlaylist;
 import com.raikuman.troubleclub.radio.commands.track.*;
 
 import java.util.ArrayList;
@@ -24,7 +30,7 @@ import java.util.List;
 /**
  * Provides commands, buttons, and selects for the ListenerHandler
  *
- * @version 1.4 2023-11-01
+ * @version 1.5 2023-13-01
  * @since 1.1
  */
 public class InvokeInterfaceProvider {
@@ -95,6 +101,7 @@ public class InvokeInterfaceProvider {
 		buttonInterfaces.addAll(PaginationButtonProvider.provideButtons(new TrackSelect(provideCommands())));
 		buttonInterfaces.addAll(PaginationButtonProvider.provideButtons(new PlaylistSelect(provideCommands())));
 		buttonInterfaces.addAll(PaginationButtonProvider.provideButtons(new OtherSelect(provideCommands())));
+		buttonInterfaces.addAll(List.of(new CancelDeletePlaylist(), new ConfirmDeletePlaylist()));
 
 		return buttonInterfaces;
 	}
@@ -116,7 +123,17 @@ public class InvokeInterfaceProvider {
 	public static List<SlashInterface> provideSlashes() {
 		List<SlashInterface> slashInterfaces = new ArrayList<>();
 		slashInterfaces.add(new Help());
+		slashInterfaces.add(new RequestFeature());
+		slashInterfaces.add(new SubmitBug());
 
 		return slashInterfaces;
+	}
+
+	public static List<ModalInterface> provideModals() {
+		List<ModalInterface> modalInterfaces = new ArrayList<>();
+		modalInterfaces.add(new RequestFeature());
+		modalInterfaces.add(new SubmitBug());
+
+		return modalInterfaces;
 	}
 }

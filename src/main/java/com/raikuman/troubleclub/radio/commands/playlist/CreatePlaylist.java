@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 /**
  * Handles creating a playlist from tracks from the queue, or a YouTube playlist link
  *
- * @version 1.2 2023-11-01
+ * @version 1.3 2023-13-01
  * @since 1.2
  */
 public class CreatePlaylist implements CommandInterface {
@@ -70,6 +70,54 @@ public class CreatePlaylist implements CommandInterface {
 			return;
 		}
 
+		// Handle args
+		if (ctx.getArgs().size() == 0)
+			playlistFromQueue(ctx);
+		else if (ctx.getArgs().size() == 1)
+			playlistFromArg(ctx, ctx.getArgs().get(0));
+		else {
+			MessageResources.timedMessage(
+				"You must provide a valid argument for this command: `" + getUsage() + "`",
+				channel,
+				5
+			);
+		}
+
+		ctx.getEvent().getMessage().delete().queue();
+	}
+
+	@Override
+	public String getInvoke() {
+		return "createplaylist";
+	}
+
+	@Override
+	public String getUsage() {
+		return "(<youtube playlist url>)";
+	}
+
+	@Override
+	public String getDescription() {
+		return "Creates a playlist given the current queue, or given a playlist link";
+	}
+
+	@Override
+	public List<String> getAliases() {
+		return List.of(
+			"cpl",
+			"createcassette",
+			"ccass"
+		);
+	}
+
+	@Override
+	public CategoryInterface getCategory() {
+		return new PlaylistCategory();
+	}
+
+	private void playlistFromQueue(CommandContext ctx) {
+		final TextChannel channel = ctx.getChannel().asTextChannel();
+
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
 		final AudioPlayer audioPlayer = musicManager.getAudioPlayer();
 		final TrackScheduler trackScheduler = musicManager.getTrackScheduler();
@@ -100,7 +148,7 @@ public class CreatePlaylist implements CommandInterface {
 		if (ctx.getArgs().size() == 0)
 			playlistName = "";
 		else
-			playlistName = String.join("_", ctx.getArgs());
+			playlistName = String.join(" ", ctx.getArgs());
 
 		if (playlistName.length() > 20) {
 			MessageResources.timedMessage(
@@ -129,40 +177,24 @@ public class CreatePlaylist implements CommandInterface {
 			if (playlistName.isEmpty())
 				builder.setTitle("Unnamed Cassette");
 			else
-				builder.setTitle(playlistName.replace("_", " "));
+				builder.setTitle(playlistName);
 
 			ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
-
-			ctx.getEvent().getMessage().delete().queue();
 		}
 	}
 
-	@Override
-	public String getInvoke() {
-		return "createplaylist";
-	}
+	private void playlistFromArg(CommandContext ctx, String arg) {
+		final TextChannel channel = ctx.getChannel().asTextChannel();
 
-	@Override
-	public String getUsage() {
-		return "(<youtube playlist url>)";
-	}
+		if (!arg.contains("https://www.youtube.com/playlist?list=")) {
+			MessageResources.timedMessage(
+				"You must provide a valid YouTube playlist link to create a cassette this way",
+				channel,
+				5
+			);
+			return;
+		}
 
-	@Override
-	public String getDescription() {
-		return "Creates a playlist given the current queue, or given a playlist link";
-	}
-
-	@Override
-	public List<String> getAliases() {
-		return List.of(
-			"cpl",
-			"createcassette",
-			"ccass"
-		);
-	}
-
-	@Override
-	public CategoryInterface getCategory() {
-		return new PlaylistCategory();
+		String playlist = arg.replace("https://www.youtube.com/playlist?list=", "");
 	}
 }

@@ -4,8 +4,10 @@ import com.raikuman.botutilities.commands.manager.CategoryInterface;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
+import com.raikuman.botutilities.helpers.RandomColor;
 import com.raikuman.troubleclub.radio.category.PlaylistCategory;
 import com.raikuman.troubleclub.radio.config.playlist.PlaylistDB;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import java.util.List;
@@ -14,7 +16,7 @@ import java.util.stream.Collectors;
 /**
  * Handles renaming a user's playlist
  *
- * @version 1.1 2023-11-01
+ * @version 1.2 2023-13-01
  * @since 1.2
  */
 public class RenamePlaylist implements CommandInterface {
@@ -24,7 +26,7 @@ public class RenamePlaylist implements CommandInterface {
 		final TextChannel channel = ctx.getChannel().asTextChannel();
 
 		// Check args
-		if (ctx.getArgs().size() != 2) {
+		if (ctx.getArgs().size() < 1) {
 			MessageResources.timedMessage(
 				"You must provide a valid argument for this command: `" + getUsage() + "`",
 				channel,
@@ -64,7 +66,7 @@ public class RenamePlaylist implements CommandInterface {
 		}
 
 		// Rename playlist
-		if (!PlaylistDB.renamePlaylist(playlistNum, ctx.getEventMember().getIdLong(), "Unnamed Cassette")) {
+		if (!PlaylistDB.renamePlaylist(playlistNum, ctx.getEventMember().getIdLong(), playlistName)) {
 			MessageResources.timedMessage(
 				"Could not rename your cassette: `" + playlistNum + "`",
 				channel,
@@ -72,6 +74,14 @@ public class RenamePlaylist implements CommandInterface {
 			);
 			return;
 		}
+
+		// Send rename embed
+		EmbedBuilder builder = new EmbedBuilder()
+			.setColor(RandomColor.getRandomColor())
+			.setAuthor("\uD83D\uDCFC Renamed Cassette #" + playlistNum + " to " + playlistName, null,
+				ctx.getEventMember().getEffectiveAvatarUrl());
+
+		ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
 
 		ctx.getEvent().getMessage().delete().queue();
 	}
@@ -83,12 +93,12 @@ public class RenamePlaylist implements CommandInterface {
 
 	@Override
 	public String getUsage() {
-		return "<playlist #> <playlist rename>";
+		return "<playlist #> (<playlist rename>)";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Renames a playlist";
+		return "Renames a playlist. If given no arguments, the playlist will be called \"Unnamed Cassette\"";
 	}
 
 	@Override

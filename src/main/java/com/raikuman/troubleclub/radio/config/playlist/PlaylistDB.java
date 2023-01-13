@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * Handles getting and updating values of the playlist tables in the database
  *
- * @version 1.1 2023-11-01
+ * @version 1.2 2023-13-01
  * @since 1.2
  */
 public class PlaylistDB {
@@ -331,12 +331,13 @@ public class PlaylistDB {
 			PreparedStatement preparedStatement = connection.prepareStatement(
 				// language=SQLITE-SQL
 				"DELETE FROM playlists " +
-					"WHERE playlist_id " + playlistId)
+					"WHERE playlist_id=?")
 		) {
-			preparedStatement.executeBatch();
+			preparedStatement.setString(1, String.valueOf(playlistId));
+			preparedStatement.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
-			logger.error("Could not add song to the songs table");
+			logger.error("Could not delete playlist from the playlists table");
 		}
 	}
 
@@ -353,8 +354,7 @@ public class PlaylistDB {
 					"WHERE playlist_number=?")
 			) {
 			preparedStatement.setString(1, String.valueOf(playlistId));
-
-			preparedStatement.executeBatch();
+			preparedStatement.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			logger.error("Could not remove songs from playlists songs table");
@@ -426,6 +426,13 @@ public class PlaylistDB {
 		return true;
 	}
 
+	/**
+	 * Renames a user's playlist
+	 * @param playlistNum The playlist number to change the name of
+	 * @param memberId The member id of the playlist to change
+	 * @param playlistName The name to change the playlist to
+	 * @return True if the playlist name was updated, false otherwise
+	 */
 	public static boolean renamePlaylist(int playlistNum, long memberId, String playlistName) {
 		try (
 			Connection connection = DatabaseManager.getConnection();
@@ -440,10 +447,9 @@ public class PlaylistDB {
 			PreparedStatement updateStatement = connection.prepareStatement(
 				// language=SQLITE-SQL
 				"UPDATE playlists SET playlist_name=? " +
-				"FROM playlists " +
-				"INNER JOIN members ON playlists.member_id=members.member_id " +
-				"WHERE members.member_long=? " +
-				"AND playlists.playlist_id=?")
+				"WHERE member_id=" +
+					"(SELECT members.member_id FROM members WHERE members.member_long=?) " +
+				"AND playlist_id=?")
 			) {
 
 			playlistStatement.setString(1, String.valueOf(memberId));
@@ -478,9 +484,9 @@ public class PlaylistDB {
 			if (playlistId == 0)
 				return false;
 
-			updateStatement.setString(1, String.valueOf(playlistName));
+			updateStatement.setString(1, playlistName);
 			updateStatement.setString(2, String.valueOf(memberId));
-			updateStatement.setString(2, String.valueOf(playlistId));
+			updateStatement.setString(3, String.valueOf(playlistId));
 			updateStatement.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -491,6 +497,11 @@ public class PlaylistDB {
 		return true;
 	}
 
+	/**
+	 * Retrieves playlist information of a user
+	 * @param memberId The member id to get playlist information from
+	 * @return The list of PlaylistInfo retrieved from the database
+	 */
 	public static List<PlaylistInfo> getMemberPlaylistInfo(long memberId) {
 		try (
 			Connection connection = DatabaseManager.getConnection();

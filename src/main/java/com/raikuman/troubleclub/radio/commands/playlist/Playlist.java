@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Handles sending a pagination of playlists of the user
  *
- * @version 1.0 2023-11-01
+ * @version 1.1 2023-13-01
  * @since 1.2
  */
 public class Playlist implements CommandInterface, PageInvokeInterface {
@@ -59,7 +59,7 @@ public class Playlist implements CommandInterface, PageInvokeInterface {
 
 	@Override
 	public String getDescription() {
-		return "";
+		return "Look at your cassettes, or take a look at other peoples' stash!";
 	}
 
 	@Override
