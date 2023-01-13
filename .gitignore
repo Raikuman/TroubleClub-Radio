@@ -34,3 +34,4 @@ test/
 /src/main/java/META-INF/MANIFEST.MF
 /out/
 /database.db
+/keystore.jks
