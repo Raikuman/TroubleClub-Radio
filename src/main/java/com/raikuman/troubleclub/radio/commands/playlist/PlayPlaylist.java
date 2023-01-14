@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Handles playing a playlist to the queue
  *
- * @version 1.2 2023-13-01
+ * @version 1.3 2023-13-01
  * @since 1.2
  */
 public class PlayPlaylist implements CommandInterface {
@@ -61,7 +61,7 @@ public class PlayPlaylist implements CommandInterface {
 			return;
 		}
 
-		PlayerManager.getInstance().loadFromDatabase(channel, info, ctx.getEvent().getAuthor(),
+		PlayerManager.getInstance().loadFromDatabase(channel, info,
 			ctx.getGuild().getIdLong());
 
 		ctx.getEvent().getMessage().delete().queue();

@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Handles loading and playing tracks for the guild music manager
  *
- * @version 1.9 2023-11-01
+ * @version 1.10 2023-13-01
  * @since 1.0
  */
 public class PlayerManager {
@@ -237,23 +237,28 @@ public class PlayerManager {
 	 *
 	 * @param channel The channel to send messages to
 	 * @param playlistInfo The playlist info object to provide name and song urls
-	 * @param user The user to display on an embed
 	 * @param guildId The guild id to get the volume from
 	 */
-	public void loadFromDatabase(TextChannel channel, PlaylistInfo playlistInfo, User user, long guildId) {
+	public void loadFromDatabase(TextChannel channel, PlaylistInfo playlistInfo, long guildId) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
 		musicManager.getAudioPlayer().setVolume(loadVolume(guildId, musicManager.getCurrentAudioTrack()));
 
-		StringBuilder grabVideos = new StringBuilder("http://www.youtube.com/watch_videos?video_ids=");
-		for (int i = 0; i < playlistInfo.getSongs().size(); i++) {
-			grabVideos.append(playlistInfo.getSongs().get(i));
+		String sendLink;
+		if (playlistInfo.getPlaylistLink().isEmpty()) {
+			StringBuilder grabVideos = new StringBuilder("http://www.youtube.com/watch_videos?video_ids=");
+			for (int i = 0; i < playlistInfo.getSongs().size(); i++) {
+				grabVideos.append(playlistInfo.getSongs().get(i));
 
-			if (i < playlistInfo.getSongs().size() - 1) {
-				grabVideos.append(",");
+				if (i < playlistInfo.getSongs().size() - 1) {
+					grabVideos.append(",");
+				}
 			}
+			sendLink = String.valueOf(grabVideos);
+		} else {
+			sendLink = "https://www.youtube.com/playlist?list=" + playlistInfo.getPlaylistLink();
 		}
 
-		this.audioPlayerManager.loadItemOrdered(musicManager, String.valueOf(grabVideos), new AudioLoadResultHandler() {
+		this.audioPlayerManager.loadItemOrdered(musicManager, sendLink, new AudioLoadResultHandler() {
 
 			@Override
 			public void trackLoaded(AudioTrack audioTrack) {

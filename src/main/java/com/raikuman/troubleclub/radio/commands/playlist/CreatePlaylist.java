@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 /**
  * Handles creating a playlist from tracks from the queue, or a YouTube playlist link
  *
- * @version 1.3 2023-13-01
+ * @version 1.4 2023-13-01
  * @since 1.2
  */
 public class CreatePlaylist implements CommandInterface {
@@ -70,12 +70,20 @@ public class CreatePlaylist implements CommandInterface {
 			return;
 		}
 
-		// Handle args
-		if (ctx.getArgs().size() == 0)
-			playlistFromQueue(ctx);
-		else if (ctx.getArgs().size() == 1)
-			playlistFromArg(ctx, ctx.getArgs().get(0));
-		else {
+		if (ctx.getArgs().size() == 0) {
+			playlistFromQueue(ctx, "");
+		} else if (ctx.getArgs().size() > 0) {
+			if (ctx.getArgs().get(0).contains("https://www.youtube.com/playlist?list=")) {
+				if (ctx.getArgs().size() == 1) {
+					playlistFromArg(ctx, ctx.getArgs().get(0), "");
+				} else {
+					playlistFromArg(ctx, ctx.getArgs().get(0),
+						ctx.getArgs().stream().skip(1).collect(Collectors.joining(" ")));
+				}
+			} else {
+				playlistFromQueue(ctx, String.join(" ", ctx.getArgs()));
+			}
+		} else {
 			MessageResources.timedMessage(
 				"You must provide a valid argument for this command: `" + getUsage() + "`",
 				channel,
@@ -115,7 +123,7 @@ public class CreatePlaylist implements CommandInterface {
 		return new PlaylistCategory();
 	}
 
-	private void playlistFromQueue(CommandContext ctx) {
+	private void playlistFromQueue(CommandContext ctx, String playlistName) {
 		final TextChannel channel = ctx.getChannel().asTextChannel();
 
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
@@ -144,46 +152,32 @@ public class CreatePlaylist implements CommandInterface {
 			.map(uri -> uri.replace("https://www.youtube.com/watch?v=", ""))
 			.collect(Collectors.toList());
 
-		String playlistName;
-		if (ctx.getArgs().size() == 0)
-			playlistName = "";
-		else
-			playlistName = String.join(" ", ctx.getArgs());
+		int playlistState = PlaylistDB.createPlaylistQueue(new PlaylistInfo(playlistName, songUrls.size(),
+			songUrls, ctx.getEventMember().getIdLong()));
 
-		if (playlistName.length() > 20) {
+		if (playlistState > 0) {
 			MessageResources.timedMessage(
-				"You must provide a cassette name within 20 characters",
+				"An error occurred while creating your playlist with error code `" + playlistState + "`",
 				channel,
 				5
 			);
 			return;
 		}
 
-		int playlistState = PlaylistDB.createPlaylist(new PlaylistInfo(playlistName, songUrls.size(),
-			songUrls, ctx.getEventMember().getIdLong()));
+		EmbedBuilder builder = new EmbedBuilder()
+			.setColor(RandomColor.getRandomColor())
+			.setAuthor("\uD83D\uDCFC Creating cassette:", null, ctx.getEventMember().getEffectiveAvatarUrl())
+			.addField("Songs in Cassette", "`" + tracks.size() + "` songs", true);
 
-		if (playlistState == 1 || playlistState == 2) {
-			MessageResources.timedMessage(
-				"An error occured while creating your playlist with error code `" + playlistState + "`",
-				channel,
-				5
-			);
-		} else {
-			EmbedBuilder builder = new EmbedBuilder()
-				.setColor(RandomColor.getRandomColor())
-				.setAuthor("\uD83D\uDCFC Creating cassette:", null, ctx.getEventMember().getEffectiveAvatarUrl())
-				.addField("Songs in Cassette", "`" + tracks.size() + "` songs", true);
+		if (playlistName.isEmpty())
+			builder.setTitle("Unnamed Cassette");
+		else
+			builder.setTitle(playlistName);
 
-			if (playlistName.isEmpty())
-				builder.setTitle("Unnamed Cassette");
-			else
-				builder.setTitle(playlistName);
-
-			ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
-		}
+		ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
 	}
 
-	private void playlistFromArg(CommandContext ctx, String arg) {
+	private void playlistFromArg(CommandContext ctx, String arg, String playlistName) {
 		final TextChannel channel = ctx.getChannel().asTextChannel();
 
 		if (!arg.contains("https://www.youtube.com/playlist?list=")) {
@@ -195,6 +189,30 @@ public class CreatePlaylist implements CommandInterface {
 			return;
 		}
 
-		String playlist = arg.replace("https://www.youtube.com/playlist?list=", "");
+		String playlistLink = arg.replace("https://www.youtube.com/playlist?list=", "");
+
+		int playlistState = PlaylistDB.createPlaylistLink(new PlaylistInfo(playlistName, playlistLink,
+			ctx.getEventMember().getIdLong()));
+
+		if (playlistState > 0) {
+			MessageResources.timedMessage(
+				"An error occurred while creating your playlist with error code `" + playlistState + "`",
+				channel,
+				5
+			);
+			return;
+		}
+
+		EmbedBuilder builder = new EmbedBuilder()
+			.setColor(RandomColor.getRandomColor())
+			.setAuthor("\uD83D\uDCFC Creating cassette:", null, ctx.getEventMember().getEffectiveAvatarUrl())
+			.addField("▶️YouTube: ", "`" + arg + "`", true);
+
+		if (playlistName.isEmpty())
+			builder.setTitle("Unnamed Cassette");
+		else
+			builder.setTitle(playlistName);
+
+		ctx.getChannel().sendMessageEmbeds(builder.build()).queue();
 	}
 }

@@ -7,7 +7,7 @@ import java.util.List;
 /**
  *  Provides configuration for playlists
  *
- * @version 1.0 2023-10-01
+ * @version 1.1 2023-13-01
  * @since 1.2
  */
 public class PlaylistConfig implements DatabaseConfigInterface {
@@ -20,6 +20,7 @@ public class PlaylistConfig implements DatabaseConfigInterface {
 			"playlist_id INTEGER PRIMARY KEY AUTOINCREMENT," +
 			"member_id INTEGER NOT NULL," +
 			"playlist_name VARCHAR(20)," +
+			"playlist_link VARCHAR(20)," +
 			"song_count INTEGER NOT NULL," +
 			"FOREIGN KEY(member_id) REFERENCES members(member_id));",
 

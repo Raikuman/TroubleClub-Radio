@@ -7,14 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * Handles getting and updating values of the playlist tables in the database
  *
- * @version 1.2 2023-13-01
+ * @version 1.3 2023-13-01
  * @since 1.2
  */
 public class PlaylistDB {
@@ -22,10 +21,11 @@ public class PlaylistDB {
 	private static final Logger logger = LoggerFactory.getLogger(PlaylistDB.class);
 
 	/**
-	 * Creates a playlist, propagating the playlist tables with relevant playlist information
+	 * Creates a playlist using the music queue, propagating the playlist tables with relevant playlist
+	 * information
 	 * @param playlistInfo The PlaylistInfo object with playlist information
 	 */
-	public static int createPlaylist(PlaylistInfo playlistInfo) {
+	public static int createPlaylistQueue(PlaylistInfo playlistInfo) {
 		// Add songs to song table
 		addSongs(playlistInfo.getSongs());
 
@@ -53,6 +53,47 @@ public class PlaylistDB {
 		if (!addPlaylistsSongs(playlistId, songIds)) {
 			removeSongs(playlistInfo.getSongs());
 			removePlaylist(playlistId);
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Creates a playlist using a YouTune playlist link, using only the playlists table
+	 * @param playlistInfo The PlaylistInfo object with playlist information
+	 */
+	public static int createPlaylistLink(PlaylistInfo playlistInfo) {
+		// Get member id from members table
+		// language=SQLITE-SQL
+		String memberId = DatabaseIO.getConfig(
+			"SELECT members.member_id " +
+				"FROM members " +
+				"WHERE members.member_long = ?",
+			"member_id",
+			String.valueOf(playlistInfo.getMemberId())
+		);
+
+		if (memberId.isEmpty())
+			return 1;
+
+		try (
+			Connection connection = DatabaseManager.getConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(
+				// language=SQLITE-SQL
+				"INSERT OR IGNORE INTO playlists(member_id, playlist_name, song_count, playlist_link) " +
+					"VALUES(?, ?, ?, ?)")
+			) {
+
+			// Insert to playlists table
+			preparedStatement.setString(1, memberId);
+			preparedStatement.setString(2, playlistInfo.getName());
+			preparedStatement.setString(3, String.valueOf(playlistInfo.getNumSongs()));
+			preparedStatement.setString(4, playlistInfo.getPlaylistLink());
+			preparedStatement.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			logger.error("Could not add playlist link to the playlists table");
+			return 2;
 		}
 
 		return 0;
@@ -225,7 +266,7 @@ public class PlaylistDB {
 
 			PreparedStatement playlistStatement = connection.prepareStatement(
 				// language=SQLITE-SQL
-				"SELECT playlists.playlist_id, playlists.playlist_name " +
+				"SELECT playlists.playlist_id, playlists.playlist_name, playlists.playlist_link " +
 				"FROM playlists " +
 				"INNER JOIN members ON playlists.member_id=members.member_id " +
 				"WHERE members.member_long=?");
@@ -233,55 +274,98 @@ public class PlaylistDB {
 			PreparedStatement songStatement = connection.prepareStatement(
 				// language=SQLITE-SQL
 				"SELECT song_link " +
-				"FROM songs " +
-				"INNER JOIN playlists_songs ON songs.song_id=playlists_songs.song_id " +
-				"WHERE playlists_songs.playlist_number=?")
+					"FROM songs " +
+					"INNER JOIN playlists_songs ON songs.song_id=playlists_songs.song_id " +
+					"WHERE playlists_songs.playlist_number=?")
 			) {
 
 			playlistStatement.setString(1, String.valueOf(memberId));
 
-			List<String> playlistIds = new ArrayList<>();
-			List<String> playlistNames = new ArrayList<>();
+			HashMap<Integer, PlaylistInfo> playlistMap = new LinkedHashMap<>();
 			try (ResultSet resultSet = playlistStatement.executeQuery()) {
 				while (resultSet.next()) {
-					playlistIds.add(resultSet.getString("playlist_id"));
-					playlistNames.add(resultSet.getString("playlist_name"));
+					int playlistId;
+					try {
+						playlistId = Integer.parseInt(resultSet.getString("playlist_id"));
+					} catch (NumberFormatException e) {
+						logger.error("Could not parse playlist id");
+						continue;
+					}
+
+					String link;
+					if (resultSet.getString("playlist_link") == null)
+						link = "";
+					else
+						link = resultSet.getString("playlist_link");
+
+					playlistMap.put(
+						playlistId,
+						new PlaylistInfo(
+							resultSet.getString("playlist_name"),
+							0,
+							new ArrayList<>(),
+							link,
+							memberId
+						)
+					);
 				}
 			}
 
-			if (playlistIds.size() != playlistNames.size()) {
-				logger.error("Could not retrieve song links from playlist id");
-				return null;
-			}
-
-			if (playlistNum > playlistIds.size()) {
+			if (playlistNum > playlistMap.size()) {
 				logger.error("Playlist num does not exist in user's playlists");
 				return null;
 			}
 
-			songStatement.setString(1, playlistIds.get(playlistNum - 1));
-
-			List<String> songLinks = new ArrayList<>();
-			try (ResultSet resultSet = songStatement.executeQuery()) {
-				while (resultSet.next()) {
-					songLinks.add(resultSet.getString("song_link"));
+			int playlistCounter = 0;
+			int playlistId = 0;
+			for (Map.Entry<Integer, PlaylistInfo> entry : playlistMap.entrySet()) {
+				if (playlistCounter == (playlistNum - 1)) {
+					playlistId = entry.getKey();
+					break;
 				}
+
+				playlistCounter++;
 			}
 
-			if (songLinks.isEmpty()) {
-				logger.error("Could not retrieve song links from playlist id");
+			if (playlistId == 0) {
+				logger.error("Could not retrieve playlist id from map");
 				return null;
 			}
 
-			String playlistName = playlistNames.get(playlistNum - 1);
-			if (playlistNames.get(playlistNum - 1).equalsIgnoreCase("Unnamed Cassette")) {
-				playlistName = "Cassette #" + playlistNum;
+			// Playlist from songs
+			if (playlistMap.get(playlistId).getPlaylistLink().isEmpty()) {
+				songStatement.setString(1, String.valueOf(playlistId));
+
+				List<String> songLinks = new ArrayList<>();
+				try (ResultSet resultSet = songStatement.executeQuery()) {
+					while (resultSet.next()) {
+						songLinks.add(resultSet.getString("song_link"));
+					}
+				}
+
+				if (songLinks.isEmpty()) {
+					logger.error("Could not retrieve song links from playlist id");
+					return null;
+				}
+
+				String playlistName = playlistMap.get(playlistId).getName();
+				if (playlistMap.get(playlistId).getName().equalsIgnoreCase("Unnamed Cassette")) {
+					playlistName = "Cassette #" + playlistNum;
+				}
+
+				return new PlaylistInfo(playlistName, songLinks.size(), songLinks, memberId);
 			}
 
-			return new PlaylistInfo(playlistName, songLinks.size(), songLinks, memberId);
+			// Playlist from link
+			return new PlaylistInfo(
+				playlistMap.get(playlistId).getName(),
+				playlistMap.get(playlistId).getPlaylistLink(),
+				memberId
+			);
+
 		} catch (SQLException e) {
 			e.printStackTrace();
-			logger.error("Could not retrieve song links from ids");
+			logger.error("Could not retrieve playlist from database");
 		}
 
 		return null;
@@ -324,8 +408,9 @@ public class PlaylistDB {
 	/**
 	 * Removes a playlist from the database using the playlist id
 	 * @param playlistId The playlist id to remove from the database
+	 * @return True if removal was success, false otherwise
 	 */
-	private static void removePlaylist(int playlistId) {
+	private static boolean removePlaylist(int playlistId) {
 		try (
 			Connection connection = DatabaseManager.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(
@@ -335,17 +420,21 @@ public class PlaylistDB {
 		) {
 			preparedStatement.setString(1, String.valueOf(playlistId));
 			preparedStatement.execute();
+
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			logger.error("Could not delete playlist from the playlists table");
+			return false;
 		}
 	}
 
 	/**
 	 * Removes song ids relevant to the playlist id from the playlists_songs table
 	 * @param playlistId The playlist id to remove from the database
+	 * @return True if removal was success, false otherwise
 	 */
-	private static void removePlaylistsSongs(int playlistId) {
+	private static boolean removePlaylistsSongs(int playlistId) {
 		try (
 			Connection connection = DatabaseManager.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(
@@ -355,9 +444,12 @@ public class PlaylistDB {
 			) {
 			preparedStatement.setString(1, String.valueOf(playlistId));
 			preparedStatement.execute();
+
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			logger.error("Could not remove songs from playlists songs table");
+			return false;
 		}
 	}
 
@@ -369,13 +461,14 @@ public class PlaylistDB {
 	 */
 	public static boolean deletePlaylist(int playlistNum, long memberId) {
 		int playlistId = 0;
+		PlaylistInfo foundPlaylist = null;
 
 		try (
 			Connection connection = DatabaseManager.getConnection();
 
 			PreparedStatement playlistStatement = connection.prepareStatement(
 				// language=SQLITE-SQL
-				"SELECT playlists.playlist_id, playlists.playlist_name " +
+				"SELECT playlists.playlist_id, playlists.playlist_name, playlists.playlist_link " +
 					"FROM playlists " +
 					"INNER JOIN members ON playlists.member_id=members.member_id " +
 					"WHERE members.member_long=?")
@@ -383,30 +476,60 @@ public class PlaylistDB {
 
 			playlistStatement.setString(1, String.valueOf(memberId));
 
-			List<String> playlistIds = new ArrayList<>();
-			List<String> playlistNames = new ArrayList<>();
+			HashMap<Integer, PlaylistInfo> playlistMap = new LinkedHashMap<>();
 			try (ResultSet resultSet = playlistStatement.executeQuery()) {
 				while (resultSet.next()) {
-					playlistIds.add(resultSet.getString("playlist_id"));
-					playlistNames.add(resultSet.getString("playlist_name"));
+					int currPlaylistId;
+					try {
+						currPlaylistId = Integer.parseInt(resultSet.getString("playlist_id"));
+					} catch (NumberFormatException e) {
+						logger.error("Could not parse playlist id");
+						continue;
+					}
+
+					String link;
+					if (resultSet.getString("playlist_link") == null)
+						link = "";
+					else
+						link = resultSet.getString("playlist_link");
+
+					playlistMap.put(
+						currPlaylistId,
+						new PlaylistInfo(
+							resultSet.getString("playlist_name"),
+							0,
+							new ArrayList<>(),
+							link,
+							memberId
+						)
+					);
 				}
 			}
 
-			if (playlistIds.size() != playlistNames.size()) {
-				logger.error("Could not retrieve song links from playlist id");
-				return false;
-			}
-
-			if (playlistNum > playlistIds.size()) {
+			if (playlistNum > playlistMap.size()) {
 				logger.error("Playlist num does not exist in user's playlists");
 				return false;
 			}
 
-			try {
-				playlistId = Integer.parseInt(playlistIds.get(playlistNum - 1));
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-				logger.error("Could not retrieve playlist id from array");
+			int playlistCounter = 0;
+			for (Map.Entry<Integer, PlaylistInfo> entry : playlistMap.entrySet()) {
+				if (playlistCounter == (playlistNum - 1)) {
+					playlistId = entry.getKey();
+					foundPlaylist = entry.getValue();
+					break;
+				}
+
+				playlistCounter++;
+			}
+
+			if (playlistId == 0) {
+				logger.error("Could not retrieve playlist id from map");
+				return false;
+			}
+
+			if (foundPlaylist == null) {
+				logger.error("Could not retrieve playlist info from map");
+				return false;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -414,16 +537,16 @@ public class PlaylistDB {
 			return false;
 		}
 
-		if (playlistId == 0) {
-			logger.error("Could not obtain playlist id");
-			return false;
+		// Remove playlist normally
+		if (foundPlaylist.getPlaylistLink().isEmpty()) {
+			if (!removePlaylist(playlistId))
+				return false;
+
+			return removePlaylistsSongs(playlistId);
+		// Remove playlist with link
+		} else {
+			return removePlaylist(playlistId);
 		}
-
-		// Remove playlist from database
-		removePlaylist(playlistId);
-		removePlaylistsSongs(playlistId);
-
-		return true;
 	}
 
 	/**
