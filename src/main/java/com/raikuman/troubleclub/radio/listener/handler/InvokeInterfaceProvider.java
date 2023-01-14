@@ -28,9 +28,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Provides commands, buttons, and selects for the ListenerHandler
+ * Provides commands, buttons, selects, slashes, and modals for the ListenerHandler
  *
- * @version 1.5 2023-13-01
+ * @version 1.6 2023-14-01
  * @since 1.1
  */
 public class InvokeInterfaceProvider {
@@ -120,6 +120,10 @@ public class InvokeInterfaceProvider {
 		return selectInterfaces;
 	}
 
+	/**
+	 * Returns all slash interfaces
+	 * @return The list of slash interfaces
+	 */
 	public static List<SlashInterface> provideSlashes() {
 		List<SlashInterface> slashInterfaces = new ArrayList<>();
 		slashInterfaces.add(new Help());
@@ -129,6 +133,10 @@ public class InvokeInterfaceProvider {
 		return slashInterfaces;
 	}
 
+	/**
+	 * Returns all modal interfaces
+	 * @return The list of modal interfaces
+	 */
 	public static List<ModalInterface> provideModals() {
 		List<ModalInterface> modalInterfaces = new ArrayList<>();
 		modalInterfaces.add(new RequestFeature());

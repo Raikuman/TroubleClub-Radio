@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Handles requesting a feature to a specified Trello board
  *
- * @version 1.0 2023-13-01
+ * @version 1.1 2023-14-01
  * @since 1.2
  */
 public class RequestFeature implements SlashInterface, ModalInterface {
@@ -52,7 +52,7 @@ public class RequestFeature implements SlashInterface, ModalInterface {
 
 	@Override
 	public String getInvoke() {
-		return "feature";
+		return "radio-feature";
 	}
 
 	@Override

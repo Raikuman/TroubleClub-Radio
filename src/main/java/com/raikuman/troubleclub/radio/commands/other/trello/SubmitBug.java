@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Handles submitting a bug to a specified Trello board
  *
- * @version 1.0 2023-13-01
+ * @version 1.1 2023-14-01
  * @since 1.2
  */
 public class SubmitBug implements SlashInterface, ModalInterface {
@@ -52,7 +52,7 @@ public class SubmitBug implements SlashInterface, ModalInterface {
 
 	@Override
 	public String getInvoke() {
-		return "bug";
+		return "radio-bug";
 	}
 
 	@Override
