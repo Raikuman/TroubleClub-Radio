@@ -4,7 +4,7 @@ import com.raikuman.botutilities.buttons.manager.ButtonContext;
 import com.raikuman.botutilities.buttons.manager.ButtonInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
-import com.raikuman.troubleclub.radio.commands.other.trello.SubmitBug;
+import com.raikuman.troubleclub.radio.commands.other.Changelog;
 import com.raikuman.troubleclub.radio.config.playlist.PlaylistDB;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -13,7 +13,7 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 /**
  * Button handles confirming the delete playlist prompt
  *
- * @version 1.0 2023-13-01
+ * @version 1.1 2023-15-01
  * @since 1.2
  */
 public class ConfirmDeletePlaylist implements ButtonInterface {
@@ -29,7 +29,7 @@ public class ConfirmDeletePlaylist implements ButtonInterface {
 			playlistDeletion = Integer.parseInt(String.valueOf(label.charAt(9)));
 		} catch (NumberFormatException e) {
 			MessageResources.timedMessage(
-				"An error has occurred. Fill out a bug report using `/" + new SubmitBug().getInvoke() + "`",
+				"An error has occurred. Please report issues to the Github using the `" + new Changelog().getInvoke() + "` command",
 				channel,
 				5
 			);
@@ -38,7 +38,7 @@ public class ConfirmDeletePlaylist implements ButtonInterface {
 
 		if (playlistDeletion == 0) {
 			MessageResources.timedMessage(
-				"An error has occurred. Fill out a bug report using `/" + new SubmitBug().getInvoke() + "`",
+				"An error has occurred. Please report issues to the Github using the `" + new Changelog().getInvoke() + "` command",
 				channel,
 				5
 			);
