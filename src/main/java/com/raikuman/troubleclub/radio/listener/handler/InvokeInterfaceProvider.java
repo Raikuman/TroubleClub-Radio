@@ -3,8 +3,10 @@ package com.raikuman.troubleclub.radio.listener.handler;
 import com.raikuman.botutilities.buttons.manager.ButtonInterface;
 import com.raikuman.botutilities.buttons.pagination.manager.PaginationButtonProvider;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
+import com.raikuman.botutilities.modals.manager.ModalInterface;
 import com.raikuman.botutilities.selectmenus.manager.SelectInterface;
 import com.raikuman.botutilities.slashcommands.manager.SlashInterface;
+import com.raikuman.troubleclub.radio.commands.bot.PlayBot;
 import com.raikuman.troubleclub.radio.commands.help.Help;
 import com.raikuman.troubleclub.radio.commands.help.selects.MusicSelect;
 import com.raikuman.troubleclub.radio.commands.help.selects.OtherSelect;
@@ -14,6 +16,8 @@ import com.raikuman.troubleclub.radio.commands.music.*;
 import com.raikuman.troubleclub.radio.commands.other.ChangePrefix;
 import com.raikuman.troubleclub.radio.commands.other.Changelog;
 import com.raikuman.troubleclub.radio.commands.other.ToS;
+import com.raikuman.troubleclub.radio.commands.other.trello.RequestFeature;
+import com.raikuman.troubleclub.radio.commands.other.trello.SubmitBug;
 import com.raikuman.troubleclub.radio.commands.playlist.*;
 import com.raikuman.troubleclub.radio.commands.playlist.deleteplaylist.CancelDeletePlaylist;
 import com.raikuman.troubleclub.radio.commands.playlist.deleteplaylist.ConfirmDeletePlaylist;
@@ -27,7 +31,7 @@ import java.util.List;
 /**
  * Provides commands, buttons, selects, slashes, and modals for the ListenerHandler
  *
- * @version 1.9 2023-20-01
+ * @version 1.8 2023-15-01
  * @since 1.1
  */
 public class InvokeInterfaceProvider {
@@ -60,7 +64,6 @@ public class InvokeInterfaceProvider {
 			new Shuffle(),
 			new Prune(),
 			new Volume(),
-			new ShufflePlay(),
 
 			new ChangeTrack(),
 			new PlayingTracks(),
@@ -79,11 +82,20 @@ public class InvokeInterfaceProvider {
 			new CreatePlaylist(),
 			new RenamePlaylist(),
 			new DeletePlaylist(),
-			new ShufflePlayPlaylist(),
 
 			new ChangePrefix(),
 			new ToS(),
 			new Changelog()
+		);
+	}
+
+	/**
+	 * Returns an array of bot commands
+	 * @return The array of bot commands
+	 */
+	public static List<CommandInterface> provideBotCommands() {
+		return Arrays.asList(
+			new PlayBot()
 		);
 	}
 
@@ -126,7 +138,21 @@ public class InvokeInterfaceProvider {
 	public static List<SlashInterface> provideSlashes() {
 		List<SlashInterface> slashInterfaces = new ArrayList<>();
 		slashInterfaces.add(new Help());
+		slashInterfaces.add(new SubmitBug());
+		slashInterfaces.add(new RequestFeature());
 
 		return slashInterfaces;
+	}
+
+	/**
+	 * Returns all modal interfaces
+	 * @return The list of modal interfaces
+	 */
+	public static List<ModalInterface> provideModals() {
+		List<ModalInterface> modalInterfaces = new ArrayList<>();
+		modalInterfaces.add(new SubmitBug());
+		modalInterfaces.add(new RequestFeature());
+
+		return modalInterfaces;
 	}
 }
