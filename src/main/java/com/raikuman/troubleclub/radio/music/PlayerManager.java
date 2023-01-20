@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Handles loading and playing tracks for the guild music manager
  *
- * @version 1.10 2023-13-01
+ * @version 1.11 2023-20-01
  * @since 1.0
  */
 public class PlayerManager {
@@ -304,7 +304,8 @@ public class PlayerManager {
 	 * @param playlistInfo The playlist info object to provide name and song urls
 	 * @param guildId The guild id to get the volume from
 	 */
-	public void loadFromDatabase(TextChannel channel, PlaylistInfo playlistInfo, long guildId) {
+	public void loadFromDatabase(TextChannel channel, PlaylistInfo playlistInfo, long guildId,
+		boolean shuffle) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
 		musicManager.getAudioPlayer().setVolume(loadVolume(guildId, musicManager.getCurrentAudioTrack()));
 
@@ -336,7 +337,11 @@ public class PlayerManager {
 
 			@Override
 			public void playlistLoaded(AudioPlaylist audioPlaylist) {
-				for (AudioTrack audioTrack : audioPlaylist.getTracks()) {
+				List<AudioTrack> audioTracks = audioPlaylist.getTracks();
+				if (shuffle)
+					Collections.shuffle(audioTracks);
+
+				for (AudioTrack audioTrack : audioTracks) {
 					musicManager.getTrackScheduler().queue(audioTrack);
 				}
 
