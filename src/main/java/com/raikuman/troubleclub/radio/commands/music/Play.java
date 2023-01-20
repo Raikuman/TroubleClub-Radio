@@ -15,11 +15,12 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 /**
  * Handles playing music in a user's voice channel
  *
- * @version 1.12 2023-11-01
+ * @version 1.13 2023-19-01
  * @since 1.1
  */
 public class Play implements CommandInterface {
@@ -91,6 +92,11 @@ public class Play implements CommandInterface {
 	public String getDescription() {
 		return "Plays a song or playlist from a link, or search for a song to play. Also can resume a " +
 			"paused audio track provided no link";
+	}
+
+	@Override
+	public List<String> getAliases() {
+		return List.of("p");
 	}
 
 	@Override

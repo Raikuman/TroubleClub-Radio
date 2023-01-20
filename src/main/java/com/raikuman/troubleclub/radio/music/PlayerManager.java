@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -130,6 +131,70 @@ public class PlayerManager {
 			public void noMatches() {
 				MessageResources.timedMessage(
 					"Nothing found using `" + trackUrl + "`",
+					channel,
+					5
+				);
+			}
+
+			@Override
+			public void loadFailed(FriendlyException e) {
+				MessageResources.timedMessage(
+					"Could not load track! `" + e.getMessage() + "`",
+					channel,
+					5
+				);
+			}
+		});
+	}
+
+	/**
+	 * Handles shuffling a playlist before playing it
+	 * @param channel The channel to send messages to
+	 * @param playlistUrl The playlist url to get the audio tracks from
+	 * @param guildId The guild id to get the volume from
+	 * @param playlistTypeName The type of playlist, whether called playlist or cassette
+	 */
+	public void loadAndShuffle(TextChannel channel, String playlistUrl, long guildId, String playlistTypeName) {
+		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+		musicManager.getAudioPlayer().setVolume(loadVolume(guildId, musicManager.getCurrentAudioTrack()));
+
+		this.audioPlayerManager.loadItemOrdered(musicManager, playlistUrl, new AudioLoadResultHandler() {
+
+			@Override
+			public void trackLoaded(AudioTrack audioTrack) {
+				MessageResources.timedMessage(
+					"Could not retrieve given " + playlistTypeName,
+					channel,
+					5
+				);
+			}
+
+			@Override
+			public void playlistLoaded(AudioPlaylist audioPlaylist) {
+				List<AudioTrack> audioTracks = audioPlaylist.getTracks();
+				Collections.shuffle(audioTracks);
+
+				for (AudioTrack audioTrack : audioTracks) {
+					musicManager.getTrackScheduler().queue(audioTrack);
+				}
+
+				EmbedBuilder builder = new EmbedBuilder()
+					.setAuthor("\uD83D\uDCFC Adding " + playlistTypeName + " to queue:")
+					.setTitle(audioPlaylist.getName())
+					.setColor(RandomColor.getRandomColor());
+
+				builder
+					.addField("Songs in " + playlistTypeName.substring(0, 1).toUpperCase() + playlistTypeName.substring(1)
+						, "`" + audioPlaylist.getTracks().size() + "` songs", true)
+					.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
+
+				channel.sendMessageEmbeds(builder.build()).queue();
+			}
+
+			@Override
+			public void noMatches() {
+				MessageResources.timedMessage(
+					"Nothing found using `" + playlistUrl + "`",
 					channel,
 					5
 				);
