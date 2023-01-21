@@ -12,7 +12,7 @@ import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 /**
  * Handles playing music in a user's voice channel via Trouble Club bot interaction
  *
- * @version 1.1 2023-19-01
+ * @version 1.2 2023-21-01
  * @since 1.2
  */
 public class PlayBot implements CommandInterface {
@@ -44,7 +44,7 @@ public class PlayBot implements CommandInterface {
 		ctx.getGuild().getAudioManager().openAudioConnection(voiceChannel);
 
 		// Shuffle instead of regular load and play
-		PlayerManager.getInstance().loadAndPlay(channel, playlistLink, ctx.getEvent().getAuthor(), ctx.getGuild().getIdLong());
+		PlayerManager.getInstance().loadAndShuffle(channel, playlistLink, ctx.getGuild().getIdLong());
 
 		ctx.getEvent().getMessage().delete().queue();
 	}
