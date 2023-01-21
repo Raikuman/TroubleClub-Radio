@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Handles shuffling then playing a playlist
  *
- * @version 1.0 2023-20-01
+ * @version 1.1 2023-20-01
  * @since 1.2
  */
 public class ShufflePlay implements CommandInterface {
@@ -45,7 +45,7 @@ public class ShufflePlay implements CommandInterface {
 			return;
 		}
 
-		PlayerManager.getInstance().loadAndShuffle(channel, link, ctx.getGuild().getIdLong(), "playlist");
+		PlayerManager.getInstance().loadAndShuffle(channel, link, ctx.getGuild().getIdLong());
 
 		ctx.getEvent().getMessage().delete().queue();
 	}

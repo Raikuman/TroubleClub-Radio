@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Handles loading and playing tracks for the guild music manager
  *
- * @version 1.11 2023-20-01
+ * @version 1.12 2023-20-01
  * @since 1.0
  */
 public class PlayerManager {
@@ -152,9 +152,8 @@ public class PlayerManager {
 	 * @param channel The channel to send messages to
 	 * @param playlistUrl The playlist url to get the audio tracks from
 	 * @param guildId The guild id to get the volume from
-	 * @param playlistTypeName The type of playlist, whether called playlist or cassette
 	 */
-	public void loadAndShuffle(TextChannel channel, String playlistUrl, long guildId, String playlistTypeName) {
+	public void loadAndShuffle(TextChannel channel, String playlistUrl, long guildId) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
 		musicManager.getAudioPlayer().setVolume(loadVolume(guildId, musicManager.getCurrentAudioTrack()));
 
@@ -163,7 +162,7 @@ public class PlayerManager {
 			@Override
 			public void trackLoaded(AudioTrack audioTrack) {
 				MessageResources.timedMessage(
-					"Could not retrieve given " + playlistTypeName,
+					"Could not retrieve given playlist",
 					channel,
 					5
 				);
@@ -179,12 +178,12 @@ public class PlayerManager {
 				}
 
 				EmbedBuilder builder = new EmbedBuilder()
-					.setAuthor("\uD83D\uDCFC Adding " + playlistTypeName + " to queue:")
+					.setAuthor("\uD83D\uDCFC Shuffled and adding playlist to queue:")
 					.setTitle(audioPlaylist.getName())
 					.setColor(RandomColor.getRandomColor());
 
 				builder
-					.addField("Songs in " + playlistTypeName.substring(0, 1).toUpperCase() + playlistTypeName.substring(1)
+					.addField("Songs in playlist"
 						, "`" + audioPlaylist.getTracks().size() + "` songs", true)
 					.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
@@ -345,8 +344,12 @@ public class PlayerManager {
 					musicManager.getTrackScheduler().queue(audioTrack);
 				}
 
+				String embedTitle = "Adding";
+				if (shuffle)
+					embedTitle = "Shuffled and adding";
+
 				EmbedBuilder builder = new EmbedBuilder()
-					.setAuthor("\uD83D\uDCFC Adding cassette to queue:")
+					.setAuthor("\uD83D\uDCFC " + embedTitle + " cassette to queue:")
 					.setTitle(playlistInfo.getName())
 					.setColor(RandomColor.getRandomColor());
 
