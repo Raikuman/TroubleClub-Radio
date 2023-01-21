@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Provides commands, buttons, selects, slashes, and modals for the ListenerHandler
  *
- * @version 1.8 2023-15-01
+ * @version 1.9 2023-20-01
  * @since 1.1
  */
 public class InvokeInterfaceProvider {
@@ -62,6 +62,7 @@ public class InvokeInterfaceProvider {
 			new Rewind(),
 			new Random(),
 			new Shuffle(),
+			new ShufflePlay(),
 			new Prune(),
 			new Volume(),
 
@@ -79,6 +80,7 @@ public class InvokeInterfaceProvider {
 
 			new Playlist(),
 			new PlayPlaylist(),
+			new ShufflePlayPlaylist(),
 			new CreatePlaylist(),
 			new RenamePlaylist(),
 			new DeletePlaylist(),
