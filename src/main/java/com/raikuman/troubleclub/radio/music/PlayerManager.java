@@ -1,9 +1,9 @@
 package com.raikuman.troubleclub.radio.music;
 
-import com.raikuman.botutilities.configs.ConfigIO;
 import com.raikuman.botutilities.helpers.DateAndTime;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.troubleclub.radio.config.music.MusicDB;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -13,9 +13,10 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ import java.util.Map;
 /**
  * Handles loading and playing tracks for the guild music manager
  *
- * @version 1.5 2022-30-06
+ * @version 1.12 2023-20-01
  * @since 1.0
  */
 public class PlayerManager {
@@ -59,10 +60,11 @@ public class PlayerManager {
 	 * @param channel The channel to send messages to
 	 * @param trackUrl The track url to get the audio track from
 	 * @param user The user to display on an embed
+	 * @param guildId The guild id to get the volume from
 	 */
-	public void loadAndPlay(TextChannel channel, String trackUrl, User user) {
+	public void loadAndPlay(TextChannel channel, String trackUrl, User user, long guildId) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
-		musicManager.getAudioPlayer().setVolume(loadVolume());
+		musicManager.getAudioPlayer().setVolume(loadVolume(guildId, musicManager.getCurrentAudioTrack()));
 
 		this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
 
@@ -115,11 +117,11 @@ public class PlayerManager {
 					musicManager.getTrackScheduler().queue(track);
 
 				EmbedBuilder builder = new EmbedBuilder()
-					.setAuthor("Adding playlist to queue:", null, user.getAvatarUrl())
+					.setAuthor("\uD83C\uDFA7 Adding playlist to queue:", null, user.getEffectiveAvatarUrl())
 					.setTitle(audioPlaylist.getName(), tracks.get(0).getInfo().uri)
 					.setColor(RandomColor.getRandomColor());
 				builder
-					.addField("Songs in Playlist", "`" + audioPlaylist.getTracks().size() + "`songs", true)
+					.addField("Songs in Playlist", "`" + audioPlaylist.getTracks().size() + "` songs", true)
 					.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
 
 				channel.sendMessageEmbeds(builder.build()).queue();
@@ -146,15 +148,79 @@ public class PlayerManager {
 	}
 
 	/**
+	 * Handles shuffling a playlist before playing it
+	 * @param channel The channel to send messages to
+	 * @param playlistUrl The playlist url to get the audio tracks from
+	 * @param guildId The guild id to get the volume from
+	 */
+	public void loadAndShuffle(TextChannel channel, String playlistUrl, long guildId) {
+		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+		musicManager.getAudioPlayer().setVolume(loadVolume(guildId, musicManager.getCurrentAudioTrack()));
+
+		this.audioPlayerManager.loadItemOrdered(musicManager, playlistUrl, new AudioLoadResultHandler() {
+
+			@Override
+			public void trackLoaded(AudioTrack audioTrack) {
+				MessageResources.timedMessage(
+					"Could not retrieve given playlist",
+					channel,
+					5
+				);
+			}
+
+			@Override
+			public void playlistLoaded(AudioPlaylist audioPlaylist) {
+				List<AudioTrack> audioTracks = audioPlaylist.getTracks();
+				Collections.shuffle(audioTracks);
+
+				for (AudioTrack audioTrack : audioTracks) {
+					musicManager.getTrackScheduler().queue(audioTrack);
+				}
+
+				EmbedBuilder builder = new EmbedBuilder()
+					.setAuthor("\uD83D\uDCFC Shuffled and adding playlist to queue:")
+					.setTitle(audioPlaylist.getName())
+					.setColor(RandomColor.getRandomColor());
+
+				builder
+					.addField("Songs in playlist"
+						, "`" + audioPlaylist.getTracks().size() + "` songs", true)
+					.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
+
+				channel.sendMessageEmbeds(builder.build()).queue();
+			}
+
+			@Override
+			public void noMatches() {
+				MessageResources.timedMessage(
+					"Nothing found using `" + playlistUrl + "`",
+					channel,
+					5
+				);
+			}
+
+			@Override
+			public void loadFailed(FriendlyException e) {
+				MessageResources.timedMessage(
+					"Could not load track! `" + e.getMessage() + "`",
+					channel,
+					5
+				);
+			}
+		});
+	}
+
+	/**
 	 * Handles loading tracks to the top of the queue
 	 * @param channel The channel to send messages to
 	 * @param trackUrl The track url to get the audio track from
 	 * @param user The user to display on an embed
 	 * @param playNow If the top track should be played immediately
+	 * @param guildId The guild id to get the volume from
 	 */
-	public void loadToTop(TextChannel channel, String trackUrl, User user, boolean playNow) {
+	public void loadToTop(TextChannel channel, String trackUrl, User user, boolean playNow, long guildId) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
-		musicManager.getAudioPlayer().setVolume(loadVolume());
+		musicManager.getAudioPlayer().setVolume(loadVolume(guildId, musicManager.getCurrentAudioTrack()));
 
 		this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
 
@@ -232,6 +298,89 @@ public class PlayerManager {
 	}
 
 	/**
+	 *
+	 * @param channel The channel to send messages to
+	 * @param playlistInfo The playlist info object to provide name and song urls
+	 * @param guildId The guild id to get the volume from
+	 */
+	public void loadFromDatabase(TextChannel channel, PlaylistInfo playlistInfo, long guildId,
+		boolean shuffle) {
+		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+		musicManager.getAudioPlayer().setVolume(loadVolume(guildId, musicManager.getCurrentAudioTrack()));
+
+		String sendLink;
+		if (playlistInfo.getPlaylistLink().isEmpty()) {
+			StringBuilder grabVideos = new StringBuilder("http://www.youtube.com/watch_videos?video_ids=");
+			for (int i = 0; i < playlistInfo.getSongs().size(); i++) {
+				grabVideos.append(playlistInfo.getSongs().get(i));
+
+				if (i < playlistInfo.getSongs().size() - 1) {
+					grabVideos.append(",");
+				}
+			}
+			sendLink = String.valueOf(grabVideos);
+		} else {
+			sendLink = "https://www.youtube.com/playlist?list=" + playlistInfo.getPlaylistLink();
+		}
+
+		this.audioPlayerManager.loadItemOrdered(musicManager, sendLink, new AudioLoadResultHandler() {
+
+			@Override
+			public void trackLoaded(AudioTrack audioTrack) {
+				MessageResources.timedMessage(
+					"Could not retrieve given cassette",
+					channel,
+					5
+				);
+			}
+
+			@Override
+			public void playlistLoaded(AudioPlaylist audioPlaylist) {
+				List<AudioTrack> audioTracks = audioPlaylist.getTracks();
+				if (shuffle)
+					Collections.shuffle(audioTracks);
+
+				for (AudioTrack audioTrack : audioTracks) {
+					musicManager.getTrackScheduler().queue(audioTrack);
+				}
+
+				String embedTitle = "Adding";
+				if (shuffle)
+					embedTitle = "Shuffled and adding";
+
+				EmbedBuilder builder = new EmbedBuilder()
+					.setAuthor("\uD83D\uDCFC " + embedTitle + " cassette to queue:")
+					.setTitle(playlistInfo.getName())
+					.setColor(RandomColor.getRandomColor());
+
+				builder
+					.addField("Songs in Cassette", "`" + audioPlaylist.getTracks().size() + "` songs", true)
+					.setFooter("Audio track " + musicManager.getCurrentAudioTrack());
+
+				channel.sendMessageEmbeds(builder.build()).queue();
+			}
+
+			@Override
+			public void noMatches() {
+				MessageResources.timedMessage(
+					"Could not retrieve given cassette",
+					channel,
+					5
+				);
+			}
+
+			@Override
+			public void loadFailed(FriendlyException e) {
+				MessageResources.timedMessage(
+					"Could not retrieve given cassette",
+					channel,
+					5
+				);
+			}
+		});
+	}
+
+	/**
 	 * Returns the current instance of the player manager
 	 * @return The player manager instance
 	 */
@@ -248,6 +397,7 @@ public class PlayerManager {
 	 * @param queueSize The size of the current queue
 	 * @param audioTrack The track that was added to the queue
 	 * @param user The user to display on an embed
+	 * @param currentAudioTrack The current audio track the manager is on
 	 * @return The embed builder with track information
 	 */
 	private EmbedBuilder trackEmbed(int queueSize, AudioTrack audioTrack, User user, int currentAudioTrack) {
@@ -280,6 +430,7 @@ public class PlayerManager {
 	 * @param audioTrack The track that was added to the top of the queue
 	 * @param user The user to display on an embed
 	 * @param playNow If the track was played immediately
+	 * @param currentAudioTrack The current audio track the manager is on
 	 * @return The embed builder with track information
 	 */
 	private EmbedBuilder topEmbed(AudioTrack audioTrack, User user, boolean playNow, int currentAudioTrack) {
@@ -304,10 +455,12 @@ public class PlayerManager {
 
 	/**
 	 * Returns the volume setting from the music config
+	 * @param guildId The guild id to get the volume from
+	 * @param trackNum The track number the manager is on
 	 * @return The volume setting normalized for the bot
 	 */
-	private int loadVolume() {
-		String volume = ConfigIO.readConfig("musicSettings", "volume");
+	private int loadVolume(long guildId, int trackNum) {
+		String volume = MusicDB.getTrackVolume(guildId, trackNum);
 		int calculateVolume;
 		try {
 			int volumeNum = Integer.parseInt(volume);
