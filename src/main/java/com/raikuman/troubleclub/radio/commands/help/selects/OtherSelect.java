@@ -1,57 +1,34 @@
 package com.raikuman.troubleclub.radio.commands.help.selects;
 
 import com.raikuman.botutilities.buttons.pagination.manager.PageInvokeInterface;
-import com.raikuman.botutilities.buttons.pagination.manager.Pagination;
-import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.context.EventContext;
 import com.raikuman.botutilities.selectmenus.manager.SelectContext;
 import com.raikuman.botutilities.selectmenus.manager.SelectInterface;
 import com.raikuman.troubleclub.radio.category.OtherCategory;
-import com.raikuman.troubleclub.radio.commands.help.HelpResources;
+import com.raikuman.troubleclub.radio.commands.help.HelpUtilities;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.ItemComponent;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * Handles showing the description of other commands
  *
- * @version 1.2 2022-15-07
+ * @version 1.3 2023-08-03
  * @since 1.1
  */
 public class OtherSelect implements SelectInterface, PageInvokeInterface {
 
-	private final List<CommandInterface> commands;
-
-	public OtherSelect(List<CommandInterface> commands) {
-		this.commands = HelpResources.parseCategory(commands, new OtherCategory());
-	}
-
 	@Override
 	public void handle(SelectContext ctx) {
-		Pagination pagination = new Pagination(
-			ctx.getEventMember(),
+		HelpUtilities.handleHelpSelect(
+			ctx,
 			getMenuValue(),
 			pageName(),
 			pageStrings(ctx),
 			itemsPerPage(),
 			loopPagination()
 		);
-
-		List<ItemComponent> componentList = Arrays.asList(
-			pagination.provideLeft(),
-			pagination.provideHome(),
-			pagination.provideFirst(),
-			pagination.provideRight()
-		);
-
-		ctx.getEvent().getHook().editOriginalEmbeds(pagination.buildEmbeds().get(0).build())
-			.setActionRow(componentList)
-			.queue();
-
-		ctx.getEvent().deferEdit().queue();
 	}
 
 	@Override
@@ -70,8 +47,8 @@ public class OtherSelect implements SelectInterface, PageInvokeInterface {
 	}
 
 	@Override
-	public List<String> pageStrings(EventContext eventContext) {
-		return HelpResources.buildPages(commands, eventContext.getGuild().getIdLong());
+	public List<String> pageStrings(EventContext ctx) {
+		return HelpUtilities.getHelpManager(ctx).provideHelpCategoryPageStrings(new OtherCategory().getName());
 	}
 
 	@Override
@@ -96,11 +73,11 @@ public class OtherSelect implements SelectInterface, PageInvokeInterface {
 
 	@Override
 	public List<ActionRow> homeActionRows(EventContext ctx) {
-		return HelpResources.getHomeActionRows(ctx);
+		return HelpUtilities.getHelpManager(ctx).provideHomeActionRows();
 	}
 
 	@Override
 	public List<EmbedBuilder> homePages(EventContext ctx) {
-		return HelpResources.getHomePagination(ctx).buildEmbeds();
+		return HelpUtilities.getHelpManager(ctx).getHomePagination().buildEmbeds();
 	}
 }
