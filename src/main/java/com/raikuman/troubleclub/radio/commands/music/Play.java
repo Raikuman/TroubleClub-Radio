@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Handles playing music in a user's voice channel
  *
- * @version 1.13 2023-19-01
+ * @version 1.14 2023-08-03
  * @since 1.1
  */
 public class Play implements CommandInterface {
@@ -29,7 +29,9 @@ public class Play implements CommandInterface {
 	public void handle(CommandContext ctx) {
 		final TextChannel channel = ctx.getChannel().asTextChannel();
 
-		new Join().joinChannel(ctx);
+		if (!new Join().joinChannel(ctx)) {
+			return;
+		}
 
 		if (ctx.getArgs().isEmpty()) {
 			final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());

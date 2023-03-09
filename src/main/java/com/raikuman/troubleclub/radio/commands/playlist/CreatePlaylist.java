@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 /**
  * Handles creating a playlist from tracks from the queue, or a YouTube playlist link
  *
- * @version 1.4 2023-13-01
+ * @version 1.5 2023-08-03
  * @since 1.2
  */
 public class CreatePlaylist implements CommandInterface {
@@ -47,7 +47,7 @@ public class CreatePlaylist implements CommandInterface {
 			return;
 		}
 
-		if (!memberVoiceState.inAudioChannel()) {
+		if (!memberVoiceState.inAudioChannel() || (memberVoiceState.getGuild() != ctx.getGuild())) {
 			MessageResources.timedMessage(
 				"You must be in a voice channel to use this command",
 				channel,

@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Handles adding a new song to the top of the queue
  *
- * @version 1.7 2023-11-01
+ * @version 1.8 2023-08-03
  * @since 1.1
  */
 public class PlayTop implements CommandInterface {
@@ -38,7 +38,7 @@ public class PlayTop implements CommandInterface {
 			return;
 		}
 
-		if (!memberVoiceState.inAudioChannel()) {
+		if (!memberVoiceState.inAudioChannel() || (memberVoiceState.getGuild() != ctx.getGuild())) {
 			MessageResources.timedMessage(
 				"You must be in a voice channel to use this command",
 				channel,

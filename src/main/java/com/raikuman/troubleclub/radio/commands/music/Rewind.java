@@ -20,7 +20,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 /**
  * Handles rewinding the current playing song to the beginning of the song
  *
- * @version 1.5 2023-11-01
+ * @version 1.6 2023-08-03
  * @since 1.1
  */
 public class Rewind implements CommandInterface {
@@ -41,7 +41,7 @@ public class Rewind implements CommandInterface {
 			return;
 		}
 
-		if (!memberVoiceState.inAudioChannel()) {
+		if (!memberVoiceState.inAudioChannel() || (memberVoiceState.getGuild() != ctx.getGuild())) {
 			MessageResources.timedMessage(
 				"You must be in a voice channel to use this command",
 				channel,

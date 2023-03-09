@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Handles the bot joining the voice channel of a user
  *
- * @version 1.4 2023-11-01
+ * @version 1.5 2023-08-03
  * @since 1.1
  */
 public class Join implements CommandInterface {
@@ -71,7 +71,7 @@ public class Join implements CommandInterface {
 			return false;
 		}
 
-		if (!memberVoiceState.inAudioChannel()) {
+		if (!memberVoiceState.inAudioChannel() || (memberVoiceState.getGuild() != ctx.getGuild())) {
 			MessageResources.timedMessage(
 				"You must be in a voice channel to use this command",
 				channel,

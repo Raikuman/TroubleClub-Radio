@@ -19,7 +19,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 /**
  * Handles the bot repeating the currently playing audio track
  *
- * @version 1.6 2023-11-01
+ * @version 1.7 2023-08-03
  * @since 1.1
  */
 public class Repeat implements CommandInterface {
@@ -40,7 +40,7 @@ public class Repeat implements CommandInterface {
 			return;
 		}
 
-		if (!memberVoiceState.inAudioChannel()) {
+		if (!memberVoiceState.inAudioChannel() || (memberVoiceState.getGuild() != ctx.getGuild())) {
 			MessageResources.timedMessage(
 				"You must be in a voice channel to use this command",
 				channel,

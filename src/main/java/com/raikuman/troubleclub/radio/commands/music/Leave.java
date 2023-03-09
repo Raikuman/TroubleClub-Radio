@@ -3,10 +3,14 @@ package com.raikuman.troubleclub.radio.commands.music;
 import com.raikuman.botutilities.commands.manager.CategoryInterface;
 import com.raikuman.botutilities.commands.manager.CommandContext;
 import com.raikuman.botutilities.commands.manager.CommandInterface;
+import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.troubleclub.radio.category.MusicCategory;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
 import com.raikuman.troubleclub.radio.music.TrackScheduler;
+import net.dv8tion.jda.api.entities.GuildVoiceState;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 import java.util.List;
@@ -14,13 +18,36 @@ import java.util.List;
 /**
  * Handles the bot leaving the voice channel of a user
  *
- * @version 1.7 2023-11-01
+ * @version 1.8 2023-08-03
  * @since 1.1
  */
 public class Leave implements CommandInterface {
 
 	@Override
 	public void handle(CommandContext ctx) {
+		final TextChannel channel = ctx.getChannel().asTextChannel();
+		final Member self = ctx.getGuild().getSelfMember();
+		final GuildVoiceState selfVoiceState = self.getVoiceState();
+		if (selfVoiceState == null) {
+			MessageResources.connectError(channel, 5);
+			return;
+		}
+
+		GuildVoiceState memberVoiceState = ctx.getEventMember().getVoiceState();
+		if (memberVoiceState == null) {
+			MessageResources.connectError(channel, 5);
+			return;
+		}
+
+		if (!memberVoiceState.inAudioChannel() || (memberVoiceState.getGuild() != ctx.getGuild())) {
+			MessageResources.timedMessage(
+				"You must be in a voice channel to use this command",
+				channel,
+				5
+			);
+			return;
+		}
+
 		boolean stopped = new Stop().stopMusic(ctx);
 
 		if (stopped) {

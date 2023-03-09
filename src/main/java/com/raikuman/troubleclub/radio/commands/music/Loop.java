@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Handles the bot looping the current audio player queue
  *
- * @version 1.7 2023-11-01
+ * @version 1.8 2023-08-03
  * @since 1.1
  */
 public class Loop implements CommandInterface {
@@ -42,7 +42,7 @@ public class Loop implements CommandInterface {
 			return;
 		}
 
-		if (!memberVoiceState.inAudioChannel()) {
+		if (!memberVoiceState.inAudioChannel() || (memberVoiceState.getGuild() != ctx.getGuild())) {
 			MessageResources.timedMessage(
 				"You must be in a voice channel to use this command",
 				channel,

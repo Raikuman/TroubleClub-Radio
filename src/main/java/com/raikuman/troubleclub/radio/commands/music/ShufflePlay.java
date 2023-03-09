@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Handles shuffling then playing a playlist
  *
- * @version 1.1 2023-20-01
+ * @version 1.2 2023-08-03
  * @since 1.2
  */
 public class ShufflePlay implements CommandInterface {
@@ -24,7 +24,9 @@ public class ShufflePlay implements CommandInterface {
 	public void handle(CommandContext ctx) {
 		final TextChannel channel = ctx.getChannel().asTextChannel();
 
-		new Join().joinChannel(ctx);
+		if (!new Join().joinChannel(ctx)) {
+			return;
+		}
 
 		if (ctx.getArgs().size() != 1) {
 			MessageResources.timedMessage(

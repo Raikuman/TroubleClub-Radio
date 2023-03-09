@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Handles removing a selected song from the queue
  *
- * @version 1.1 2023-11-01
+ * @version 1.2 2023-08-03
  * @since 1.2
  */
 public class Remove implements CommandInterface {
@@ -41,7 +41,7 @@ public class Remove implements CommandInterface {
 			return;
 		}
 
-		if (!memberVoiceState.inAudioChannel()) {
+		if (!memberVoiceState.inAudioChannel() || (memberVoiceState.getGuild() != ctx.getGuild())) {
 			MessageResources.timedMessage(
 				"You must be in a voice channel to use this command",
 				channel,

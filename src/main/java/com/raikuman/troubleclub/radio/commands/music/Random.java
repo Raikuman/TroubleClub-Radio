@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Handles playing a random song immediately from the queue
  *
- * @version 1.4 2023-11-01
+ * @version 1.5 2023-08-03
  * @since 1.1
  */
 public class Random implements CommandInterface {
@@ -41,7 +41,7 @@ public class Random implements CommandInterface {
 			return;
 		}
 
-		if (!memberVoiceState.inAudioChannel()) {
+		if (!memberVoiceState.inAudioChannel() || (memberVoiceState.getGuild() != ctx.getGuild())) {
 			MessageResources.timedMessage(
 				"You must be in a voice channel to use this command",
 				channel,

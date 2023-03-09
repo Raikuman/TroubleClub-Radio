@@ -19,13 +19,36 @@ import java.util.List;
 /**
  * Handles the bot stopping the current playing song and clearing the queue
  *
- * @version 1.10 2023-11-01
+ * @version 1.11 2023-08-03
  * @since 1.1
  */
 public class Stop implements CommandInterface {
 
 	@Override
 	public void handle(CommandContext ctx) {
+		final TextChannel channel = ctx.getChannel().asTextChannel();
+		final Member self = ctx.getGuild().getSelfMember();
+		final GuildVoiceState selfVoiceState = self.getVoiceState();
+		if (selfVoiceState == null) {
+			MessageResources.connectError(channel, 5);
+			return;
+		}
+
+		GuildVoiceState memberVoiceState = ctx.getEventMember().getVoiceState();
+		if (memberVoiceState == null) {
+			MessageResources.connectError(channel, 5);
+			return;
+		}
+
+		if (!memberVoiceState.inAudioChannel() || (memberVoiceState.getGuild() != ctx.getGuild())) {
+			MessageResources.timedMessage(
+				"You must be in a voice channel to use this command",
+				channel,
+				5
+			);
+			return;
+		}
+
 		boolean stopped = stopMusic(ctx);
 
 		if (stopped) {

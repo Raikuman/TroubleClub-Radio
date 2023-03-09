@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 /**
  * Handles shuffling the current queue of songs
  *
- * @version 1.3 2023-11-01
+ * @version 1.4 2023-08-03
  * @since 1.1
  */
 public class Shuffle implements CommandInterface {
@@ -38,7 +38,7 @@ public class Shuffle implements CommandInterface {
 			return;
 		}
 
-		if (!memberVoiceState.inAudioChannel()) {
+		if (!memberVoiceState.inAudioChannel() || (memberVoiceState.getGuild() != ctx.getGuild())) {
 			MessageResources.timedMessage(
 				"You must be in a voice channel to use this command",
 				channel,
