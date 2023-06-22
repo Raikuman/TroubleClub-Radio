@@ -1,9 +1,9 @@
 package com.raikuman.troubleclub.radio.commands.other;
 
-import com.raikuman.botutilities.commands.manager.CategoryInterface;
-import com.raikuman.botutilities.commands.manager.CommandContext;
-import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.botutilities.invokes.CategoryInterface;
+import com.raikuman.botutilities.invokes.context.CommandContext;
+import com.raikuman.botutilities.invokes.interfaces.CommandInterface;
 import com.raikuman.troubleclub.radio.category.OtherCategory;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Handles sending an embed with informational links about the bot
  *
- * @version 1.2 2023-11-01
+ * @version 1.3 2023-22-06
  * @since 1.1
  */
 public class Changelog implements CommandInterface {

@@ -1,83 +1,48 @@
 package com.raikuman.troubleclub.radio.commands.help.selects;
 
-import com.raikuman.botutilities.buttons.pagination.manager.PageInvokeInterface;
-import com.raikuman.botutilities.context.EventContext;
-import com.raikuman.botutilities.selectmenus.manager.SelectContext;
-import com.raikuman.botutilities.selectmenus.manager.SelectInterface;
+import com.raikuman.botutilities.invokes.context.SelectContext;
+import com.raikuman.botutilities.invokes.interfaces.SelectInterface;
+import com.raikuman.botutilities.invokes.manager.InvokeProvider;
+import com.raikuman.botutilities.pagination.manager.PageComponent;
+import com.raikuman.botutilities.pagination.manager.PaginationBuilder;
 import com.raikuman.troubleclub.radio.category.MusicCategory;
 import com.raikuman.troubleclub.radio.commands.help.HelpUtilities;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-
-import java.util.List;
 
 /**
- * Handles showing the description of music commands
+ * Handles the music select for the help command
  *
- * @version 1.3 2023-08-03
- * @since 1.1
+ * @version 1.0 2023-22-06
+ * @since 1.3
  */
-public class MusicSelect implements SelectInterface, PageInvokeInterface {
+public class MusicSelect extends PageComponent implements SelectInterface {
 
-	@Override
-	public void handle(SelectContext ctx) {
-		HelpUtilities.handleHelpSelect(
-			ctx,
-			getMenuValue(),
-			pageName(),
-			pageStrings(ctx),
-			itemsPerPage(),
-			loopPagination()
-		);
-	}
+    private final InvokeProvider invokeProvider;
 
-	@Override
-	public String getMenuValue() {
-		return "helpmusic";
-	}
+    public MusicSelect(InvokeProvider invokeProvider) {
+        this.invokeProvider = invokeProvider;
 
-	@Override
-	public String getLabel() {
-		return "Music";
-	}
+        pagination = new PaginationBuilder(getInvoke())
+            .setTitle("Music Commands")
+            .setItemsPerPage(1)
+            .enableLoop(true)
+            .enableFirstPageButton(true)
+            .enableHomeButton(true)
+            .build();
+    }
 
-	@Override
-	public String pageName() {
-		return "Music Commands";
-	}
+    @Override
+    public void handle(SelectContext ctx) {
+        pagination.updateEmbeds(HelpUtilities.categoryPageStrings(ctx, invokeProvider, new MusicCategory()));
+        pagination.selectHandle(ctx);
+    }
 
-	@Override
-	public List<String> pageStrings(EventContext ctx) {
-		return HelpUtilities.getHelpManager(ctx).provideHelpCategoryPageStrings(new MusicCategory().getName());
-	}
+    @Override
+    public String displayLabel() {
+        return "Music Commands";
+    }
 
-	@Override
-	public int itemsPerPage() {
-		return 1;
-	}
-
-	@Override
-	public boolean loopPagination() {
-		return true;
-	}
-
-	@Override
-	public boolean addHomeBtn() {
-		return true;
-	}
-
-	@Override
-	public boolean addFirstPageBtn() {
-		return true;
-	}
-
-	@Override
-	public List<ActionRow> homeActionRows(EventContext ctx) {
-		return HelpUtilities.getHelpManager(ctx).provideHomeActionRows();
-	}
-
-	@Override
-	public List<EmbedBuilder> homePages(EventContext ctx) {
-		return HelpUtilities.getHelpManager(ctx).getHomePagination().buildEmbeds();
-	}
+    @Override
+    public String getInvoke() {
+        return "helpmusic";
+    }
 }

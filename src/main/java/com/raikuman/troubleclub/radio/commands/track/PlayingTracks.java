@@ -1,10 +1,10 @@
 package com.raikuman.troubleclub.radio.commands.track;
 
-import com.raikuman.botutilities.commands.manager.CategoryInterface;
-import com.raikuman.botutilities.commands.manager.CommandContext;
-import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.botutilities.invokes.CategoryInterface;
+import com.raikuman.botutilities.invokes.context.CommandContext;
+import com.raikuman.botutilities.invokes.interfaces.CommandInterface;
 import com.raikuman.troubleclub.radio.category.TrackCategory;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
@@ -22,7 +22,7 @@ import java.util.Map;
  * Handles sending an embed of the playing songs and size of queue from all audio tracks
  * player
  *
- * @version 1.3 2023-11-01
+ * @version 1.4 2023-22-06
  * @since 1.1
  */
 public class PlayingTracks implements CommandInterface {

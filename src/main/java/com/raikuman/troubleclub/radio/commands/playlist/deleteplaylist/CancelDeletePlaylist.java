@@ -1,14 +1,14 @@
 package com.raikuman.troubleclub.radio.commands.playlist.deleteplaylist;
 
-import com.raikuman.botutilities.buttons.manager.ButtonContext;
-import com.raikuman.botutilities.buttons.manager.ButtonInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
+import com.raikuman.botutilities.invokes.context.ButtonContext;
+import com.raikuman.botutilities.invokes.interfaces.ButtonInterface;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 /**
  * Button handles canceling the delete playlist prompt
  *
- * @version 1.0 2023-13-01
+ * @version 1.1 2023-22-06
  * @since 1.2
  */
 public class CancelDeletePlaylist implements ButtonInterface {
@@ -25,17 +25,17 @@ public class CancelDeletePlaylist implements ButtonInterface {
 	}
 
 	@Override
-	public String getButtonId() {
+	public Emoji displayEmoji() {
+		return null;
+	}
+
+	@Override
+	public String displayLabel() {
+		return null;
+	}
+
+	@Override
+	public String getInvoke() {
 		return "CancelDeletePlaylist";
-	}
-
-	@Override
-	public Emoji getEmoji() {
-		return null;
-	}
-
-	@Override
-	public String getLabel() {
-		return null;
 	}
 }

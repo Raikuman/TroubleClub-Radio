@@ -1,9 +1,9 @@
 package com.raikuman.troubleclub.radio.commands.playlist.deleteplaylist;
 
-import com.raikuman.botutilities.buttons.manager.ButtonContext;
-import com.raikuman.botutilities.buttons.manager.ButtonInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.botutilities.invokes.context.ButtonContext;
+import com.raikuman.botutilities.invokes.interfaces.ButtonInterface;
 import com.raikuman.troubleclub.radio.commands.other.Changelog;
 import com.raikuman.troubleclub.radio.config.playlist.PlaylistDB;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -13,7 +13,7 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 /**
  * Button handles confirming the delete playlist prompt
  *
- * @version 1.1 2023-15-01
+ * @version 1.2 2023-22-06
  * @since 1.2
  */
 public class ConfirmDeletePlaylist implements ButtonInterface {
@@ -68,17 +68,17 @@ public class ConfirmDeletePlaylist implements ButtonInterface {
 	}
 
 	@Override
-	public String getButtonId() {
+	public Emoji displayEmoji() {
+		return null;
+	}
+
+	@Override
+	public String displayLabel() {
+		return null;
+	}
+
+	@Override
+	public String getInvoke() {
 		return "ConfirmDeletePlaylist";
-	}
-
-	@Override
-	public Emoji getEmoji() {
-		return null;
-	}
-
-	@Override
-	public String getLabel() {
-		return null;
 	}
 }

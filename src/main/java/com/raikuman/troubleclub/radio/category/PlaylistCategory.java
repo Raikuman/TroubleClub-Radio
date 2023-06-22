@@ -1,11 +1,11 @@
 package com.raikuman.troubleclub.radio.category;
 
-import com.raikuman.botutilities.commands.manager.CategoryInterface;
+import com.raikuman.botutilities.invokes.CategoryInterface;
 
 /**
  * Provides name and emoji for the playlist category
  *
- * @version 1.0 2022-03-08
+ * @version 1.1 2023-22-06
  * @since 1.2
  */
 public class PlaylistCategory implements CategoryInterface {

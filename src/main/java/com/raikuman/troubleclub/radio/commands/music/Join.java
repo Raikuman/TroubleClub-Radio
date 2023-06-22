@@ -1,9 +1,9 @@
 package com.raikuman.troubleclub.radio.commands.music;
 
-import com.raikuman.botutilities.commands.manager.CategoryInterface;
-import com.raikuman.botutilities.commands.manager.CommandContext;
-import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
+import com.raikuman.botutilities.invokes.CategoryInterface;
+import com.raikuman.botutilities.invokes.context.CommandContext;
+import com.raikuman.botutilities.invokes.interfaces.CommandInterface;
 import com.raikuman.troubleclub.radio.category.MusicCategory;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Handles the bot joining the voice channel of a user
  *
- * @version 1.5 2023-08-03
+ * @version 1.6 2023-22-06
  * @since 1.1
  */
 public class Join implements CommandInterface {

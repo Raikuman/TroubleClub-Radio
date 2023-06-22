@@ -1,14 +1,14 @@
 package com.raikuman.troubleclub.radio.commands.music;
 
-import com.raikuman.botutilities.buttons.pagination.manager.PageInvokeInterface;
-import com.raikuman.botutilities.commands.manager.CategoryInterface;
+import com.raikuman.botutilities.invokes.CategoryInterface;
+import com.raikuman.botutilities.invokes.context.CommandContext;
+import com.raikuman.botutilities.invokes.context.EventContext;
+import com.raikuman.botutilities.invokes.interfaces.CommandInterface;
+import com.raikuman.botutilities.pagination.manager.PageComponent;
+import com.raikuman.botutilities.pagination.manager.PaginationBuilder;
 import com.raikuman.troubleclub.radio.category.MusicCategory;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
-import com.raikuman.botutilities.buttons.pagination.manager.Pagination;
-import com.raikuman.botutilities.commands.manager.CommandContext;
-import com.raikuman.botutilities.commands.manager.CommandInterface;
-import com.raikuman.botutilities.context.EventContext;
 import com.raikuman.botutilities.helpers.DateAndTime;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.troubleclub.radio.music.TrackScheduler;
@@ -18,19 +18,26 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.interactions.components.ItemComponent;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * Handles sending a pagination of songs queued and playing, as well as the state of the audio player
  *
- * @version 1.6 2023-08-03
+ * @version 1.7 2023-22-06
  * @since 1.1
  */
-public class Queue implements CommandInterface, PageInvokeInterface {
+public class Queue extends PageComponent implements CommandInterface {
+
+	public Queue() {
+		pagination = new PaginationBuilder(getInvoke())
+			.setTitle("Music Queue")
+			.setItemsPerPage(10)
+			.enableLoop(true)
+			.enableFirstPageButton(true)
+			.build();
+	}
 
 	@Override
 	public void handle(CommandContext ctx) {
@@ -84,24 +91,12 @@ public class Queue implements CommandInterface, PageInvokeInterface {
 			return;
 		}
 
-		Pagination pagination = new Pagination(
-			ctx.getEventMember(),
-			getInvoke(),
-			pageName(),
-			pageStrings(ctx),
-			itemsPerPage(),
-			loopPagination()
-		);
-
-		List<ItemComponent> componentList = Arrays.asList(
-			pagination.provideLeft(),
-			pagination.provideFirst(),
-			pagination.provideRight()
-		);
+		pagination.updateEmbeds(pageStrings(ctx));
+		pagination.updateMember(ctx.getEventMember());
 
 		ctx.getChannel().sendMessageEmbeds(
-			pagination.buildEmbeds().get(0).build()
-		).setActionRow(componentList).queue();
+			pagination.getEmbeds().get(0).build()
+		).addComponents(pagination.provideActionRows()).queue();
 
 		ctx.getEvent().getMessage().delete().queue();
 	}
@@ -131,13 +126,7 @@ public class Queue implements CommandInterface, PageInvokeInterface {
 		return new MusicCategory();
 	}
 
-	@Override
-	public String pageName() {
-		return "Music Queue";
-	}
-
-	@Override
-	public List<String> pageStrings(EventContext ctx) {
+	private List<String> pageStrings(EventContext ctx) {
 		final GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(ctx.getGuild());
 		final AudioPlayer audioPlayer = musicManager.getAudioPlayer();
 		final TrackScheduler trackScheduler = musicManager.getTrackScheduler();
@@ -179,25 +168,5 @@ public class Queue implements CommandInterface, PageInvokeInterface {
 		}
 
 		return stringList;
-	}
-
-	@Override
-	public int itemsPerPage() {
-		return 10;
-	}
-
-	@Override
-	public boolean loopPagination() {
-		return true;
-	}
-
-	@Override
-	public boolean addHomeBtn() {
-		return false;
-	}
-
-	@Override
-	public boolean addFirstPageBtn() {
-		return true;
 	}
 }

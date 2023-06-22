@@ -1,13 +1,13 @@
 package com.raikuman.troubleclub.radio.commands.music;
 
-import com.raikuman.botutilities.commands.manager.CategoryInterface;
 import com.raikuman.botutilities.helpers.DateAndTime;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.botutilities.invokes.CategoryInterface;
+import com.raikuman.botutilities.invokes.context.CommandContext;
+import com.raikuman.botutilities.invokes.interfaces.CommandInterface;
 import com.raikuman.troubleclub.radio.category.MusicCategory;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
-import com.raikuman.botutilities.commands.manager.CommandContext;
-import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.troubleclub.radio.music.TrackScheduler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
@@ -20,7 +20,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 /**
  * Handles rewinding the current playing song to the beginning of the song
  *
- * @version 1.6 2023-08-03
+ * @version 1.7 2023-22-06
  * @since 1.1
  */
 public class Rewind implements CommandInterface {

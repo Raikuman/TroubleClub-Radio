@@ -7,7 +7,7 @@ import com.raikuman.troubleclub.radio.config.music.MusicConfig;
 import com.raikuman.troubleclub.radio.config.playlist.PlaylistConfig;
 import com.raikuman.troubleclub.radio.config.member.MemberConfig;
 import com.raikuman.troubleclub.radio.config.member.MemberDB;
-import com.raikuman.troubleclub.radio.listener.handler.ListenerHandler;
+import com.raikuman.troubleclub.radio.listener.InvokeData;
 import com.raikuman.botutilities.configs.ConfigFileWriter;
 import com.raikuman.botutilities.configs.EnvLoader;
 import net.dv8tion.jda.api.JDA;
@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * The main class for the bot
  *
- * @version 1.7 2023-11-01
+ * @version 1.8 2023-22-06
  * @since 1.0
  */
 public class TroubleClubRadio {
@@ -85,7 +85,7 @@ public class TroubleClubRadio {
 				.enableIntents(gatewayIntents)
 				.setChunkingFilter(ChunkingFilter.ALL)
 				.enableCache(CacheFlag.VOICE_STATE)
-				.addEventListeners(ListenerHandler.getListenerManager().getListeners())
+				.addEventListeners(InvokeData.provideListeners())
 				.setMemberCachePolicy(MemberCachePolicy.ALL)
 				.setMaxReconnectDelay(32)
 				.setAutoReconnect(true)
@@ -108,7 +108,7 @@ public class TroubleClubRadio {
 	private static void setPresence(JDA jda) {
 		jda.getPresence().setPresence(
 			OnlineStatus.ONLINE,
-			Activity.playing("some tunes \uD83C\uDFB6 | /music")
+			Activity.playing("some tunes \uD83C\uDFB6 | /radio")
 		);
 	}
 

@@ -1,10 +1,10 @@
 package com.raikuman.troubleclub.radio.commands.playlist.deleteplaylist;
 
-import com.raikuman.botutilities.commands.manager.CategoryInterface;
-import com.raikuman.botutilities.commands.manager.CommandContext;
-import com.raikuman.botutilities.commands.manager.CommandInterface;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.botutilities.invokes.CategoryInterface;
+import com.raikuman.botutilities.invokes.context.CommandContext;
+import com.raikuman.botutilities.invokes.interfaces.CommandInterface;
 import com.raikuman.troubleclub.radio.category.PlaylistCategory;
 import com.raikuman.troubleclub.radio.config.playlist.PlaylistDB;
 import com.raikuman.troubleclub.radio.music.PlaylistInfo;
@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Handles deleting a playlist from a user's playlist collection
  *
- * @version 1.2 2023-13-01
+ * @version 1.3 2023-22-06
  * @since 1.2
  */
 public class DeletePlaylist implements CommandInterface {
