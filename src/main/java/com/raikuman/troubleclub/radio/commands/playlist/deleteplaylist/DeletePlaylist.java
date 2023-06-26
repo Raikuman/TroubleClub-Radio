@@ -3,6 +3,10 @@ package com.raikuman.troubleclub.radio.commands.playlist.deleteplaylist;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
 import com.raikuman.botutilities.invokes.CategoryInterface;
+import com.raikuman.botutilities.invokes.components.components.ButtonComponent;
+import com.raikuman.botutilities.invokes.components.components.rows.ButtonRow;
+import com.raikuman.botutilities.invokes.components.manager.ComponentHandler;
+import com.raikuman.botutilities.invokes.components.manager.ComponentInvoke;
 import com.raikuman.botutilities.invokes.context.CommandContext;
 import com.raikuman.botutilities.invokes.interfaces.CommandInterface;
 import com.raikuman.troubleclub.radio.category.PlaylistCategory;
@@ -10,19 +14,25 @@ import com.raikuman.troubleclub.radio.config.playlist.PlaylistDB;
 import com.raikuman.troubleclub.radio.music.PlaylistInfo;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 
 import java.util.List;
 
 /**
  * Handles deleting a playlist from a user's playlist collection
  *
- * @version 1.3 2023-22-06
+ * @version 1.4 2023-25-06
  * @since 1.2
  */
-public class DeletePlaylist implements CommandInterface {
+public class DeletePlaylist extends ComponentInvoke implements CommandInterface {
+
+	public DeletePlaylist() {
+		componentHandler = ComponentHandler.buttons(new ButtonComponent(
+			new ButtonRow(
+				new CancelDeletePlaylist(),
+				new ConfirmDeletePlaylist()
+			)
+		));
+	}
 
 	@Override
 	public void handle(CommandContext ctx) {
@@ -69,17 +79,8 @@ public class DeletePlaylist implements CommandInterface {
 				null,
 				ctx.getEventMember().getEffectiveAvatarUrl());
 
-		String memberId = ctx.getEventMember().getId();
-
-		channel.sendMessageEmbeds(confirmation.build())
-			.setActionRow(
-				Button.of(ButtonStyle.SUCCESS, memberId + ":ConfirmDeletePlaylist",
-					" Delete #" + playlistNum + ": " + playlistInfo.getName(),
-					Emoji.fromUnicode("✔️")),
-				Button.of(ButtonStyle.DANGER, memberId + ":CancelDeletePlaylist",
-					" Cancel", Emoji.fromUnicode("✖️"))
-			).queue();
-
+		ctx.getEvent().getChannel().sendMessageEmbeds(confirmation.build())
+			.setComponents(componentHandler.asActionRows(ctx)).queue();
 		ctx.getEvent().getMessage().delete().queue();
 	}
 

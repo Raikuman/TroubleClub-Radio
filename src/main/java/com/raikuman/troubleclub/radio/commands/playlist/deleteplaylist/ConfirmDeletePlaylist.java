@@ -9,11 +9,12 @@ import com.raikuman.troubleclub.radio.config.playlist.PlaylistDB;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 
 /**
  * Button handles confirming the delete playlist prompt
  *
- * @version 1.2 2023-22-06
+ * @version 1.3 2023-25-06
  * @since 1.2
  */
 public class ConfirmDeletePlaylist implements ButtonInterface {
@@ -75,6 +76,11 @@ public class ConfirmDeletePlaylist implements ButtonInterface {
 	@Override
 	public String displayLabel() {
 		return null;
+	}
+
+	@Override
+	public ButtonStyle buttonStyle() {
+		return ButtonStyle.SECONDARY;
 	}
 
 	@Override

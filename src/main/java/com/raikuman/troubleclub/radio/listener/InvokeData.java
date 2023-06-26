@@ -10,8 +10,8 @@ import com.raikuman.troubleclub.radio.commands.music.*;
 import com.raikuman.troubleclub.radio.commands.other.ChangePrefix;
 import com.raikuman.troubleclub.radio.commands.other.Changelog;
 import com.raikuman.troubleclub.radio.commands.other.ToS;
-import com.raikuman.troubleclub.radio.commands.other.trello.RequestFeature;
-import com.raikuman.troubleclub.radio.commands.other.trello.SubmitBug;
+import com.raikuman.troubleclub.radio.commands.other.trello.requestfeature.RequestFeature;
+import com.raikuman.troubleclub.radio.commands.other.trello.submitbug.SubmitBug;
 import com.raikuman.troubleclub.radio.commands.playlist.*;
 import com.raikuman.troubleclub.radio.commands.playlist.deleteplaylist.CancelDeletePlaylist;
 import com.raikuman.troubleclub.radio.commands.playlist.deleteplaylist.ConfirmDeletePlaylist;
@@ -24,19 +24,18 @@ import java.util.List;
 /**
  * Provides instantiating all invokes and providing them to the InvokeManager to create listeners
  *
- * @version 1.0 2023-22-06
+ * @version 1.1 2023-25-06
  * @since 1.3
  */
 public class InvokeData {
 
     public static Object[] provideListeners() {
         InvokeProvider invokeProvider = new InvokeProvider();
-        invokeProvider.commands.addAll(provideCommands());
-        invokeProvider.slashes.addAll(provideSlashes());
-        invokeProvider.buttons.addAll(provideButtons());
+        invokeProvider.addCommands(provideCommands());
+        invokeProvider.addSlashes(provideSlashes());
 
         Help help = new Help(invokeProvider);
-        invokeProvider.slashes.add(help);
+        invokeProvider.addSlash(help);
 
         return new InvokeManager(
             invokeProvider,
@@ -100,13 +99,6 @@ public class InvokeData {
         return Arrays.asList(
             new RequestFeature(),
             new SubmitBug()
-        );
-    }
-
-    private static List<ButtonInterface> provideButtons() {
-        return Arrays.asList(
-            new CancelDeletePlaylist(),
-            new ConfirmDeletePlaylist()
         );
     }
 }

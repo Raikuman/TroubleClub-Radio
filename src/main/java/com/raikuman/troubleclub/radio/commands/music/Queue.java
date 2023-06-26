@@ -1,11 +1,13 @@
 package com.raikuman.troubleclub.radio.commands.music;
 
 import com.raikuman.botutilities.invokes.CategoryInterface;
+import com.raikuman.botutilities.invokes.components.components.PaginationComponent;
+import com.raikuman.botutilities.invokes.components.manager.ComponentHandler;
+import com.raikuman.botutilities.invokes.components.manager.ComponentInvoke;
+import com.raikuman.botutilities.invokes.components.pagination.PaginationBuilder;
 import com.raikuman.botutilities.invokes.context.CommandContext;
 import com.raikuman.botutilities.invokes.context.EventContext;
 import com.raikuman.botutilities.invokes.interfaces.CommandInterface;
-import com.raikuman.botutilities.pagination.manager.PageComponent;
-import com.raikuman.botutilities.pagination.manager.PaginationBuilder;
 import com.raikuman.troubleclub.radio.category.MusicCategory;
 import com.raikuman.troubleclub.radio.music.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.PlayerManager;
@@ -25,18 +27,20 @@ import java.util.List;
 /**
  * Handles sending a pagination of songs queued and playing, as well as the state of the audio player
  *
- * @version 1.7 2023-22-06
+ * @version 1.9 2023-25-06
  * @since 1.1
  */
-public class Queue extends PageComponent implements CommandInterface {
+public class Queue extends ComponentInvoke implements CommandInterface {
 
 	public Queue() {
-		pagination = new PaginationBuilder(getInvoke())
-			.setTitle("Music Queue")
-			.setItemsPerPage(10)
-			.enableLoop(true)
-			.enableFirstPageButton(true)
-			.build();
+		componentHandler = ComponentHandler.pagination(new PaginationComponent(
+			new PaginationBuilder(getInvoke())
+				.setTitle("Music Queue")
+				.setItemsPerPage(10)
+				.enableLoop(true)
+				.enableFirstPageButton(true)
+				.build()
+		));
 	}
 
 	@Override
@@ -91,14 +95,8 @@ public class Queue extends PageComponent implements CommandInterface {
 			return;
 		}
 
-		pagination.updateEmbeds(pageStrings(ctx));
-		pagination.updateMember(ctx.getEventMember());
-
-		ctx.getChannel().sendMessageEmbeds(
-			pagination.getEmbeds().get(0).build()
-		).addComponents(pagination.provideActionRows()).queue();
-
-		ctx.getEvent().getMessage().delete().queue();
+		componentHandler.providePaginationComponent().updateItems(pageStrings(ctx));
+		componentHandler.providePaginationComponent().handleContext(ctx);
 	}
 
 	@Override

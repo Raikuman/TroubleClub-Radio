@@ -1,39 +1,43 @@
 package com.raikuman.troubleclub.radio.commands.help.selects;
 
+import com.raikuman.botutilities.invokes.components.components.PaginationComponent;
+import com.raikuman.botutilities.invokes.components.manager.ComponentHandler;
+import com.raikuman.botutilities.invokes.components.manager.ComponentInvoke;
+import com.raikuman.botutilities.invokes.components.pagination.PaginationBuilder;
 import com.raikuman.botutilities.invokes.context.SelectContext;
 import com.raikuman.botutilities.invokes.interfaces.SelectInterface;
 import com.raikuman.botutilities.invokes.manager.InvokeProvider;
-import com.raikuman.botutilities.pagination.manager.PageComponent;
-import com.raikuman.botutilities.pagination.manager.PaginationBuilder;
 import com.raikuman.troubleclub.radio.category.TrackCategory;
 import com.raikuman.troubleclub.radio.commands.help.HelpUtilities;
 
 /**
  * Handles the track select for the help command
  *
- * @version 1.0 2023-22-06
+ * @version 1.1 2023-25-06
  * @since 1.3
  */
-public class TrackSelect extends PageComponent implements SelectInterface {
+public class TrackSelect extends ComponentInvoke implements SelectInterface {
 
     private final InvokeProvider invokeProvider;
 
     public TrackSelect(InvokeProvider invokeProvider) {
         this.invokeProvider = invokeProvider;
 
-        pagination = new PaginationBuilder(getInvoke())
-            .setTitle("Track Commands")
-            .setItemsPerPage(1)
-            .enableLoop(true)
-            .enableFirstPageButton(true)
-            .enableHomeButton(true)
-            .build();
+        componentHandler = ComponentHandler.pagination(new PaginationComponent(
+            new PaginationBuilder(getInvoke())
+                .setTitle("Track Commands")
+                .setItemsPerPage(1)
+                .enableLoop(true)
+                .enableFirstPageButton(true)
+                .build()
+        ));
     }
 
     @Override
     public void handle(SelectContext ctx) {
-        pagination.updateEmbeds(HelpUtilities.categoryPageStrings(ctx, invokeProvider, new TrackCategory()));
-        pagination.selectHandle(ctx);
+        componentHandler.providePaginationComponent().updateItems(
+            HelpUtilities.categoryPageStrings(ctx, invokeProvider, new TrackCategory()));
+        componentHandler.providePaginationComponent().handleContext(ctx);
     }
 
     @Override

@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * A utility class to help construct pages for the help slash command
  *
- * @version 1.0 2023-22-06
+ * @version 1.1 2023-25-06
  * @since 1.3
  */
 public class HelpUtilities {
@@ -100,11 +100,11 @@ public class HelpUtilities {
 	 */
     private static int numInvokesInCategory(CategoryInterface categoryInterface, InvokeProvider invokeProvider) {
         int count = 0;
-        for (CommandInterface command : invokeProvider.commands) {
+        for (CommandInterface command : invokeProvider.getCommands()) {
             if (command.getCategory().getClass() == categoryInterface.getClass()) count++;
         }
 
-        for (SlashInterface slash : invokeProvider.slashes) {
+        for (SlashInterface slash : invokeProvider.getSlashes()) {
 			if (slash.getInvoke().equals(new Help(null).getInvoke())) continue;
 
             if (slash.getCategory().getClass() == categoryInterface.getClass()) count++;
@@ -163,7 +163,7 @@ public class HelpUtilities {
 		StringBuilder invokeAliases = new StringBuilder();
 
 		// Build slash invokes
-		for (SlashInterface slash : invokeProvider.slashes) {
+		for (SlashInterface slash : invokeProvider.getSlashes()) {
 			if (slash.getInvoke().equals(new Help(null).getInvoke())) continue;
 
 			if (slash.getCategory().getClass() != category.getClass()) continue;
@@ -179,7 +179,7 @@ public class HelpUtilities {
 		}
 
 		// Build command invokes
-		for (CommandInterface command : invokeProvider.commands) {
+		for (CommandInterface command : invokeProvider.getCommands()) {
 			if (command.getCategory().getClass() != category.getClass()) continue;
 
 			if (!command.getAliases().isEmpty()) {
