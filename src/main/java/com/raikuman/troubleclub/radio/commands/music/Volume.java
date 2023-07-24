@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Handles setting the volume of the bot
  *
- * @version 1.10 2023-22-06
+ * @version 1.11 2023-29-06
  * @since 1.1
  */
 public class Volume implements CommandInterface {
@@ -68,19 +68,12 @@ public class Volume implements CommandInterface {
 		final AudioPlayer audioPlayer = musicManager.getAudioPlayer();
 
 		if (ctx.getArgs().size() == 0) {
-			String volume = MusicDB.getTrackVolume(ctx.getGuild().getIdLong(),
+			int volume = MusicDB.getTrackVolume(ctx.getGuild(),
 				musicManager.getCurrentAudioTrack());
-
-			int volumeNum;
-			try {
-				volumeNum = Integer.parseInt(volume);
-			} catch (NumberFormatException e) {
-				volumeNum = 100;
-			}
 
 			EmbedBuilder builder = new EmbedBuilder()
 				.setAuthor(
-					"\uD83D\uDD0A Current volume: " + volumeNum + "%",
+					"\uD83D\uDD0A Current volume: " + volume + "%",
 					null,
 					ctx.getEventMember().getEffectiveAvatarUrl()
 				)
@@ -112,8 +105,8 @@ public class Volume implements CommandInterface {
 					return;
 				}
 
-				MusicDB.updateTrackVolume(
-					ctx.getGuild().getIdLong(),
+				MusicDB.setTrackVolume(
+					ctx.getGuild(),
 					musicManager.getCurrentAudioTrack(),
 					volumeNum
 				);

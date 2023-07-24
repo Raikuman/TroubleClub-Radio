@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Handles playing a new song, skipping the current track
  *
- * @version 1.9 2023-22-06
+ * @version 1.10 2023-29-06
  * @since 1.1
  */
 public class PlayNow implements CommandInterface {
@@ -115,7 +115,7 @@ public class PlayNow implements CommandInterface {
 		if (!isUrl(link))
 			link = "ytsearch:" + link;
 
-		PlayerManager.getInstance().loadToTop(channel, link, ctx.getEvent().getAuthor(), true, ctx.getGuild().getIdLong());
+		PlayerManager.getInstance().loadToTop(channel, link, ctx.getEvent().getAuthor(), true, ctx.getGuild());
 
 		ctx.getEvent().getMessage().delete().queue();
 	}

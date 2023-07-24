@@ -3,6 +3,10 @@ package com.raikuman.troubleclub.radio.music;
 import com.raikuman.botutilities.helpers.DateAndTime;
 import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
+import com.raikuman.botutilities.invokes.context.CommandContext;
+import com.raikuman.troubleclub.radio.commands.playlist.AddSongToPlaylist;
+import com.raikuman.troubleclub.radio.commands.playlist.CreatePlaylist;
+import com.raikuman.troubleclub.radio.commands.playlist.RemoveSongFromPlaylist;
 import com.raikuman.troubleclub.radio.config.music.MusicDB;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -11,6 +15,7 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import kotlin.Triple;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
@@ -24,7 +29,7 @@ import java.util.Map;
 /**
  * Handles loading and playing tracks for the guild music manager
  *
- * @version 1.12 2023-20-01
+ * @version 1.13 2023-29-06
  * @since 1.0
  */
 public class PlayerManager {
@@ -32,6 +37,7 @@ public class PlayerManager {
 	private static PlayerManager PLAYER_INSTANCE;
 	private final Map<Long, GuildMusicManager> musicManagerMap;
 	private final AudioPlayerManager audioPlayerManager;
+	private final GuildMusicManager playlistManager;
 
 	public PlayerManager() {
 		this.musicManagerMap = new HashMap<>();
@@ -40,6 +46,8 @@ public class PlayerManager {
 		// Check source of track
 		AudioSourceManagers.registerRemoteSources(this.audioPlayerManager);
 		AudioSourceManagers.registerLocalSource(this.audioPlayerManager);
+
+		playlistManager = new GuildMusicManager(this.audioPlayerManager);
 	}
 
 	/**
@@ -55,16 +63,51 @@ public class PlayerManager {
 		});
 	}
 
+	public void handlePlaylist(CommandContext ctx, String link, Triple<String, Integer, Integer> playlist, boolean add) {
+		playlistManager.getAudioPlayer().setVolume(0);
+
+		this.audioPlayerManager.loadItemOrdered(playlistManager, link, new AudioLoadResultHandler() {
+
+			@Override
+			public void trackLoaded(AudioTrack audioTrack) {
+				if (add) {
+					new AddSongToPlaylist().addSongToPlaylist(ctx, playlist, audioTrack);
+				} else {
+					new RemoveSongFromPlaylist().removeSongFromPlaylist(ctx, playlist, audioTrack);
+				}
+			}
+
+			@Override
+			public void playlistLoaded(AudioPlaylist audioPlaylist) {
+				String name = playlist.getFirst();
+				if (name.isEmpty()) {
+					name = audioPlaylist.getName();
+				}
+				new CreatePlaylist().createPlaylistFromLink(ctx, audioPlaylist, name);
+			}
+
+			@Override
+			public void noMatches() {
+
+			}
+
+			@Override
+			public void loadFailed(FriendlyException e) {
+
+			}
+		});
+	}
+
 	/**
 	 * Handles normally loading tracks from the queue and playing tracks
 	 * @param channel The channel to send messages to
 	 * @param trackUrl The track url to get the audio track from
 	 * @param user The user to display on an embed
-	 * @param guildId The guild id to get the volume from
+	 * @param guild The Guild to get the volume from
 	 */
-	public void loadAndPlay(TextChannel channel, String trackUrl, User user, long guildId) {
+	public void loadAndPlay(TextChannel channel, String trackUrl, User user, Guild guild) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
-		musicManager.getAudioPlayer().setVolume(loadVolume(guildId, musicManager.getCurrentAudioTrack()));
+		musicManager.getAudioPlayer().setVolume(loadVolume(guild, musicManager.getCurrentAudioTrack()));
 
 		this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
 
@@ -151,11 +194,11 @@ public class PlayerManager {
 	 * Handles shuffling a playlist before playing it
 	 * @param channel The channel to send messages to
 	 * @param playlistUrl The playlist url to get the audio tracks from
-	 * @param guildId The guild id to get the volume from
+	 * @param guild The Guild to get the volume from
 	 */
-	public void loadAndShuffle(TextChannel channel, String playlistUrl, long guildId) {
+	public void loadAndShuffle(TextChannel channel, String playlistUrl, Guild guild) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
-		musicManager.getAudioPlayer().setVolume(loadVolume(guildId, musicManager.getCurrentAudioTrack()));
+		musicManager.getAudioPlayer().setVolume(loadVolume(guild, musicManager.getCurrentAudioTrack()));
 
 		this.audioPlayerManager.loadItemOrdered(musicManager, playlistUrl, new AudioLoadResultHandler() {
 
@@ -216,11 +259,11 @@ public class PlayerManager {
 	 * @param trackUrl The track url to get the audio track from
 	 * @param user The user to display on an embed
 	 * @param playNow If the top track should be played immediately
-	 * @param guildId The guild id to get the volume from
+	 * @param guild The Guild to get the volume from
 	 */
-	public void loadToTop(TextChannel channel, String trackUrl, User user, boolean playNow, long guildId) {
+	public void loadToTop(TextChannel channel, String trackUrl, User user, boolean playNow, Guild guild) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
-		musicManager.getAudioPlayer().setVolume(loadVolume(guildId, musicManager.getCurrentAudioTrack()));
+		musicManager.getAudioPlayer().setVolume(loadVolume(guild, musicManager.getCurrentAudioTrack()));
 
 		this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
 
@@ -301,12 +344,11 @@ public class PlayerManager {
 	 *
 	 * @param channel The channel to send messages to
 	 * @param playlistInfo The playlist info object to provide name and song urls
-	 * @param guildId The guild id to get the volume from
+	 * @param guild The Guild to get the volume from
 	 */
-	public void loadFromDatabase(TextChannel channel, PlaylistInfo playlistInfo, long guildId,
-		boolean shuffle) {
+	public void loadFromDatabase(TextChannel channel, PlaylistInfo playlistInfo, Guild guild, boolean shuffle) {
 		GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
-		musicManager.getAudioPlayer().setVolume(loadVolume(guildId, musicManager.getCurrentAudioTrack()));
+		musicManager.getAudioPlayer().setVolume(loadVolume(guild, musicManager.getCurrentAudioTrack()));
 
 		String sendLink;
 		if (playlistInfo.getPlaylistLink().isEmpty()) {
@@ -455,24 +497,11 @@ public class PlayerManager {
 
 	/**
 	 * Returns the volume setting from the music config
-	 * @param guildId The guild id to get the volume from
+	 * @param guild The Guild to get the volume from
 	 * @param trackNum The track number the manager is on
 	 * @return The volume setting normalized for the bot
 	 */
-	private int loadVolume(long guildId, int trackNum) {
-		String volume = MusicDB.getTrackVolume(guildId, trackNum);
-		int calculateVolume;
-		try {
-			int volumeNum = Integer.parseInt(volume);
-
-			if ((volumeNum < 1) || (volumeNum > 100))
-				return 25;
-
-			calculateVolume = volumeNum;
-		} catch (NumberFormatException e) {
-			calculateVolume = 100;
-		}
-
-		return (int) Math.ceil((double) calculateVolume / 4);
+	private int loadVolume(Guild guild, int trackNum) {
+		return (int) Math.ceil((double) MusicDB.getTrackVolume(guild, trackNum) / 4);
 	}
 }

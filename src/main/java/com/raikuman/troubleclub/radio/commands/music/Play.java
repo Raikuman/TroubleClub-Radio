@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Handles playing music in a user's voice channel
  *
- * @version 1.15 2023-22-06
+ * @version 1.16 2023-29-06
  * @since 1.1
  */
 public class Play implements CommandInterface {
@@ -75,7 +75,7 @@ public class Play implements CommandInterface {
 		if (!isUrl(link))
 			link = "ytsearch:" + link;
 
-		PlayerManager.getInstance().loadAndPlay(channel, link, ctx.getEvent().getAuthor(), ctx.getGuild().getIdLong());
+		PlayerManager.getInstance().loadAndPlay(channel, link, ctx.getEvent().getAuthor(), ctx.getGuild());
 
 		ctx.getEvent().getMessage().delete().queue();
 	}
