@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * Provides an event listener for voice channels, detecting if any users leave. The bot will leave
  * after there are no more users.
  *
- * @version 1.4 2023-11-01
+ * @version 1.5 2023-29-06
  * @since 1.0
  */
 public class VoiceEventListener extends ListenerAdapter {
@@ -26,7 +26,7 @@ public class VoiceEventListener extends ListenerAdapter {
 	@Override
 	public void onReady(@NotNull ReadyEvent event) {
 		logger.info("{}" + VoiceEventListener.class.getName() + " is initialized",
-			event.getJDA().getSelfUser().getAsTag());
+			event.getJDA().getSelfUser().getEffectiveName());
 	}
 
 	@Override
