@@ -1,20 +1,18 @@
 package com.raikuman.troubleclub.radio.listener;
 
-import com.raikuman.botutilities.invokes.interfaces.ButtonInterface;
+import com.raikuman.botutilities.configs.defaults.ChangePrefix;
 import com.raikuman.botutilities.invokes.interfaces.CommandInterface;
 import com.raikuman.botutilities.invokes.interfaces.SlashInterface;
 import com.raikuman.botutilities.invokes.manager.InvokeManager;
 import com.raikuman.botutilities.invokes.manager.InvokeProvider;
+import com.raikuman.troubleclub.radio.category.OtherCategory;
 import com.raikuman.troubleclub.radio.commands.help.Help;
 import com.raikuman.troubleclub.radio.commands.music.*;
-import com.raikuman.troubleclub.radio.commands.other.ChangePrefix;
 import com.raikuman.troubleclub.radio.commands.other.Changelog;
 import com.raikuman.troubleclub.radio.commands.other.ToS;
 import com.raikuman.troubleclub.radio.commands.other.trello.requestfeature.RequestFeature;
 import com.raikuman.troubleclub.radio.commands.other.trello.submitbug.SubmitBug;
 import com.raikuman.troubleclub.radio.commands.playlist.*;
-import com.raikuman.troubleclub.radio.commands.playlist.deleteplaylist.CancelDeletePlaylist;
-import com.raikuman.troubleclub.radio.commands.playlist.deleteplaylist.ConfirmDeletePlaylist;
 import com.raikuman.troubleclub.radio.commands.playlist.deleteplaylist.DeletePlaylist;
 import com.raikuman.troubleclub.radio.commands.track.*;
 
@@ -24,12 +22,12 @@ import java.util.List;
 /**
  * Provides instantiating all invokes and providing them to the InvokeManager to create listeners
  *
- * @version 1.1 2023-25-06
+ * @version 1.2 2023-06-07
  * @since 1.3
  */
 public class InvokeData {
 
-    public static Object[] provideListeners() {
+    public static InvokeManager getManager() {
         InvokeProvider invokeProvider = new InvokeProvider();
         invokeProvider.addCommands(provideCommands());
         invokeProvider.addSlashes(provideSlashes());
@@ -39,9 +37,8 @@ public class InvokeData {
 
         return new InvokeManager(
             invokeProvider,
-            new VoiceEventListener(),
-            new MemberEventListener()
-        ).getListeners();
+            new VoiceEventListener()
+        );
     }
 
     private static List<CommandInterface> provideCommands() {
@@ -88,9 +85,10 @@ public class InvokeData {
             new PlayPlaylist(),
             new RenamePlaylist(),
             new ShufflePlayPlaylist(),
+            new AddSongToPlaylist(),
+            new RemoveSongFromPlaylist(),
 
             new Changelog(),
-            new ChangePrefix(),
             new ToS()
         );
     }
@@ -98,7 +96,8 @@ public class InvokeData {
     private static List<SlashInterface> provideSlashes() {
         return Arrays.asList(
             new RequestFeature(),
-            new SubmitBug()
+            new SubmitBug(),
+            new ChangePrefix(new OtherCategory())
         );
     }
 }

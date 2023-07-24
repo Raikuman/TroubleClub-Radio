@@ -10,7 +10,9 @@ import com.raikuman.botutilities.invokes.context.EventContext;
 import com.raikuman.botutilities.invokes.interfaces.CommandInterface;
 import com.raikuman.troubleclub.radio.category.PlaylistCategory;
 import com.raikuman.troubleclub.radio.config.playlist.PlaylistDB;
-import com.raikuman.troubleclub.radio.music.PlaylistInfo;
+import kotlin.Triple;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +20,7 @@ import java.util.List;
 /**
  * Handles sending a pagination of playlists of the user
  *
- * @version 1.3 2023-22-06
+ * @version 1.4 2023-06-07
  * @since 1.2
  */
 public class Playlist extends ComponentInvoke implements CommandInterface {
@@ -36,7 +38,19 @@ public class Playlist extends ComponentInvoke implements CommandInterface {
 
 	@Override
 	public void handle(CommandContext ctx) {
-		componentHandler.providePaginationComponent().updateItems(pageStrings(ctx));
+		List<Member> mentioned = ctx.getEvent().getMessage().getMentions().getMembers();
+
+		if (mentioned.size() > 0) {
+			componentHandler.providePaginationComponent().updateItems(pageStrings(ctx, mentioned.get(0).getUser()));
+			componentHandler.providePaginationComponent().updateMember(mentioned.get(0));
+			componentHandler.providePaginationComponent().updateTitle(mentioned.get(0).getEffectiveName() + "'s " +
+				"Cassettes");
+		} else {
+			componentHandler.providePaginationComponent().updateItems(pageStrings(ctx, ctx.getEventMember().getUser()));
+			componentHandler.providePaginationComponent().updateMember(ctx.getEventMember());
+			componentHandler.providePaginationComponent().updateTitle("Your Cassettes");
+		}
+
 		componentHandler.providePaginationComponent().handleContext(ctx);
 	}
 
@@ -69,26 +83,33 @@ public class Playlist extends ComponentInvoke implements CommandInterface {
 		return new PlaylistCategory();
 	}
 
-	private List<String> pageStrings(EventContext ctx) {
-		List<PlaylistInfo> playlistInfoList = PlaylistDB.getMemberPlaylistInfo(ctx.getEventMember().getIdLong());
-
-		if (playlistInfoList.isEmpty())
-			return new ArrayList<>(
-				List.of("You do not have any cassettes! Use the `" +
-					new CreatePlaylist().getInvoke() +
-					"` command to create a cassette.")
-			);
-
+	private List<String> pageStrings(EventContext ctx, User user) {
 		List<String> stringList = new ArrayList<>();
-		int playlistNum = 1;
-		for (PlaylistInfo playlistInfo : playlistInfoList) {
-			stringList.add(
-				"`" + playlistNum + "` | **" +
-				playlistInfo.getName() + "** | *" +
-				playlistInfo.getNumSongs() + " songs*"
-			);
+		List<Triple<String, Integer, Integer>> playlists = PlaylistDB.getBasicPlaylistInfo(user);
+		if (playlists.isEmpty()) {
+			return List.of("You currently have no cassettes!");
+		}
 
-			playlistNum++;
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < playlists.size(); i++) {
+			builder
+				.append("`")
+				.append(i + 1)
+				.append(".` ")
+				.append(playlists.get(i).getFirst())
+				.append(" `")
+				.append(playlists.get(i).getSecond())
+				.append(" song");
+
+			// Handle plurality
+			if (playlists.get(i).getSecond() > 1) {
+				builder.append("s");
+			}
+
+			builder.append("`");
+
+			stringList.add(builder.toString());
+			builder = new StringBuilder();
 		}
 
 		return stringList;

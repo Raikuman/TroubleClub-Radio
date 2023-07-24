@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Handles shuffling and playing a playlist to the queue
  *
- * @version 1.1 2023-22-06
+ * @version 1.2 2023-29-06
  * @since 1.2
  */
 public class ShufflePlayPlaylist implements CommandInterface {
@@ -27,7 +27,7 @@ public class ShufflePlayPlaylist implements CommandInterface {
 			return;
 
 		PlayerManager.getInstance().loadFromDatabase(channel, info,
-			ctx.getGuild().getIdLong(), true);
+			ctx.getGuild(), true);
 
 		ctx.getEvent().getMessage().delete().queue();
 	}

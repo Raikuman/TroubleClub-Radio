@@ -11,16 +11,23 @@ import com.raikuman.botutilities.invokes.context.CommandContext;
 import com.raikuman.botutilities.invokes.interfaces.CommandInterface;
 import com.raikuman.troubleclub.radio.category.PlaylistCategory;
 import com.raikuman.troubleclub.radio.config.playlist.PlaylistDB;
-import com.raikuman.troubleclub.radio.music.PlaylistInfo;
+import kotlin.Triple;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.ItemComponent;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Handles deleting a playlist from a user's playlist collection
  *
- * @version 1.4 2023-25-06
+ * @version 1.5 2023-30-06
  * @since 1.2
  */
 public class DeletePlaylist extends ComponentInvoke implements CommandInterface {
@@ -48,23 +55,25 @@ public class DeletePlaylist extends ComponentInvoke implements CommandInterface 
 			return;
 		}
 
+		List<Triple<String, Integer, Integer>> playlists = PlaylistDB.getBasicPlaylistInfo(ctx.getEventMember().getUser());
 		// Get playlist number
-		int playlistNum;
+		int playlistNum = -1;
 		try {
 			playlistNum = Integer.parseInt(ctx.getArgs().get(0));
+			if (playlistNum > playlists.size()) {
+				playlistNum = -1;
+			}
 		} catch (NumberFormatException e) {
-			MessageResources.timedMessage(
-				"You must provide a valid argument for this command: `" + getUsage() + "`",
-				channel,
-				5
-			);
-			return;
+			for (int i = 0; i < playlists.size(); i++) {
+				if (ctx.getArgs().get(0).equalsIgnoreCase(playlists.get(i).getFirst())) {
+					playlistNum = i + 1;
+				}
+			}
 		}
 
-		PlaylistInfo playlistInfo = PlaylistDB.getPlaylist(ctx.getEventMember().getIdLong(), playlistNum);
-		if (playlistInfo == null) {
+		if (playlistNum == -1) {
 			MessageResources.timedMessage(
-				"You must select a valid cassette to delete",
+				"You must provide a valid argument for this command: `" + getUsage() + "`",
 				channel,
 				5
 			);
@@ -74,14 +83,53 @@ public class DeletePlaylist extends ComponentInvoke implements CommandInterface 
 		// Button confirmation
 		EmbedBuilder confirmation = new EmbedBuilder()
 			.setColor(RandomColor.getRandomColor())
-			.setAuthor("\uD83D\uDCFC Are you sure you want to delete Cassette \"" +
-					playlistInfo.getName() + "\"?",
+			.setAuthor("\uD83D\uDCFC Are you sure you want to delete this Cassette?",
 				null,
-				ctx.getEventMember().getEffectiveAvatarUrl());
+				ctx.getEventMember().getEffectiveAvatarUrl())
+			.setTitle("Cassette " + playlistNum + ": " + playlists.get(playlistNum - 1).getFirst());
+
+		StringBuilder descriptionBuilder = confirmation.getDescriptionBuilder();
+		descriptionBuilder
+			.append("`")
+			.append(playlists.get(playlistNum - 1).getSecond())
+			.append(" song");
+
+		if (playlists.get(playlistNum - 1).getSecond() > 1) {
+			descriptionBuilder.append("s");
+		}
+
+		descriptionBuilder.append("`");
+
+		List<ItemComponent> components = componentHandler.asActionRows(ctx).get(0).getComponents();
+		List<Button> buttons = new ArrayList<>();
+		for (ItemComponent component : components) {
+			if (Button.class.isAssignableFrom(component.getClass())) {
+				buttons.add((Button) component);
+			}
+		}
+
+		buttons.set(1,
+			buttons.get(1).withLabel("Delete " + playlists.get(playlistNum - 1).getFirst()).withStyle(ButtonStyle.SUCCESS));
 
 		ctx.getEvent().getChannel().sendMessageEmbeds(confirmation.build())
-			.setComponents(componentHandler.asActionRows(ctx)).queue();
+			.setComponents(ActionRow.of(buttons))
+			.delay(Duration.ofSeconds(15))
+			.flatMap((message) -> message.editMessageEmbeds(updateEmbed(confirmation, ctx.getEventMember().getEffectiveAvatarUrl()).build()))
+			.flatMap(Message::editMessageComponents)
+			.delay(Duration.ofSeconds(7))
+			.flatMap(Message::delete)
+			.queue();
+
 		ctx.getEvent().getMessage().delete().queue();
+	}
+
+	private EmbedBuilder updateEmbed(EmbedBuilder embedBuilder, String avatarUrl) {
+		embedBuilder
+			.setAuthor("\uD83D\uDCFC Your Cassette will not be deleted!",
+				null,
+				avatarUrl);
+
+		return embedBuilder;
 	}
 
 	@Override
@@ -91,7 +139,7 @@ public class DeletePlaylist extends ComponentInvoke implements CommandInterface 
 
 	@Override
 	public String getUsage() {
-		return "<playlist #>";
+		return "<playlist # or name>";
 	}
 
 	@Override

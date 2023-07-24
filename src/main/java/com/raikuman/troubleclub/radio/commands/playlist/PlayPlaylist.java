@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Handles playing a playlist to the queue
  *
- * @version 1.5 2023-22-06
+ * @version 1.6 2023-29-06
  * @since 1.2
  */
 public class PlayPlaylist implements CommandInterface {
@@ -30,7 +30,7 @@ public class PlayPlaylist implements CommandInterface {
 			return;
 
 		PlayerManager.getInstance().loadFromDatabase(channel, info,
-			ctx.getGuild().getIdLong(), false);
+			ctx.getGuild(), false);
 
 		ctx.getEvent().getMessage().delete().queue();
 	}
@@ -71,7 +71,9 @@ public class PlayPlaylist implements CommandInterface {
 	 * @return The PlaylistInfo object
 	 */
 	public PlaylistInfo handlePlaylist(CommandContext ctx, TextChannel channel) {
-		new Join().joinChannel(ctx);
+		if (!new Join().joinChannel(ctx)) {
+			return null;
+		}
 
 		// Check args
 		if (ctx.getArgs().size() != 1) {
@@ -87,6 +89,9 @@ public class PlayPlaylist implements CommandInterface {
 		int playlistNum;
 		try {
 			playlistNum = Integer.parseInt(ctx.getArgs().get(0));
+			if (playlistNum > PlaylistDB.getBasicPlaylistInfo(ctx.getEventMember().getUser()).size()) {
+				playlistNum = -1;
+			}
 		} catch (NumberFormatException e) {
 			MessageResources.timedMessage(
 				"You must provide a valid argument for this command: `" + getUsage() + "`",
@@ -96,17 +101,18 @@ public class PlayPlaylist implements CommandInterface {
 			return null;
 		}
 
-		// Get playlist to play from database
-		PlaylistInfo info = PlaylistDB.getPlaylist(ctx.getEventMember().getIdLong(), playlistNum);
-		if (info == null) {
+		if (playlistNum == -1) {
 			MessageResources.timedMessage(
-				"Could not find your cassette: `" + playlistNum + "`",
+				"You must provide a valid argument for this command: `" + getUsage() + "`",
 				channel,
 				5
 			);
 			return null;
 		}
 
-		return info;
+		// Retrieve playlist with both number and name
+		// If there are playlists with the same name, prompt with the number they should play with
+
+		return PlaylistDB.getUserPlaylist(ctx.getEventMember().getUser(), playlistNum - 1);
 	}
 }

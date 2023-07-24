@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * Handles setting the volume of all audio tracks of the bot
  *
- * @version 1.6 2023-20-06
+ * @version 1.7 2023-29-06
  * @since 1.1
  */
 public class VolumeTracks implements CommandInterface {
@@ -72,22 +72,15 @@ public class VolumeTracks implements CommandInterface {
 
 			StringBuilder stringBuilder = new StringBuilder();
 
-			String volume;
+			int volume;
 			for (int i = 1; i < 4; i++) {
-				volume = MusicDB.getTrackVolume(ctx.getGuild().getIdLong(), i);
-
-				int volumeNum;
-				try {
-					volumeNum = Integer.parseInt(volume);
-				} catch (NumberFormatException e) {
-					volumeNum = 100;
-				}
+				volume = MusicDB.getTrackVolume(ctx.getGuild(), i);
 
 				stringBuilder
 					.append("**Audio Track ")
 					.append(i)
 					.append("**: `")
-					.append(volumeNum)
+					.append(volume)
 					.append("%`");
 
 				if (i != 3)
@@ -131,8 +124,8 @@ public class VolumeTracks implements CommandInterface {
 				int calculateVolume = (int) Math.ceil((double) volumeNum / 4);
 
 				for (int i = 1; i < 4; i++) {
-					MusicDB.updateTrackVolume(
-						ctx.getGuild().getIdLong(),
+					MusicDB.setTrackVolume(
+						ctx.getGuild(),
 						i,
 						volumeNum
 					);
