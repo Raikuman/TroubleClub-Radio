@@ -6,6 +6,7 @@ import com.raikuman.botutilities.helpers.RandomColor;
 import com.raikuman.botutilities.invokes.context.CommandContext;
 import com.raikuman.troubleclub.radio.commands.playlist.AddSongToPlaylist;
 import com.raikuman.troubleclub.radio.commands.playlist.CreatePlaylist;
+import com.raikuman.troubleclub.radio.commands.playlist.Playlist;
 import com.raikuman.troubleclub.radio.commands.playlist.RemoveSongFromPlaylist;
 import com.raikuman.troubleclub.radio.config.music.MusicDB;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
@@ -29,7 +30,7 @@ import java.util.Map;
 /**
  * Handles loading and playing tracks for the guild music manager
  *
- * @version 1.13 2023-29-06
+ * @version 1.14 2023-24-07
  * @since 1.0
  */
 public class PlayerManager {
@@ -63,19 +64,65 @@ public class PlayerManager {
 		});
 	}
 
-	public void handlePlaylist(CommandContext ctx, String link, Triple<String, Integer, Integer> playlist, boolean add) {
+	/**
+	 * Loads playlist information
+	 * @param ctx The CommandContext to send to the command
+	 * @param link The link of the playlist to get info from
+	 * @param playlist The playlist the user is getting info on
+	 * @param playlistCommand The command to return to
+	 */
+	public void loadPlaylistInfo(CommandContext ctx, String link, Triple<String, Integer, Integer> playlist,
+								 User user, Playlist playlistCommand) {
 		playlistManager.getAudioPlayer().setVolume(0);
 
 		this.audioPlayerManager.loadItemOrdered(playlistManager, link, new AudioLoadResultHandler() {
 
 			@Override
 			public void trackLoaded(AudioTrack audioTrack) {
-				if (add) {
+
+			}
+
+			@Override
+			public void playlistLoaded(AudioPlaylist audioPlaylist) {
+				playlistCommand.showUserPlaylist(ctx, audioPlaylist, playlist, user);
+			}
+
+			@Override
+			public void noMatches() {
+
+			}
+
+			@Override
+			public void loadFailed(FriendlyException e) {
+				MessageResources.timedMessage(
+					"Could not retrieve cassette information! `" + e.getMessage() + "`",
+					ctx.getChannel().asTextChannel(),
+					5
+				);
+			}
+		});
+	}
+
+	/**
+	 * Handles manipulating and creating playlists
+	 * @param ctx The CommandContext to send to the command
+	 * @param link The link of the track/playlist to add/create
+	 * @param playlist The playlist the user is manipulating
+	 * @param addTrack Whether to add or remove a track from a playlist
+	 */
+	public void handlePlaylist(CommandContext ctx, String link, Triple<String, Integer, Integer> playlist, boolean addTrack) {
+		playlistManager.getAudioPlayer().setVolume(0);
+
+		this.audioPlayerManager.loadItemOrdered(playlistManager, link, new AudioLoadResultHandler() {
+
+			@Override
+			public void trackLoaded(AudioTrack audioTrack) {
+				if (addTrack) {
 					new AddSongToPlaylist().addSongToPlaylist(ctx, playlist, audioTrack);
 				} else {
 					new RemoveSongFromPlaylist().removeSongFromPlaylist(ctx, playlist, audioTrack);
 				}
-			}
+            }
 
 			@Override
 			public void playlistLoaded(AudioPlaylist audioPlaylist) {
@@ -93,7 +140,11 @@ public class PlayerManager {
 
 			@Override
 			public void loadFailed(FriendlyException e) {
-
+				MessageResources.timedMessage(
+					"Could not handle loading track! `" + e.getMessage() + "`",
+					ctx.getChannel().asTextChannel(),
+					5
+				);
 			}
 		});
 	}
@@ -123,7 +174,7 @@ public class PlayerManager {
 						musicManager.getCurrentAudioTrack()
 					).build()
 				).queue();
-			}
+            }
 
 			@Override
 			public void playlistLoaded(AudioPlaylist audioPlaylist) {
@@ -209,7 +260,7 @@ public class PlayerManager {
 					channel,
 					5
 				);
-			}
+            }
 
 			@Override
 			public void playlistLoaded(AudioPlaylist audioPlaylist) {
@@ -282,7 +333,7 @@ public class PlayerManager {
 						musicManager.getCurrentAudioTrack()
 					).build()
 				).queue();
-			}
+            }
 
 			@Override
 			public void playlistLoaded(AudioPlaylist audioPlaylist) {
@@ -374,7 +425,7 @@ public class PlayerManager {
 					channel,
 					5
 				);
-			}
+            }
 
 			@Override
 			public void playlistLoaded(AudioPlaylist audioPlaylist) {
