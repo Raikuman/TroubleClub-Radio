@@ -9,15 +9,20 @@ import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 /**
  * Button handles canceling the delete playlist prompt
  *
- * @version 1.2 2023-25-06
+ * @version 1.3 2023-30-06
  * @since 1.2
  */
 public class CancelDeletePlaylist implements ButtonInterface {
 
 	@Override
 	public void handle(ButtonContext ctx) {
+		String playlist = ctx.getEvent().getMessage().getEmbeds().get(0).getTitle();
+		if (playlist == null) {
+			return;
+		}
+
 		MessageResources.timedMessage(
-			":thumbsup:",
+			"**" + playlist.substring(12) + "** was not deleted :thumbsup:",
 			ctx.getEvent().getChannel().asTextChannel(),
 			5
 		);
@@ -32,12 +37,12 @@ public class CancelDeletePlaylist implements ButtonInterface {
 
 	@Override
 	public String displayLabel() {
-		return null;
+		return "\uD83D\uDDD9";
 	}
 
 	@Override
 	public ButtonStyle buttonStyle() {
-		return ButtonStyle.SECONDARY;
+		return ButtonStyle.DANGER;
 	}
 
 	@Override

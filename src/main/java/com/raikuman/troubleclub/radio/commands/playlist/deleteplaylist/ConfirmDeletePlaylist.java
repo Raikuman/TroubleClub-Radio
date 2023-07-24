@@ -4,17 +4,19 @@ import com.raikuman.botutilities.helpers.MessageResources;
 import com.raikuman.botutilities.helpers.RandomColor;
 import com.raikuman.botutilities.invokes.context.ButtonContext;
 import com.raikuman.botutilities.invokes.interfaces.ButtonInterface;
-import com.raikuman.troubleclub.radio.commands.other.Changelog;
 import com.raikuman.troubleclub.radio.config.playlist.PlaylistDB;
+import kotlin.Triple;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 
+import java.util.List;
+
 /**
  * Button handles confirming the delete playlist prompt
  *
- * @version 1.3 2023-25-06
+ * @version 1.4 2023-05-07
  * @since 1.2
  */
 public class ConfirmDeletePlaylist implements ButtonInterface {
@@ -23,49 +25,39 @@ public class ConfirmDeletePlaylist implements ButtonInterface {
 	public void handle(ButtonContext ctx) {
 		final TextChannel channel = ctx.getEvent().getChannel().asTextChannel();
 
-		String label = ctx.getEvent().getButton().getLabel();
-
-		int playlistDeletion;
-		try {
-			playlistDeletion = Integer.parseInt(String.valueOf(label.charAt(9)));
-		} catch (NumberFormatException e) {
+		String playlist = ctx.getEvent().getMessage().getEmbeds().get(0).getTitle();
+		if (playlist == null) {
 			MessageResources.timedMessage(
-				"An error has occurred. Please report issues to the Github using the `" + new Changelog().getInvoke() + "` command",
+				"There was an error deleting your cassette",
 				channel,
 				5
 			);
 			return;
 		}
 
-		if (playlistDeletion == 0) {
-			MessageResources.timedMessage(
-				"An error has occurred. Please report issues to the Github using the `" + new Changelog().getInvoke() + "` command",
-				channel,
-				5
-			);
-			return;
-		}
+		int playlistNum = Integer.parseInt(String.valueOf(playlist.charAt(9)));
 
-		// Delete playlist
-		if (!PlaylistDB.deletePlaylist(playlistDeletion, ctx.getEventMember().getIdLong())) {
-			MessageResources.timedMessage(
-				"Could not delete your cassette: `" + playlistDeletion + "`",
-				channel,
-				5
-			);
-		}
-
-		int numSubstring = 7 + String.valueOf(playlistDeletion).length();
-		String playlistName = label.substring(numSubstring);
+		// Get playlist to delete
+		List<Triple<String, Integer, Integer>> playlists = PlaylistDB.getBasicPlaylistInfo(ctx.getEventMember().getUser());
+		boolean deleted = PlaylistDB.deletePlaylist(playlists.get(playlistNum - 1).getThird());
 
 		EmbedBuilder builder = new EmbedBuilder()
 			.setColor(RandomColor.getRandomColor())
-			.setAuthor("\uD83D\uDDD1️ Cassette \"" + playlistName + "\" deleted",	null,
+			.setTitle(playlists.get(playlistNum - 1).getFirst());
+
+		if (deleted) {
+			builder
+				.setAuthor("\uD83D\uDDD1\uFE0F Cassette deleted:",
+					null,
+					ctx.getEventMember().getEffectiveAvatarUrl());
+		} else {
+			builder
+				.setAuthor("❗ There was an error deleting your cassette:",
+				null,
 				ctx.getEventMember().getEffectiveAvatarUrl());
+		}
 
-		channel.sendMessageEmbeds(builder.build()).queue();
-
-		ctx.getEvent().getMessage().delete().queue();
+		ctx.getEvent().editMessageEmbeds(builder.build()).queue();
 	}
 
 	@Override
