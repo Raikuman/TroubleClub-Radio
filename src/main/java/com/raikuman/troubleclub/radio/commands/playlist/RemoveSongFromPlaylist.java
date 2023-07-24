@@ -46,7 +46,7 @@ public class RemoveSongFromPlaylist implements CommandInterface {
 
         List<Triple<String, Integer, Integer>> playlists = PlaylistDB.getBasicPlaylistInfo(ctx.getEventMember().getUser());
         Triple<String, Integer, Integer> targetPlaylist = null;
-        int playlistNum = -1, songNum = -1;
+        int playlistNum = -1, songNum;
 
         if (ctx.getArgs().size() == 2) {
             // Retrieve first arg, playlistNum

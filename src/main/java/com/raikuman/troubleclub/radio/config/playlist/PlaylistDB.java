@@ -31,7 +31,7 @@ public class PlaylistDB {
 		List<Integer> songIds = new ArrayList<>();
 		for (String link : playlistInfo.getSongs()) {
 			int songId = addSongToDatabase(link);
-			if (songId == -1) continue;;
+			if (songId == -1) continue;
 
 			songIds.add(songId);
 		}

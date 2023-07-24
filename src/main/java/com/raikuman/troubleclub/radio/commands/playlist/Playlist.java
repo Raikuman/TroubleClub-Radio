@@ -6,7 +6,6 @@ import com.raikuman.botutilities.invokes.components.manager.ComponentHandler;
 import com.raikuman.botutilities.invokes.components.manager.ComponentInvoke;
 import com.raikuman.botutilities.invokes.components.pagination.PaginationBuilder;
 import com.raikuman.botutilities.invokes.context.CommandContext;
-import com.raikuman.botutilities.invokes.context.EventContext;
 import com.raikuman.botutilities.invokes.interfaces.CommandInterface;
 import com.raikuman.troubleclub.radio.category.PlaylistCategory;
 import com.raikuman.troubleclub.radio.config.playlist.PlaylistDB;
@@ -20,7 +19,7 @@ import java.util.List;
 /**
  * Handles sending a pagination of playlists of the user
  *
- * @version 1.4 2023-06-07
+ * @version 1.5 2023-24-07
  * @since 1.2
  */
 public class Playlist extends ComponentInvoke implements CommandInterface {
@@ -41,12 +40,12 @@ public class Playlist extends ComponentInvoke implements CommandInterface {
 		List<Member> mentioned = ctx.getEvent().getMessage().getMentions().getMembers();
 
 		if (mentioned.size() > 0) {
-			componentHandler.providePaginationComponent().updateItems(pageStrings(ctx, mentioned.get(0).getUser()));
+			componentHandler.providePaginationComponent().updateItems(pageStrings(mentioned.get(0).getUser()));
 			componentHandler.providePaginationComponent().updateMember(mentioned.get(0));
 			componentHandler.providePaginationComponent().updateTitle(mentioned.get(0).getEffectiveName() + "'s " +
 				"Cassettes");
 		} else {
-			componentHandler.providePaginationComponent().updateItems(pageStrings(ctx, ctx.getEventMember().getUser()));
+			componentHandler.providePaginationComponent().updateItems(pageStrings(ctx.getEventMember().getUser()));
 			componentHandler.providePaginationComponent().updateMember(ctx.getEventMember());
 			componentHandler.providePaginationComponent().updateTitle("Your Cassettes");
 		}
@@ -83,7 +82,7 @@ public class Playlist extends ComponentInvoke implements CommandInterface {
 		return new PlaylistCategory();
 	}
 
-	private List<String> pageStrings(EventContext ctx, User user) {
+	private List<String> pageStrings(User user) {
 		List<String> stringList = new ArrayList<>();
 		List<Triple<String, Integer, Integer>> playlists = PlaylistDB.getBasicPlaylistInfo(user);
 		if (playlists.isEmpty()) {
