@@ -1,38 +1,41 @@
 package com.raikuman.troubleclub.radio.config.playlist;
 
 import com.raikuman.botutilities.configs.DatabaseConfigInterface;
-
-import java.util.List;
+import com.raikuman.botutilities.database.DatabaseManager;
+import net.dv8tion.jda.api.JDA;
 
 /**
  *  Provides configuration for playlists
  *
- * @version 1.1 2023-13-01
+ * @version 1.2 2023-24-07
  * @since 1.2
  */
 public class PlaylistConfig implements DatabaseConfigInterface {
 
 	@Override
-	public List<String> tableStatements() {
-		// language=SQLITE-SQL
-		return List.of(
-			"CREATE TABLE IF NOT EXISTS playlists(" +
-			"playlist_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-			"member_id INTEGER NOT NULL," +
-			"playlist_name VARCHAR(20)," +
-			"playlist_link VARCHAR(20)," +
-			"song_count INTEGER NOT NULL," +
-			"FOREIGN KEY(member_id) REFERENCES members(member_id));",
+	public void startup(JDA jda) {
+		// Create user_playlist table
+		DatabaseManager.sendBasicQuery(
+			// language=SQL
+			"CREATE TABLE IF NOT EXISTS user_playlist(user_playlist_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id " +
+				"INTEGER NOT NULL, playlist_name VARCHAR(60), song_num INTEGER NOT NULL, FOREIGN KEY(user_id) " +
+				"REFERENCES user(user_id))"
+		);
 
-			"CREATE TABLE IF NOT EXISTS songs(" +
-			"song_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-			"song_link VARCHAR(20) NOT NULL UNIQUE);",
+		// Create playlist_song table
+		DatabaseManager.sendBasicQuery(
+			// language=SQL
+			"CREATE TABLE IF NOT EXISTS playlist_song(playlist_song_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+				"user_playlist_id INTEGER NOT NULL, song_id INTEGER NOT NULL, song_num INTEGER NOT NULL, FOREIGN KEY" +
+				"(song_id) REFERENCES song(song_id), CONSTRAINT fk_user_playlist_id FOREIGN KEY(user_playlist_id) REFERENCES " +
+				"user_playlist(user_playlist_id) ON DELETE CASCADE)"
+		);
 
-			"CREATE TABLE IF NOT EXISTS playlists_songs(" +
-			"playlist_number INTEGER NOT NULL," +
-			"song_id INTEGER NOT NULL," +
-			"FOREIGN KEY(playlist_number) REFERENCES playlists(playlist_id)," +
-			"FOREIGN KEY(song_id) REFERENCES songs(song_id));"
+		// Create song table
+		DatabaseManager.sendBasicQuery(
+			// language=SQL
+			"CREATE TABLE IF NOT EXISTS song(song_id INTEGER PRIMARY KEY AUTOINCREMENT, song_link VARCHAR(20) UNIQUE NOT " +
+				"NULL)"
 		);
 	}
 }
