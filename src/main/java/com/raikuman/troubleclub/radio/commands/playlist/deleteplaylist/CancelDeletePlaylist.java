@@ -1,15 +1,19 @@
 package com.raikuman.troubleclub.radio.commands.playlist.deleteplaylist;
 
-import com.raikuman.botutilities.helpers.MessageResources;
+import com.raikuman.botutilities.helpers.RandomColor;
 import com.raikuman.botutilities.invokes.context.ButtonContext;
 import com.raikuman.botutilities.invokes.interfaces.ButtonInterface;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
+
+import java.time.Duration;
 
 /**
  * Button handles canceling the delete playlist prompt
  *
- * @version 1.3 2023-30-06
+ * @version 1.4 2023-27-07
  * @since 1.2
  */
 public class CancelDeletePlaylist implements ButtonInterface {
@@ -21,13 +25,18 @@ public class CancelDeletePlaylist implements ButtonInterface {
 			return;
 		}
 
-		MessageResources.timedMessage(
-			"**" + playlist.substring(12) + "** was not deleted :thumbsup:",
-			ctx.getEvent().getChannel().asTextChannel(),
-			5
-		);
+		EmbedBuilder builder = new EmbedBuilder()
+			.setColor(RandomColor.getRandomColor())
+			.setTitle(playlist.substring(12))
+			.setAuthor("\uD83D\uDDD1\uFE0F Cassette was not deleted:",
+				null,
+				ctx.getEventMember().getEffectiveAvatarUrl());
 
-		ctx.getEvent().getMessage().delete().queue();
+		ctx.getEvent().editMessageEmbeds(builder.build()).queue();
+		ctx.getEvent().getMessage().editMessageComponents()
+			.delay(Duration.ofSeconds(7))
+			.flatMap(Message::delete)
+			.queue();
 	}
 
 	@Override

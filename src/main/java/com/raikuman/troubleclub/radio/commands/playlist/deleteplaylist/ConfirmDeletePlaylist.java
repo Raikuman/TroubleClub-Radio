@@ -7,16 +7,18 @@ import com.raikuman.botutilities.invokes.interfaces.ButtonInterface;
 import com.raikuman.troubleclub.radio.config.playlist.PlaylistDB;
 import kotlin.Triple;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 
+import java.time.Duration;
 import java.util.List;
 
 /**
  * Button handles confirming the delete playlist prompt
  *
- * @version 1.4 2023-05-07
+ * @version 1.5 2023-27-07
  * @since 1.2
  */
 public class ConfirmDeletePlaylist implements ButtonInterface {
@@ -58,6 +60,10 @@ public class ConfirmDeletePlaylist implements ButtonInterface {
 		}
 
 		ctx.getEvent().editMessageEmbeds(builder.build()).queue();
+		ctx.getEvent().getMessage().editMessageComponents()
+			.delay(Duration.ofSeconds(7))
+			.flatMap(Message::delete)
+			.queue();
 	}
 
 	@Override
