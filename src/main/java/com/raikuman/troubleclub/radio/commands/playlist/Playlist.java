@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Handles sending a pagination of playlists of the user
  *
- * @version 1.6 2023-24-07
+ * @version 1.7 2023-27-07
  * @since 1.2
  */
 public class Playlist extends ComponentInvoke implements CommandInterface {
@@ -79,7 +79,7 @@ public class Playlist extends ComponentInvoke implements CommandInterface {
 					return;
 				}
 
-				if (!getUserPlaylist(ctx, playlistNum - 1, mentioned.get(0).getUser(),
+				if (getUserPlaylist(ctx, playlistNum - 1, mentioned.get(0).getUser(),
 					playlists.get(playlistNum - 1))) {
 					MessageResources.timedMessage(
 						"Could not load " + mentioned.get(0).getEffectiveName() + "'s cassette",
@@ -124,7 +124,7 @@ public class Playlist extends ComponentInvoke implements CommandInterface {
 					return;
 				}
 
-				if (!getUserPlaylist(ctx, playlistNum - 1, ctx.getEventMember().getUser(),
+				if (getUserPlaylist(ctx, playlistNum - 1, ctx.getEventMember().getUser(),
 					playlists.get(playlistNum - 1))) {
 					MessageResources.timedMessage(
 						"Could not load your cassette",
@@ -211,7 +211,7 @@ public class Playlist extends ComponentInvoke implements CommandInterface {
 	private boolean getUserPlaylist(CommandContext ctx, int playlistNum, User user,
 									Triple<String, Integer, Integer> playlist) {
 		PlaylistInfo playlistInfo = PlaylistDB.getUserPlaylist(user, playlistNum);
-		if (playlistInfo == null) return false;
+		if (playlistInfo == null) return true;
 
 		// Construct playlist
 		StringBuilder stringBuilder = new StringBuilder("http://www.youtube.com/watch_videos?video_ids=");
@@ -224,7 +224,7 @@ public class Playlist extends ComponentInvoke implements CommandInterface {
 		}
 
 		PlayerManager.getInstance().loadPlaylistInfo(ctx, stringBuilder.toString(), playlist, user, this);
-		return true;
+		return false;
 	}
 
 	public void showUserPlaylist(CommandContext ctx, AudioPlaylist audioPlaylist,

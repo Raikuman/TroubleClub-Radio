@@ -2,7 +2,9 @@ package com.raikuman.troubleclub.radio.config.playlist;
 
 import com.raikuman.botutilities.database.DatabaseManager;
 import com.raikuman.botutilities.database.DefaultDatabaseHandler;
+import com.raikuman.troubleclub.radio.commands.playlist.mixplaylist.PlaylistMixEnum;
 import com.raikuman.troubleclub.radio.music.PlaylistInfo;
+import kotlin.Pair;
 import kotlin.Triple;
 import net.dv8tion.jda.api.entities.User;
 import org.slf4j.Logger;
@@ -14,7 +16,7 @@ import java.util.*;
 /**
  * Handles getting and updating values of the playlist tables in the database
  *
- * @version 1.4 2023-05-07
+ * @version 1.5 2023-27-07
  * @since 1.2
  */
 public class PlaylistDB {
@@ -95,6 +97,66 @@ public class PlaylistDB {
 		} catch (SQLException e) {
 			logger.error("Could not rename playlist with id " + playlistId);
 			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Handles mixing playlists from the database
+	 * @param originalPlaylist The original playlist id to mix to
+	 * @param targetPlaylist The target playlist id to mix from
+	 * @param mixType The method to mix the playlists
+	 * @return Whether the playlist was successfully mixed
+	 */
+	public static boolean mixPlaylists(Triple<String, Integer, Integer> originalPlaylist,
+									   Triple<String, Integer, Integer> targetPlaylist, PlaylistMixEnum mixType) {
+		// Retrieve target playlist
+		PlaylistInfo targetPlaylistInfo = getPlaylistFromDatabase(targetPlaylist);
+		if (targetPlaylistInfo == null) {
+			return false;
+		}
+
+		// Construct pairs with song link and song num
+		List<Pair<String, Integer>> songPositions = new ArrayList<>();
+		int songNum;
+		switch (mixType) {
+			case ADD_TO_FRONT:
+				// Start from first song and add after
+				songNum = 1;
+				for (String songLink : targetPlaylistInfo.getSongs()) {
+					songPositions.add(new Pair<>(songLink, songNum));
+					songNum++;
+				}
+				break;
+
+			case ADD_TO_BACK:
+				// Start from song after last and add after
+				songNum = originalPlaylist.getSecond() + 1;
+				for (String songLink : targetPlaylistInfo.getSongs()) {
+					songPositions.add(new Pair<>(songLink, songNum));
+					songNum++;
+				}
+				break;
+
+			case SHUFFLE:
+				// Generate random numbers between 1 and original playlist size and append backwards
+				Random random = new Random();
+				for (String songLink : targetPlaylistInfo.getSongs()) {
+					songNum = random.nextInt(originalPlaylist.getSecond()) + 1;
+					songPositions.add(new Pair<>(songLink, songNum));
+				}
+
+				// Sort list
+				songPositions.sort(Comparator.comparing(Pair<String, Integer>::getSecond).reversed());
+				break;
+		}
+
+		// Add to playlist
+		for (Pair<String, Integer> songPosition : songPositions) {
+			if (!addSongToPlaylist(originalPlaylist.getThird(), songPosition.getFirst(), songPosition.getSecond())) {
+				return false;
+			}
 		}
 
 		return true;
@@ -236,7 +298,7 @@ public class PlaylistDB {
 				return false;
 			}
 
-			if (songNum > numberOfSongs) {
+			if (songNum > (numberOfSongs + 1)) {
 				return false;
 			}
 		}
@@ -310,17 +372,17 @@ public class PlaylistDB {
 
 	private static PlaylistInfo getPlaylistFromDatabase(Triple<String, Integer, Integer> basicInfo) {
 		// Retrieve song ids
-		List<Integer> songIds = new ArrayList<>();
+		List<Pair<Integer, Integer>> songIds = new ArrayList<>();
 		try (
 			Connection connection = DatabaseManager.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(
 				// language=SQL
-				"SELECT song_id FROM playlist_song WHERE user_playlist_id = ?"
+				"SELECT song_id, song_num FROM playlist_song WHERE user_playlist_id = ?"
 			)) {
 			preparedStatement.setString(1, String.valueOf(basicInfo.getThird()));
 			try (ResultSet resultSet = preparedStatement.executeQuery()) {
 				while (resultSet.next()) {
-					songIds.add(resultSet.getInt(1));
+					songIds.add(new Pair<>(resultSet.getInt(1), resultSet.getInt(2)));
 				}
 			}
 		} catch (SQLException e) {
@@ -329,16 +391,18 @@ public class PlaylistDB {
 
 		if (songIds.isEmpty()) return null;
 
+		songIds.sort(Comparator.comparing(Pair<Integer, Integer>::getSecond));
+
 		// Retrieve song links to populate PlaylistInfo
 		List<String> songLinks = new ArrayList<>();
-		for (Integer songId : songIds) {
+		for (Pair<Integer, Integer> songId : songIds) {
 			try (
 				Connection connection = DatabaseManager.getConnection();
 				PreparedStatement preparedStatement = connection.prepareStatement(
 					// language=SQL
 					"SELECT song_link FROM song WHERE song_id = ?"
 				)) {
-				preparedStatement.setString(1, String.valueOf(songId));
+				preparedStatement.setString(1, String.valueOf(songId.getFirst()));
 				try (ResultSet resultSet = preparedStatement.executeQuery()) {
 					while (resultSet.next()) {
 						songLinks.add(resultSet.getString(1));
@@ -369,7 +433,7 @@ public class PlaylistDB {
 			)) {
 			preparedStatement.setString(1, String.valueOf(userId));
 			try (ResultSet resultSet = preparedStatement.executeQuery()) {
-				if (resultSet.next()) {
+				while (resultSet.next()) {
 					playlists.add(new Triple<>(resultSet.getString(1), resultSet.getInt(2), resultSet.getInt(3)));
 				}
 			}

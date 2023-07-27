@@ -14,6 +14,7 @@ import com.raikuman.troubleclub.radio.commands.other.trello.requestfeature.Reque
 import com.raikuman.troubleclub.radio.commands.other.trello.submitbug.SubmitBug;
 import com.raikuman.troubleclub.radio.commands.playlist.*;
 import com.raikuman.troubleclub.radio.commands.playlist.deleteplaylist.DeletePlaylist;
+import com.raikuman.troubleclub.radio.commands.playlist.mixplaylist.MixPlaylist;
 import com.raikuman.troubleclub.radio.commands.track.*;
 
 import java.util.Arrays;
@@ -22,7 +23,7 @@ import java.util.List;
 /**
  * Provides instantiating all invokes and providing them to the InvokeManager to create listeners
  *
- * @version 1.2 2023-06-07
+ * @version 1.3 2023-24-07
  * @since 1.3
  */
 public class InvokeData {
@@ -87,6 +88,7 @@ public class InvokeData {
             new ShufflePlayPlaylist(),
             new AddSongToPlaylist(),
             new RemoveSongFromPlaylist(),
+            new MixPlaylist(),
 
             new Changelog(),
             new ToS()
