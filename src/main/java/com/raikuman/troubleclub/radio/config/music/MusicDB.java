@@ -15,7 +15,7 @@ import java.sql.SQLException;
 /**
  * Handles getting and updating values of the music table in the database
  *
- * @version 1.3 2023-24-07
+ * @version 1.4 2023-27-07
  * @since 1.2
  */
 public class MusicDB {
@@ -31,22 +31,26 @@ public class MusicDB {
 	public static int getTrackVolume(Guild guild, int trackNum) {
 		int guildId = DefaultDatabaseHandler.getGuildId(guild);
 		String track = "track_" + trackNum + "_vol";
+		int[] volumes = new int[3];
 
 		// Get volume from database
 		try (
 			Connection connection = DatabaseManager.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(
 				// language=SQL
-				"SELECT ? FROM music_setting WHERE guild_id = ?"
+				"SELECT * FROM music_setting WHERE guild_id = ?"
 			)) {
-			preparedStatement.setString(1, track);
-			preparedStatement.setString(2, String.valueOf(guildId));
+			preparedStatement.setString(1, String.valueOf(guildId));
 
 			try (ResultSet resultSet = preparedStatement.executeQuery()) {
 				if (resultSet.next()) {
-					return resultSet.getInt(1);
+					volumes[0] = resultSet.getInt(3);
+					volumes[1] = resultSet.getInt(4);
+					volumes[2] = resultSet.getInt(5);
 				}
 			}
+
+			return volumes[trackNum - 1];
 		} catch (SQLException e) {
 			logger.error("Could not retrieve " + track + " for guild " + guild.getName() + ":" + guild.getId());
 		}
