@@ -15,10 +15,12 @@ import kotlin.Triple;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
+import net.dv8tion.jda.api.requests.ErrorResponse;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -27,7 +29,7 @@ import java.util.List;
 /**
  * Handles deleting a playlist from a user's playlist collection
  *
- * @version 1.5 2023-30-06
+ * @version 1.6 2023-25-07
  * @since 1.2
  */
 public class DeletePlaylist extends ComponentInvoke implements CommandInterface {
@@ -118,7 +120,8 @@ public class DeletePlaylist extends ComponentInvoke implements CommandInterface 
 			.flatMap(Message::editMessageComponents)
 			.delay(Duration.ofSeconds(7))
 			.flatMap(Message::delete)
-			.queue();
+			.queue(null, new ErrorHandler()
+				.ignore(ErrorResponse.UNKNOWN_MESSAGE));
 
 		ctx.getEvent().getMessage().delete().queue();
 	}
