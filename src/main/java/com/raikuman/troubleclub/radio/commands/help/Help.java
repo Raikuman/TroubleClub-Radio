@@ -17,7 +17,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 /**
  * Handles the help slash command
  *
- * @version 1.1 2023-25-06
+ * @version 1.2 2023-16-09
  * @since 1.3
  */
 public class Help extends ComponentInvoke implements SlashInterface {
@@ -32,6 +32,7 @@ public class Help extends ComponentInvoke implements SlashInterface {
                 .setTitle("Radio Command Categories")
                 .setItemsPerPage(1)
                 .enableLoop(true)
+                .enableEphemeral(true)
                 .enableFirstPageButton(true)
                 .setSelectionMenu(
                     "View commands in category",
@@ -45,13 +46,15 @@ public class Help extends ComponentInvoke implements SlashInterface {
 
     @Override
     public void handle(SlashContext ctx) {
-        componentHandler.providePaginationComponent().updateItems(HelpUtilities.homePageStrings(ctx, invokeProvider));
+        componentHandler.providePaginationComponent().updateItems(
+            ctx.getEventMember(),
+            HelpUtilities.homePageStrings(ctx, invokeProvider));
         componentHandler.providePaginationComponent().handleContext(ctx);
     }
 
     @Override
     public String getInvoke() {
-        return "radio";
+        return HelpUtilities.helpInvoke;
     }
 
     @Override

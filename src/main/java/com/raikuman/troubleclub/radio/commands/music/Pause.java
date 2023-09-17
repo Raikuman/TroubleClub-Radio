@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Handles pausing the music player
  *
- * @version 1.8 2023-22-06
+ * @version 1.9 2023-16-09
  * @since 1.1
  */
 public class Pause implements CommandInterface {
@@ -116,7 +116,7 @@ public class Pause implements CommandInterface {
 
 	@Override
 	public List<String> getAliases() {
-		return List.of("p");
+		return List.of("pa");
 	}
 
 	@Override

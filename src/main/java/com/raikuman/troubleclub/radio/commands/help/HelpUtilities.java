@@ -18,10 +18,12 @@ import java.util.List;
 /**
  * A utility class to help construct pages for the help slash command
  *
- * @version 1.1 2023-25-06
+ * @version 1.2 2023-16-09
  * @since 1.3
  */
 public class HelpUtilities {
+
+	public static final String helpInvoke = "radio";
 
 	/**
 	 * Build the page strings for the main help slash
@@ -105,7 +107,7 @@ public class HelpUtilities {
         }
 
         for (SlashInterface slash : invokeProvider.getSlashes()) {
-			if (slash.getInvoke().equals(new Help(null).getInvoke())) continue;
+			if (slash.getInvoke().equals(helpInvoke)) continue;
 
             if (slash.getCategory().getClass() == categoryInterface.getClass()) count++;
         }
@@ -164,7 +166,7 @@ public class HelpUtilities {
 
 		// Build slash invokes
 		for (SlashInterface slash : invokeProvider.getSlashes()) {
-			if (slash.getInvoke().equals(new Help(null).getInvoke())) continue;
+			if (slash.getInvoke().equals(helpInvoke)) continue;
 
 			if (slash.getCategory().getClass() != category.getClass()) continue;
 

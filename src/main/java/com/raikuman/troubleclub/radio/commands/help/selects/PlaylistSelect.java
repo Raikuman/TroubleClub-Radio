@@ -13,7 +13,7 @@ import com.raikuman.troubleclub.radio.commands.help.HelpUtilities;
 /**
  * Handles the playlist select for the help command
  *
- * @version 1.1 2023-25-06
+ * @version 1.2 2023-16-09
  * @since 1.3
  */
 public class PlaylistSelect extends ComponentInvoke implements SelectInterface {
@@ -35,7 +35,7 @@ public class PlaylistSelect extends ComponentInvoke implements SelectInterface {
 
     @Override
     public void handle(SelectContext ctx) {
-        componentHandler.providePaginationComponent().updateItems(
+        componentHandler.providePaginationComponent().updateItems(ctx.getEventMember(),
             HelpUtilities.categoryPageStrings(ctx, invokeProvider, new PlaylistCategory()));
         componentHandler.providePaginationComponent().handleContext(ctx);
     }

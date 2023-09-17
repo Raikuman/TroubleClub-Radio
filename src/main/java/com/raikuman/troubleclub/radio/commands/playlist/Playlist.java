@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Handles sending a pagination of playlists of the user
  *
- * @version 1.7 2023-27-07
+ * @version 1.8 2023-16-09
  * @since 1.2
  */
 public class Playlist extends ComponentInvoke implements CommandInterface {
@@ -90,11 +90,10 @@ public class Playlist extends ComponentInvoke implements CommandInterface {
 				return;
 			}
 
-			componentHandler.providePaginationComponent().updateItems(pageStringsPlaylists(mentioned.get(0).getUser()
-				, true));
-			componentHandler.providePaginationComponent().updateMember(mentioned.get(0));
-			componentHandler.providePaginationComponent().updateTitle(mentioned.get(0).getEffectiveName() + "'s " +
-				"Cassettes");
+			componentHandler.providePaginationComponent().updateItems(ctx.getEventMember(),
+				pageStringsPlaylists(mentioned.get(0).getUser(), true));
+			componentHandler.providePaginationComponent().updateTitle(ctx.getEventMember(),
+				mentioned.get(0).getEffectiveName() + "'s Cassettes");
 		} else {
 			// Handle selected playlist
 			if (ctx.getArgs().size() == 1) {
@@ -135,9 +134,9 @@ public class Playlist extends ComponentInvoke implements CommandInterface {
 				return;
 			}
 
-			componentHandler.providePaginationComponent().updateItems(pageStringsPlaylists(ctx.getEventMember().getUser(), false));
-			componentHandler.providePaginationComponent().updateMember(ctx.getEventMember());
-			componentHandler.providePaginationComponent().updateTitle("Your Cassettes");
+			componentHandler.providePaginationComponent().updateItems(ctx.getEventMember(),
+				pageStringsPlaylists(ctx.getEventMember().getUser(), false));
+			componentHandler.providePaginationComponent().updateTitle(ctx.getEventMember(), "Your Cassettes");
 		}
 
 		componentHandler.providePaginationComponent().handleContext(ctx);
@@ -243,9 +242,9 @@ public class Playlist extends ComponentInvoke implements CommandInterface {
 			songNum++;
 		}
 
-		componentHandler.providePaginationComponent().updateItems(stringList);
-		componentHandler.providePaginationComponent().updateMember(ctx.getEventMember());
-		componentHandler.providePaginationComponent().updateTitle(user.getEffectiveName() + "'s " +
+		componentHandler.providePaginationComponent().updateItems(ctx.getEventMember(), stringList);
+		componentHandler.providePaginationComponent().updateTitle(ctx.getEventMember(), user.getEffectiveName() +
+			"'s " +
 			"Cassette: " + playlist.getFirst());
 		componentHandler.providePaginationComponent().handleContext(ctx);
 	}
