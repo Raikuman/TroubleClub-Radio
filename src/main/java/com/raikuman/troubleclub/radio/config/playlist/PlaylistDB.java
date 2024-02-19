@@ -109,56 +109,41 @@ public class PlaylistDB {
 	 * @param mixType The method to mix the playlists
 	 * @return Whether the playlist was successfully mixed
 	 */
-	public static boolean mixPlaylists(Triple<String, Integer, Integer> originalPlaylist,
+	public static boolean mixPlaylists(User user, Triple<String, Integer, Integer> originalPlaylist,
 									   Triple<String, Integer, Integer> targetPlaylist, PlaylistMixEnum mixType) {
 		// Retrieve target playlist
+		PlaylistInfo originalPlaylistInfo = getPlaylistFromDatabase(originalPlaylist);
 		PlaylistInfo targetPlaylistInfo = getPlaylistFromDatabase(targetPlaylist);
-		if (targetPlaylistInfo == null) {
+		if (originalPlaylistInfo == null || targetPlaylistInfo == null) {
 			return false;
 		}
 
-		// Construct pairs with song link and song num
-		List<Pair<String, Integer>> songPositions = new ArrayList<>();
-		int songNum;
+		// Create song list
+		List<String> songs = new ArrayList<>();
 		switch (mixType) {
 			case ADD_TO_FRONT:
-				// Start from first song and add after
-				songNum = 1;
-				for (String songLink : targetPlaylistInfo.getSongs()) {
-					songPositions.add(new Pair<>(songLink, songNum));
-					songNum++;
-				}
+				songs.addAll(targetPlaylistInfo.getSongs());
+				songs.addAll(originalPlaylistInfo.getSongs());
 				break;
 
 			case ADD_TO_BACK:
-				// Start from song after last and add after
-				songNum = originalPlaylist.getSecond() + 1;
-				for (String songLink : targetPlaylistInfo.getSongs()) {
-					songPositions.add(new Pair<>(songLink, songNum));
-					songNum++;
-				}
+				songs.addAll(originalPlaylistInfo.getSongs());
+				songs.addAll(targetPlaylistInfo.getSongs());
 				break;
 
 			case SHUFFLE:
-				// Generate random numbers between 1 and original playlist size and append backwards
-				Random random = new Random();
-				for (String songLink : targetPlaylistInfo.getSongs()) {
-					songNum = random.nextInt(originalPlaylist.getSecond()) + 1;
-					songPositions.add(new Pair<>(songLink, songNum));
-				}
-
-				// Sort list
-				songPositions.sort(Comparator.comparing(Pair<String, Integer>::getSecond).reversed());
+				songs.addAll(originalPlaylistInfo.getSongs());
+				songs.addAll(targetPlaylistInfo.getSongs());
+				Collections.shuffle(songs);
 				break;
 		}
 
-		// Add to playlist
-		for (Pair<String, Integer> songPosition : songPositions) {
-			if (!addSongToPlaylist(originalPlaylist.getThird(), songPosition.getFirst(), songPosition.getSecond())) {
-				return false;
-			}
-		}
-
+		// Create new playlist
+		createPlaylist(
+			new PlaylistInfo(
+				originalPlaylist.getFirst() + " x " + targetPlaylist.getFirst(),
+				songs
+			), user);
 		return true;
 	}
 

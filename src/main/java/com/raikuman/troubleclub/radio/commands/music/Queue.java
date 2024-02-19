@@ -95,7 +95,7 @@ public class Queue extends ComponentInvoke implements CommandInterface {
 			return;
 		}
 
-		componentHandler.providePaginationComponent().updateItems(pageStrings(ctx));
+		componentHandler.providePaginationComponent().updateItems(ctx.getEventMember(), pageStrings(ctx));
 		componentHandler.providePaginationComponent().handleContext(ctx);
 	}
 

@@ -26,7 +26,7 @@ public class ShuffleToPlaylist implements SelectInterface {
     @Override
     public void handle(SelectContext ctx) {
         // Handle mixing playlist
-        if (!PlaylistDB.mixPlaylists(userPlaylist, targetPlaylist, PlaylistMixEnum.SHUFFLE)) {
+        if (!PlaylistDB.mixPlaylists(ctx.getEventMember().getUser(), userPlaylist, targetPlaylist, PlaylistMixEnum.SHUFFLE)) {
             MessageResources.timedMessage(
                 "There was an error mixing these cassette",
                 ctx.getEvent().getChannel().asTextChannel(),

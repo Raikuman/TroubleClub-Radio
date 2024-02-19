@@ -53,7 +53,7 @@ public class MixPlaylist extends ComponentInvoke implements CommandInterface {
     public void handle(CommandContext ctx) {
         final TextChannel channel = ctx.getChannel().asTextChannel();
 
-        if (ctx.getArgs().size() > 4 || ctx.getArgs().size() < 1) {
+        if (ctx.getArgs().size() > 4 || ctx.getArgs().isEmpty()) {
             MessageResources.timedMessage(
                 "You must provide a valid argument for this command: `" + getUsage() + "`",
                 channel,

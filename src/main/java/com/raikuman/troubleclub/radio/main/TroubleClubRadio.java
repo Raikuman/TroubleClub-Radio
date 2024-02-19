@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Icon;
+import net.dv8tion.jda.api.managers.Presence;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
@@ -30,7 +31,7 @@ public class TroubleClubRadio {
 	private static final Logger logger = LoggerFactory.getLogger(TroubleClubRadio.class);
 
 	public static void main(String[] args) {
-		BotUtilsSetup.setupJDA(getJDABuilder(
+		JDA jda = BotUtilsSetup.setupJDA(getJDABuilder(
 			List.of(
 				GatewayIntent.GUILD_MEMBERS,
 				GatewayIntent.GUILD_MESSAGES,
@@ -39,6 +40,8 @@ public class TroubleClubRadio {
 			.setConfigs(new MusicConfig())
 			.setDatabases(new MusicConfig(), new PlaylistConfig())
 			.build();
+
+		setPresence(jda);
 	}
 
 	/**

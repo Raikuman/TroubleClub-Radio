@@ -27,7 +27,7 @@ public class AddToBackPlaylist implements SelectInterface {
     @Override
     public void handle(SelectContext ctx) {
         // Handle mixing playlist
-        if (!PlaylistDB.mixPlaylists(userPlaylist, targetPlaylist, PlaylistMixEnum.ADD_TO_BACK)) {
+        if (!PlaylistDB.mixPlaylists(ctx.getEventMember().getUser(), userPlaylist, targetPlaylist, PlaylistMixEnum.ADD_TO_BACK)) {
             MessageResources.timedMessage(
                 "There was an error mixing these cassette",
                 ctx.getEvent().getChannel().asTextChannel(),
