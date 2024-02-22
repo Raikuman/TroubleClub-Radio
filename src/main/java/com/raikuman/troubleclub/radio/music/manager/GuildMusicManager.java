@@ -1,9 +1,11 @@
-package com.raikuman.troubleclub.radio.music;
+package com.raikuman.troubleclub.radio.music.manager;
 
+import com.raikuman.troubleclub.radio.database.MusicDatabaseHandler;
 import com.sedmelluq.discord.lavaplayer.filter.equalizer.EqualizerFactory;
 import com.sedmelluq.discord.lavaplayer.format.Pcm16AudioDataFormat;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import net.dv8tion.jda.api.entities.Guild;
 
 public class GuildMusicManager {
 
@@ -11,23 +13,24 @@ public class GuildMusicManager {
     private final TrackScheduler[] trackSchedulers;
     private final MixingSendHandler mixingSendHandler;
     private static final int MAX_AUDIO_PLAYERS = 3;
-    private int currentTrack;
+    private int currentAudioPlayer;
 
-    public GuildMusicManager(AudioPlayerManager playerManager) {
-        this.currentTrack = 1;
+    public GuildMusicManager(AudioPlayerManager playerManager, Guild guild) {
+        this.currentAudioPlayer = 1;
         this.audioPlayers = new AudioPlayer[MAX_AUDIO_PLAYERS];
         this.trackSchedulers = new TrackScheduler[MAX_AUDIO_PLAYERS];
 
         playerManager.getConfiguration().setOutputFormat(new Pcm16AudioDataFormat(2, 48000, 960, true));
 
+        // Handle audio players
         for (int i = 0; i < MAX_AUDIO_PLAYERS; i++) {
             // Create audio players
             audioPlayers[i] = playerManager.createPlayer();
             trackSchedulers[i] = new TrackScheduler(audioPlayers[i]);
             audioPlayers[i].addListener(trackSchedulers[i]);
 
-            // Default volume
-            audioPlayers[i].setVolume(25);
+            // Load volume from database
+            audioPlayers[i].setVolume(MusicDatabaseHandler.getVolume(guild, i + 1));
 
             // Equalize filter
             audioPlayers[i].setFilterFactory(new EqualizerFactory());
@@ -41,22 +44,22 @@ public class GuildMusicManager {
         return mixingSendHandler;
     }
 
-    public int getCurrentTrack() {
-        return currentTrack;
+    public int getCurrentAudioPlayer() {
+        return currentAudioPlayer;
     }
 
-    public void setCurrentTrack(int currentTrack) {
-        if ((currentTrack < 1) || (currentTrack > MAX_AUDIO_PLAYERS))
+    public void setCurrentAudioPlayer(int currentAudioPlayer) {
+        if ((currentAudioPlayer < 1) || (currentAudioPlayer > MAX_AUDIO_PLAYERS))
             return;
 
-        this.currentTrack = currentTrack;
+        this.currentAudioPlayer = currentAudioPlayer;
     }
 
     public AudioPlayer getAudioPlayer() {
-        return audioPlayers[currentTrack - 1];
+        return audioPlayers[currentAudioPlayer - 1];
     }
 
     public TrackScheduler getTrackScheduler() {
-        return trackSchedulers[currentTrack - 1];
+        return trackSchedulers[currentAudioPlayer - 1];
     }
 }

@@ -1,4 +1,4 @@
-package com.raikuman.troubleclub.radio.music;
+package com.raikuman.troubleclub.radio.music.manager;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
