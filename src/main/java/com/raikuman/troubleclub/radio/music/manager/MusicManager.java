@@ -113,13 +113,12 @@ public class MusicManager {
         channel.sendMessageEmbeds(embedBuilder.build()).queue();
     }
 
-    public static void addAudioTrack(MessageChannelUnion channel, User user, int queueSize, AudioTrack audioTrack) {
-        String method, nowPlaying;
+    public static void addAudioTrack(String method, MessageChannelUnion channel, User user, int queueSize,
+                                     AudioTrack audioTrack) {
+        String nowPlaying;
         if (queueSize == 0) {
-            method = "▶️ Playing:";
             nowPlaying = "Now playing";
         } else {
-            method = "⏭️ Adding to queue:";
             nowPlaying = String.valueOf(queueSize);
         }
 
