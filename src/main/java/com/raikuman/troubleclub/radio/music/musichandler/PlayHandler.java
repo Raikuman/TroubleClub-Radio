@@ -77,7 +77,7 @@ public class PlayHandler extends MusicHandler {
         if (musicManager.getTrackScheduler().queue.isEmpty()) {
             method = "▶️ Playing:";
         } else {
-            method = "↪\uFE0F Adding to queue:";
+            method = "↪️ Adding to queue:";
         }
         MusicManager.addAudioTrack(method, getMessageChannel(), getUser(),
             musicManager.getTrackScheduler().queue.size(), audioTrack);

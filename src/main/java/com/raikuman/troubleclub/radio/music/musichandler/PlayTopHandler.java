@@ -108,7 +108,7 @@ public class PlayTopHandler extends MusicHandler {
         if (playNow) {
             method = "▶️ Playing:";
         } else {
-            method = "⬆\uFE0F️ Adding to queue:";
+            method = "⬆️️ Adding to queue:";
         }
         MusicManager.addAudioTrack(method, getMessageChannel(), getUser(),
             musicManager.getTrackScheduler().queue.size(), audioTrack);
@@ -148,7 +148,7 @@ public class PlayTopHandler extends MusicHandler {
             if (playNow) {
                 method = "▶️ Playing playlist at top of queue:";
             } else {
-                method = "⬆\uFE0F↪️ Adding playlist to top of queue:";
+                method = "⬆️↪️ Adding playlist to top of queue:";
             }
         }
 
