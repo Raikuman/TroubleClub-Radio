@@ -2,13 +2,14 @@ package com.raikuman.troubleclub.radio.music.musichandler;
 
 import com.raikuman.botutilities.invocation.context.CommandContext;
 import com.raikuman.troubleclub.radio.music.manager.GuildMusicManager;
+import com.raikuman.troubleclub.radio.music.playlist.Playlist;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 
-public abstract class MusicHandler{
+public abstract class MusicHandler {
 
     private final String url;
     private final MessageChannelUnion messageChannel;
@@ -46,4 +47,8 @@ public abstract class MusicHandler{
     }
 
     public abstract AudioLoadResultHandler getResultHandler(GuildMusicManager musicManager);
+
+    public AudioLoadResultHandler getResultHandler(GuildMusicManager musicManager, Playlist playlist) {
+        return null;
+    }
 }

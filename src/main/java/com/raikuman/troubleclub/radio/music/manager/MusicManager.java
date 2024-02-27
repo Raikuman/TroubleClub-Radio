@@ -5,10 +5,10 @@ import com.raikuman.botutilities.utilities.EmbedResources;
 import com.raikuman.botutilities.utilities.MessageResources;
 import com.raikuman.troubleclub.radio.music.MusicChecking;
 import com.raikuman.troubleclub.radio.music.musichandler.MusicHandler;
+import com.raikuman.troubleclub.radio.music.playlist.Playlist;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
-import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import java.awt.*;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -87,6 +88,14 @@ public class MusicManager {
             musicHandler.getResultHandler(musicManager));
     }
 
+    public void play(MusicHandler musicHandler, Playlist playlist) {
+        GuildMusicManager musicManager = getMusicManager(musicHandler.getGuild());
+        this.audioPlayerManager.loadItemOrdered(
+            musicManager,
+            musicHandler.getUrl(),
+            musicHandler.getResultHandler(musicManager, playlist));
+    }
+
     private static void sendMusicEmbed(MessageChannelUnion channel, User user, String method, String title,
                                        String color, MessageEmbed.Field... fields) {
         EmbedBuilder embedBuilder = new EmbedBuilder()
@@ -122,16 +131,21 @@ public class MusicManager {
         );
     }
 
-    public static void addPlaylist(String method, MessageChannelUnion channel, User user,
-                                    AudioPlaylist audioPlaylist) {
+    public static void addPlaylist(String method, MessageChannelUnion channel, User user, String playlistName,
+                                   List<AudioTrack> audioTracks, boolean isCassette) {
         long playlistLength = 0L;
-        for (AudioTrack track : audioPlaylist.getTracks()) {
+        for (AudioTrack track : audioTracks) {
             playlistLength += track.getDuration();
         }
 
-        sendMusicEmbed(channel, user, method, audioPlaylist.getName(), MUSIC_COLOR,
-            new MessageEmbed.Field("Songs in playlist", String.valueOf(audioPlaylist.getTracks().size()), true),
-            new MessageEmbed.Field("Length of playlist", formatMilliseconds(playlistLength), true)
+        String playlistText = "playlist";
+        if (isCassette) {
+            playlistText = "cassette";
+        }
+
+        sendMusicEmbed(channel, user, method, playlistName, MUSIC_COLOR,
+            new MessageEmbed.Field("Songs in " + playlistText, String.valueOf(audioTracks.size()), true),
+            new MessageEmbed.Field("Length of " + playlistText, formatMilliseconds(playlistLength), true)
         );
     }
 
