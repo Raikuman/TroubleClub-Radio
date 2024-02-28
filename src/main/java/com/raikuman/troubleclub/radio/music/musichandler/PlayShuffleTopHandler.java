@@ -31,7 +31,7 @@ public class PlayShuffleTopHandler extends MusicHandler {
 
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
-                MessageResources.embedReplyDelete(getMessage(), 10,
+                MessageResources.embedReplyDelete(getMessage(), 10, true,
                     EmbedResources.error("Playlist could not load!", "Could not load using `" + getUrl() + "`",
                         getMessageChannel(), getUser()));
             }
@@ -43,14 +43,14 @@ public class PlayShuffleTopHandler extends MusicHandler {
 
             @Override
             public void noMatches() {
-                MessageResources.embedReplyDelete(getMessage(), 10,
+                MessageResources.embedReplyDelete(getMessage(), 10, true,
                     EmbedResources.error("Music not found!", "Nothing found using `" + getUrl() + "`",
                         getMessageChannel(), getUser()));
             }
 
             @Override
             public void loadFailed(FriendlyException e) {
-                MessageResources.embedReplyDelete(getMessage(), 10,
+                MessageResources.embedReplyDelete(getMessage(), 10, true,
                     EmbedResources.error("Music could not load!", "Could not load using `" + getUrl() + "`",
                         getMessageChannel(), getUser()));
             }
@@ -73,14 +73,14 @@ public class PlayShuffleTopHandler extends MusicHandler {
 
             @Override
             public void noMatches() {
-                MessageResources.embedReplyDelete(getMessage(), 10,
+                MessageResources.embedReplyDelete(getMessage(), 10, true,
                     EmbedResources.error("Cassette not found!", "Nothing found from `" + playlist.title() + "`",
                         getMessageChannel(), getUser()));
             }
 
             @Override
             public void loadFailed(FriendlyException e) {
-                MessageResources.embedReplyDelete(getMessage(), 10,
+                MessageResources.embedReplyDelete(getMessage(), 10, true,
                     EmbedResources.error("Cassette could not load!", "Could not load using `" + playlist.title() + "`",
                         getMessageChannel(), getUser()));
             }

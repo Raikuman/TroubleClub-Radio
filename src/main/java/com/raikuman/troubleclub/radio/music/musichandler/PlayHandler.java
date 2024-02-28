@@ -36,7 +36,7 @@ public class PlayHandler extends MusicHandler {
                     // Handle searching songs
                     AudioTrack audioTrack = audioTracks.get(0);
                     if (audioTrack == null) {
-                        MessageResources.embedReplyDelete(getMessage(), 10,
+                        MessageResources.embedReplyDelete(getMessage(), 10, true,
                             EmbedResources.error("Could not find track!", "Nothing found using `" + getUrl() + "`",
                                 getMessageChannel(), getUser()));
                         return;
@@ -57,14 +57,14 @@ public class PlayHandler extends MusicHandler {
 
             @Override
             public void noMatches() {
-                MessageResources.embedReplyDelete(getMessage(), 10,
+                MessageResources.embedReplyDelete(getMessage(), 10, true,
                     EmbedResources.error("Music not found!", "Nothing found using `" + getUrl() + "`",
                         getMessageChannel(), getUser()));
             }
 
             @Override
             public void loadFailed(FriendlyException e) {
-                MessageResources.embedReplyDelete(getMessage(), 10,
+                MessageResources.embedReplyDelete(getMessage(), 10, true,
                     EmbedResources.error("Music could not load!", "Could not load using `" + getUrl() + "`",
                         getMessageChannel(), getUser()));
             }
