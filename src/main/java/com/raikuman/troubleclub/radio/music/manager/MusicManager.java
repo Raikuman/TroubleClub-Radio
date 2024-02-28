@@ -29,7 +29,7 @@ public class MusicManager {
     private static MusicManager PLAYER_INSTANCE;
     private final Map<Long, GuildMusicManager> musicManagerMap;
     private final AudioPlayerManager audioPlayerManager;
-    private static final String MUSIC_COLOR = "#4287f5";
+    public static final String MUSIC_COLOR = "#4287f5";
 
     public MusicManager() {
         this.musicManagerMap = new HashMap<>();
@@ -63,7 +63,7 @@ public class MusicManager {
         AudioChannelUnion audioChannel = MusicChecking.retrieveMemberVoiceChannel(ctx);
 
         if (audioChannel == null) {
-            MessageResources.embedReplyDelete(ctx.event().getMessage(), 10,
+            MessageResources.embedReplyDelete(ctx.event().getMessage(), 10, true,
                 EmbedResources.error("Could not connect to your voice channel!",
                     "Please contact an administrator for help",
                     ctx.event().getChannel(), ctx.event().getAuthor()));

@@ -44,8 +44,8 @@ public class GuildMusicManager {
         return mixingSendHandler;
     }
 
-    public int getCurrentAudioPlayer() {
-        return currentAudioPlayer;
+    public AudioPlayer getAudioPlayer(int audioPlayerNum) {
+        return audioPlayers[audioPlayerNum - 1];
     }
 
     public void setCurrentAudioPlayer(int currentAudioPlayer) {
@@ -55,8 +55,12 @@ public class GuildMusicManager {
         this.currentAudioPlayer = currentAudioPlayer;
     }
 
-    public AudioPlayer getAudioPlayer() {
+    public AudioPlayer getCurrentAudioPlayer() {
         return audioPlayers[currentAudioPlayer - 1];
+    }
+
+    public int getCurrentAudioPlayerNum() {
+        return currentAudioPlayer;
     }
 
     public TrackScheduler getTrackScheduler() {

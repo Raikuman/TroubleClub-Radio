@@ -20,28 +20,28 @@ public class MusicChecking {
         Member member = ctx.event().getMember();
 
         if (member == null) {
-            MessageResources.embedReplyDelete(message, 10,
-                EmbedResources.error("Something went wrong with Discord!!",
+            MessageResources.embedReplyDelete(message, 10, true,
+                EmbedResources.error("Something went wrong with Discord!",
                     "An error occurred getting the member when checking for a voice channel",
-                    messageChannel, user));
+                    messageChannel, ctx.event().getGuild().getSelfMember().getUser()));
             return true;
         }
 
         GuildVoiceState memberVoiceState = member.getVoiceState();
         if (memberVoiceState == null) {
-            MessageResources.embedReplyDelete(message, 10,
-                EmbedResources.error("Something went wrong with Discord!!",
+            MessageResources.embedReplyDelete(message, 10, true,
+                EmbedResources.error("Something went wrong with Discord!",
                     "An error occurred getting the voice state for the member when checking for a voice channel",
-                    messageChannel, user));
+                    messageChannel, ctx.event().getGuild().getSelfMember().getUser()));
             return true;
         }
 
         if (memberVoiceState.getChannel() != null) {
             return false;
         } else {
-            MessageResources.embedReplyDelete(message, 10,
+            MessageResources.embedReplyDelete(message, 10, true,
                 EmbedResources.error("You are not in a voice channel!", "Connect to a voice channel to use this command",
-                    messageChannel, user));
+                    messageChannel, ctx.event().getGuild().getSelfMember().getUser()));
             return true;
         }
     }
@@ -54,10 +54,10 @@ public class MusicChecking {
         Member member = ctx.event().getMember();
 
         if (member == null) {
-            MessageResources.embedReplyDelete(message, 10,
-                EmbedResources.error("Something went wrong with Discord!!",
+            MessageResources.embedReplyDelete(message, 10, true,
+                EmbedResources.error("Something went wrong with Discord!",
                     "An error occurred getting the member and bot user when checking for different voice channels",
-                    messageChannel, user));
+                    messageChannel, self.getUser()));
             return true;
         }
 
@@ -66,10 +66,10 @@ public class MusicChecking {
         GuildVoiceState memberVoiceState = member.getVoiceState();
 
         if (selfVoiceState == null || memberVoiceState == null) {
-            MessageResources.embedReplyDelete(message, 10,
-                EmbedResources.error("Something went wrong with Discord!!",
+            MessageResources.embedReplyDelete(message, 10, true,
+                EmbedResources.error("Something went wrong with Discord!",
                     "An error occurred getting the voice state for the member and bot user when checking for different voice channels",
-                    messageChannel, user));
+                    messageChannel, self.getUser()));
             return true;
         }
 
@@ -82,10 +82,10 @@ public class MusicChecking {
 
         // Check if bot is in a different voice channel
         if (!botChannel.equals(memberVoiceState.getChannel())) {
-            MessageResources.embedReplyDelete(message, 10,
+            MessageResources.embedReplyDelete(message, 10, true,
                 EmbedResources.error("I'm currently in a different channel!", "Unable to join your voice channel until " +
                         "disconnected from `" + botChannel.getName() + "`",
-                    messageChannel, user));
+                    messageChannel, self.getUser()));
             return true;
         }
 
@@ -96,9 +96,9 @@ public class MusicChecking {
         if (ctx.event().getGuild().getSelfMember().hasPermission(Permission.VOICE_CONNECT)) {
             return false;
         } else {
-            MessageResources.embedReplyDelete(ctx.event().getMessage(), 10,
+            MessageResources.embedReplyDelete(ctx.event().getMessage(), 10, true,
                 EmbedResources.error("I can't join your voice channel!", "Allow permission to connect to voice channels",
-                    ctx.event().getChannel(), ctx.event().getAuthor()));
+                    ctx.event().getChannel(), ctx.event().getGuild().getSelfMember().getUser()));
             return true;
         }
     }
