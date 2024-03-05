@@ -50,6 +50,14 @@ public class PlaylistStartup implements DatabaseStartup {
                     "FOREIGN KEY(song_id) REFERENCES song(song_id)" +
                     ")"
             );
+
+            statement.execute(
+                "CREATE TRIGGER IF NOT EXISTS trim_songs AFTER DELETE ON playlist_song " +
+                    "BEGIN " +
+                    "DELETE FROM song WHERE song_id = OLD.song_id AND NOT EXISTS (SELECT 1 FROM playlist_song WHERE " +
+                    "song_id = OLD.song_id); " +
+                    "END"
+            );
         } catch (SQLException e) {
             logger.error("An error occurred creating playlist tables");
         }
