@@ -1,9 +1,9 @@
-package com.raikuman.troubleclub.radio.database;
+package com.raikuman.troubleclub.radio.database.music;
 
 import com.raikuman.botutilities.config.ConfigData;
 import com.raikuman.botutilities.database.DatabaseManager;
 import com.raikuman.botutilities.defaults.database.DefaultDatabaseHandler;
-import com.raikuman.troubleclub.radio.config.MusicConfig;
+import com.raikuman.troubleclub.radio.config.music.MusicConfig;
 import net.dv8tion.jda.api.entities.Guild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ public class MusicDatabaseHandler {
         // Couldn't retrieve guild id
         if (guildId == -1) {
             return;
-        };
+        }
 
         // Add guild to music setting table
         try (
@@ -44,7 +44,7 @@ public class MusicDatabaseHandler {
         // Couldn't retrieve guild id
         if (guildId == -1) {
             return;
-        };
+        }
 
         try (
             Connection connection = DatabaseManager.getConnection();
@@ -64,7 +64,7 @@ public class MusicDatabaseHandler {
         // Couldn't retrieve guild id
         if (guildId == -1) {
             return getDefaultVolume();
-        };
+        }
 
         try (
             Connection connection = DatabaseManager.getConnection();
@@ -92,7 +92,7 @@ public class MusicDatabaseHandler {
         // Couldn't retrieve guild id
         if (guildId == -1) {
             return;
-        };
+        }
 
         try (
             Connection connection = DatabaseManager.getConnection();

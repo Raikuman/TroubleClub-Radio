@@ -1,6 +1,6 @@
 package com.raikuman.troubleclub.radio.music.manager;
 
-import com.raikuman.troubleclub.radio.database.MusicDatabaseHandler;
+import com.raikuman.troubleclub.radio.database.music.MusicDatabaseHandler;
 import com.sedmelluq.discord.lavaplayer.filter.equalizer.EqualizerFactory;
 import com.sedmelluq.discord.lavaplayer.format.Pcm16AudioDataFormat;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;

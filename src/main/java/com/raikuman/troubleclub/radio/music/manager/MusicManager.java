@@ -29,7 +29,7 @@ public class MusicManager {
     private static MusicManager PLAYER_INSTANCE;
     private final Map<Long, GuildMusicManager> musicManagerMap;
     private final AudioPlayerManager audioPlayerManager;
-    public static final String MUSIC_COLOR = "#4287f5";
+    public static final Color MUSIC_COLOR = Color.decode("#4287f5"), CASSETTE_COLOR = Color.decode("#801cba");
 
     public MusicManager() {
         this.musicManagerMap = new HashMap<>();
@@ -97,9 +97,9 @@ public class MusicManager {
     }
 
     private static void sendMusicEmbed(MessageChannelUnion channel, User user, String method, String title,
-                                       String color, MessageEmbed.Field... fields) {
+                                       Color color, MessageEmbed.Field... fields) {
         EmbedBuilder embedBuilder = new EmbedBuilder()
-            .setColor(Color.decode(color))
+            .setColor(color)
             .setAuthor(method, null, user.getAvatarUrl())
             .setTitle(title)
             .setFooter("#" + channel.getName())
@@ -137,12 +137,17 @@ public class MusicManager {
             playlistLength += track.getDuration();
         }
 
-        String playlistText = "playlist";
+        String playlistText;
+        Color embedColor;
         if (isCassette) {
             playlistText = "cassette";
+            embedColor = CASSETTE_COLOR;
+        } else {
+            playlistText = "playlist";
+            embedColor = MUSIC_COLOR;
         }
 
-        sendMusicEmbed(channel, user, method, playlistName, MUSIC_COLOR,
+        sendMusicEmbed(channel, user, method, playlistName, embedColor,
             new MessageEmbed.Field("Songs in " + playlistText, String.valueOf(audioTracks.size()), true),
             new MessageEmbed.Field("Length of " + playlistText, formatMilliseconds(playlistLength), true)
         );

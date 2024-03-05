@@ -1,4 +1,4 @@
-package com.raikuman.troubleclub.radio.config;
+package com.raikuman.troubleclub.radio.config.music;
 
 import com.raikuman.botutilities.config.Config;
 
