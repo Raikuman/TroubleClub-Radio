@@ -9,11 +9,12 @@ import java.util.List;
 public class Playlist {
 
     private final String title, url;
-    private final int songs;
+    private final int id, songs;
     private final User user;
     private final List<AudioTrack> tracks;
 
     public Playlist(String title, String url, int songs, User user, List<AudioTrack> tracks) {
+        this.id = -1;
         this.title = title;
         this.url = url;
         this.songs = songs;
@@ -21,12 +22,17 @@ public class Playlist {
         this.tracks = tracks;
     }
 
-    public Playlist(String title, String url, int songs, User user) {
+    public Playlist(int id, String title, String url, int songs, User user) {
+        this.id = id;
         this.title = title;
         this.url = url;
         this.songs = songs;
         this.user = user;
         this.tracks = new ArrayList<>();
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getTitle() {
@@ -35,6 +41,10 @@ public class Playlist {
 
     public String getUrl() {
         return url;
+    }
+
+    public int getSongs() {
+        return songs;
     }
 
     public User getUser() {

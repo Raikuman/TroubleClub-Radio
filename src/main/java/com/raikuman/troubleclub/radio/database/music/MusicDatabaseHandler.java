@@ -29,7 +29,7 @@ public class MusicDatabaseHandler {
         try (
             Connection connection = DatabaseManager.getConnection();
             PreparedStatement statement = connection.prepareStatement(
-                "INSERT INTO guild_music_setting(guild_id) VALUES(?)"
+                "INSERT OR IGNORE INTO guild_music_setting(guild_id) VALUES(?)"
             )) {
             statement.setInt(1, guildId);
             statement.execute();
