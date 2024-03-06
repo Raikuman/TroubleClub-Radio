@@ -105,7 +105,7 @@ public class PlayShuffleTopHandler extends MusicHandler {
     }
 
     private void shuffleAndQueueToTop(GuildMusicManager musicManager, List<AudioTrack> playlistTracks) {
-        TrackScheduler trackScheduler = musicManager.getTrackScheduler();
+        TrackScheduler trackScheduler = musicManager.getCurrentTrackScheduler();
 
         // Drain tracks to new queue
         List<AudioTrack> queueTracks = new ArrayList<>();

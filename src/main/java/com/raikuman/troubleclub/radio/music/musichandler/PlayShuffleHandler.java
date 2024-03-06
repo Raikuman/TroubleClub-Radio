@@ -39,7 +39,7 @@ public class PlayShuffleHandler extends MusicHandler {
 
                 // Queue playlist tracks
                 for (AudioTrack track : audioTracks) {
-                    musicManager.getTrackScheduler().queue(track);
+                    musicManager.getCurrentTrackScheduler().queue(track);
                 }
 
                 getMessageChannel().sendMessageEmbeds(
@@ -69,7 +69,7 @@ public class PlayShuffleHandler extends MusicHandler {
 
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
-                musicManager.getTrackScheduler().queue(audioTrack);
+                musicManager.getCurrentTrackScheduler().queue(audioTrack);
 
                 getMessageChannel().sendMessageEmbeds(
                     getPlaylistLoadedEmbed(playlist.getTitle(), List.of(audioTrack), true).build()
@@ -83,7 +83,7 @@ public class PlayShuffleHandler extends MusicHandler {
 
                 // Queue playlist tracks
                 for (AudioTrack track : audioTracks) {
-                    musicManager.getTrackScheduler().queue(track);
+                    musicManager.getCurrentTrackScheduler().queue(track);
                 }
 
                 getMessageChannel().sendMessageEmbeds(

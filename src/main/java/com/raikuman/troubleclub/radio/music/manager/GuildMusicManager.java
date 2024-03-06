@@ -63,7 +63,7 @@ public class GuildMusicManager {
         return currentAudioPlayer;
     }
 
-    public TrackScheduler getTrackScheduler() {
+    public TrackScheduler getCurrentTrackScheduler() {
         return trackSchedulers[currentAudioPlayer - 1];
     }
 }

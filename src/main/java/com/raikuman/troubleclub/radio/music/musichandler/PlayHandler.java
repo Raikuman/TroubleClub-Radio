@@ -25,7 +25,7 @@ public class PlayHandler extends MusicHandler {
 
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
-                musicManager.getTrackScheduler().queue(audioTrack);
+                musicManager.getCurrentTrackScheduler().queue(audioTrack);
                 getMessageChannel().sendMessageEmbeds(
                     getTrackLoadedEmbed(musicManager, audioTrack).build()
                 ).queue();
@@ -47,14 +47,14 @@ public class PlayHandler extends MusicHandler {
                     }
 
                     // Queue found track
-                    musicManager.getTrackScheduler().queue(audioTrack);
+                    musicManager.getCurrentTrackScheduler().queue(audioTrack);
                     getMessageChannel().sendMessageEmbeds(
                         getTrackLoadedEmbed(musicManager, audioTrack).build()
                     ).queue();
                 } else {
                     // Queue playlist tracks
                     for (AudioTrack track : audioTracks) {
-                        musicManager.getTrackScheduler().queue(track);
+                        musicManager.getCurrentTrackScheduler().queue(track);
                     }
 
                     getMessageChannel().sendMessageEmbeds(
@@ -82,12 +82,12 @@ public class PlayHandler extends MusicHandler {
 
     private EmbedBuilder getTrackLoadedEmbed(GuildMusicManager musicManager, AudioTrack audioTrack) {
         String method;
-        if (musicManager.getTrackScheduler().queue.isEmpty()) {
+        if (musicManager.getCurrentTrackScheduler().queue.isEmpty()) {
             method = "▶️ Playing:";
         } else {
             method = "↪️ Adding to queue:";
         }
         return MusicManager.getAudioTrackEmbed(method, getMessageChannel(), getUser(),
-            musicManager.getTrackScheduler().queue.size(), audioTrack);
+            musicManager.getCurrentTrackScheduler().queue.size(), audioTrack);
     }
 }

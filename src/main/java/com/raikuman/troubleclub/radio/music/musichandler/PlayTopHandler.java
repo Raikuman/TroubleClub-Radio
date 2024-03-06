@@ -102,7 +102,7 @@ public class PlayTopHandler extends MusicHandler {
     }
 
     private void queueTrackToTop(GuildMusicManager musicManager, AudioTrack audioTrack) {
-        TrackScheduler trackScheduler = musicManager.getTrackScheduler();
+        TrackScheduler trackScheduler = musicManager.getCurrentTrackScheduler();
 
         // Drain tracks to new queue
         List<AudioTrack> queueTracks = new ArrayList<>();
@@ -130,11 +130,11 @@ public class PlayTopHandler extends MusicHandler {
             method = "⬆️️ Adding to queue:";
         }
         return MusicManager.getAudioTrackEmbed(method, getMessageChannel(), getUser(),
-            musicManager.getTrackScheduler().queue.size(), audioTrack);
+            musicManager.getCurrentTrackScheduler().queue.size(), audioTrack);
     }
 
     private void queuePlaylistToTop(GuildMusicManager musicManager, List<AudioTrack> playlistTracks) {
-        TrackScheduler trackScheduler = musicManager.getTrackScheduler();
+        TrackScheduler trackScheduler = musicManager.getCurrentTrackScheduler();
 
         // Drain tracks to new queue
         List<AudioTrack> queueTracks = new ArrayList<>();
