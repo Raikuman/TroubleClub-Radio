@@ -45,6 +45,8 @@ public class PlayShuffleHandler extends MusicHandler {
                 getMessageChannel().sendMessageEmbeds(
                     getPlaylistLoadedEmbed(audioPlaylist.getName(), audioPlaylist.getTracks(), false).build()
                 ).queue();
+
+                getMessage().delete().queue();
             }
 
             @Override
@@ -74,6 +76,8 @@ public class PlayShuffleHandler extends MusicHandler {
                 getMessageChannel().sendMessageEmbeds(
                     getPlaylistLoadedEmbed(playlist.getTitle(), List.of(audioTrack), true).build()
                 ).queue();
+
+                getMessage().delete().queue();
             }
 
             @Override
@@ -89,6 +93,8 @@ public class PlayShuffleHandler extends MusicHandler {
                 getMessageChannel().sendMessageEmbeds(
                     getPlaylistLoadedEmbed(playlist.getTitle(), audioPlaylist.getTracks(), true).build()
                 ).queue();
+
+                getMessage().delete().queue();
             }
 
             @Override

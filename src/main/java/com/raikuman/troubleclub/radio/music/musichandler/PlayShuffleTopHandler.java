@@ -45,6 +45,8 @@ public class PlayShuffleTopHandler extends MusicHandler {
                 getMessageChannel().sendMessageEmbeds(
                     getPlaylistLoadedEmbed(audioPlaylist.getName(), audioTracks, false).build()
                 ).queue();
+
+                getMessage().delete().queue();
             }
 
             @Override
@@ -76,6 +78,8 @@ public class PlayShuffleTopHandler extends MusicHandler {
                 getMessageChannel().sendMessageEmbeds(
                     getPlaylistLoadedEmbed(playlist.getTitle(), audioTracks, true).build()
                 ).queue();
+
+                getMessage().delete().queue();
             }
 
             @Override
@@ -86,6 +90,8 @@ public class PlayShuffleTopHandler extends MusicHandler {
                 getMessageChannel().sendMessageEmbeds(
                     getPlaylistLoadedEmbed(playlist.getTitle(), audioTracks, true).build()
                 ).queue();
+
+                getMessage().delete().queue();
             }
 
             @Override

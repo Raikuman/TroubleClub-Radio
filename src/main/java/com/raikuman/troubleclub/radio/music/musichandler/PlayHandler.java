@@ -29,6 +29,8 @@ public class PlayHandler extends MusicHandler {
                 getMessageChannel().sendMessageEmbeds(
                     getTrackLoadedEmbed(musicManager, audioTrack).build()
                 ).queue();
+
+                getMessage().delete().queue();
             }
 
             @Override
@@ -62,6 +64,8 @@ public class PlayHandler extends MusicHandler {
                             audioPlaylist.getName(), audioTracks, false).build()
                     ).queue();
                 }
+
+                getMessage().delete().queue();
             }
 
             @Override
