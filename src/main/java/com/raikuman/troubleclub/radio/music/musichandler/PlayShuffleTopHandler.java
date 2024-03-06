@@ -11,6 +11,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +39,12 @@ public class PlayShuffleTopHandler extends MusicHandler {
 
             @Override
             public void playlistLoaded(AudioPlaylist audioPlaylist) {
-                handlePlaylistLoaded(musicManager, audioPlaylist.getName(), audioPlaylist.getTracks(), false);
+                List<AudioTrack> audioTracks = audioPlaylist.getTracks();
+                shuffleAndQueueToTop(musicManager, audioTracks);
+
+                getMessageChannel().sendMessageEmbeds(
+                    getPlaylistLoadedEmbed(audioPlaylist.getName(), audioTracks, false).build()
+                ).queue();
             }
 
             @Override
@@ -63,12 +69,23 @@ public class PlayShuffleTopHandler extends MusicHandler {
 
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
-                handlePlaylistLoaded(musicManager, playlist.getTitle(), List.of(audioTrack), true);
+                List<AudioTrack> audioTracks = new ArrayList<>();
+                audioTracks.add(audioTrack);
+                shuffleAndQueueToTop(musicManager, audioTracks);
+
+                getMessageChannel().sendMessageEmbeds(
+                    getPlaylistLoadedEmbed(playlist.getTitle(), audioTracks, true).build()
+                ).queue();
             }
 
             @Override
             public void playlistLoaded(AudioPlaylist audioPlaylist) {
-                handlePlaylistLoaded(musicManager, playlist.getTitle(), audioPlaylist.getTracks(), true);
+                List<AudioTrack> audioTracks = audioPlaylist.getTracks();
+                shuffleAndQueueToTop(musicManager, audioTracks);
+
+                getMessageChannel().sendMessageEmbeds(
+                    getPlaylistLoadedEmbed(playlist.getTitle(), audioTracks, true).build()
+                ).queue();
             }
 
             @Override
@@ -87,8 +104,7 @@ public class PlayShuffleTopHandler extends MusicHandler {
         };
     }
 
-    private void handlePlaylistLoaded(GuildMusicManager musicManager, String playlistName,
-                                      List<AudioTrack> playlistTracks, boolean isCassette) {
+    private void shuffleAndQueueToTop(GuildMusicManager musicManager, List<AudioTrack> playlistTracks) {
         TrackScheduler trackScheduler = musicManager.getTrackScheduler();
 
         // Drain tracks to new queue
@@ -111,7 +127,9 @@ public class PlayShuffleTopHandler extends MusicHandler {
         if (playNow && trackScheduler.audioPlayer.getPlayingTrack() != null) {
             trackScheduler.nextTrack();
         }
+    }
 
+    private EmbedBuilder getPlaylistLoadedEmbed(String playlistName, List<AudioTrack> playlistTracks, boolean isCassette) {
         String method;
         if (isCassette) {
             if (playNow) {
@@ -127,7 +145,7 @@ public class PlayShuffleTopHandler extends MusicHandler {
             }
         }
 
-        MusicManager.addPlaylist(method, getMessageChannel(),
+        return MusicManager.getPlaylistEmbed(method, getMessageChannel(),
             getUser(), playlistName, playlistTracks, isCassette);
     }
 }

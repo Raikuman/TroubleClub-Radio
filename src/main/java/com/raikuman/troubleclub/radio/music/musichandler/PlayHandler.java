@@ -9,6 +9,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.util.List;
 
@@ -24,7 +25,10 @@ public class PlayHandler extends MusicHandler {
 
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
-                handleTrackLoaded(musicManager, audioTrack);
+                musicManager.getTrackScheduler().queue(audioTrack);
+                getMessageChannel().sendMessageEmbeds(
+                    getTrackLoadedEmbed(musicManager, audioTrack).build()
+                ).queue();
             }
 
             @Override
@@ -43,15 +47,20 @@ public class PlayHandler extends MusicHandler {
                     }
 
                     // Queue found track
-                    handleTrackLoaded(musicManager, audioTrack);
+                    musicManager.getTrackScheduler().queue(audioTrack);
+                    getMessageChannel().sendMessageEmbeds(
+                        getTrackLoadedEmbed(musicManager, audioTrack).build()
+                    ).queue();
                 } else {
                     // Queue playlist tracks
                     for (AudioTrack track : audioTracks) {
                         musicManager.getTrackScheduler().queue(track);
                     }
 
-                    MusicManager.addPlaylist("▶️ Adding playlist to queue:", getMessageChannel(), getUser(),
-                        audioPlaylist.getName(), audioTracks, false);
+                    getMessageChannel().sendMessageEmbeds(
+                        MusicManager.getPlaylistEmbed("▶️ Adding playlist to queue:", getMessageChannel(), getUser(),
+                            audioPlaylist.getName(), audioTracks, false).build()
+                    ).queue();
                 }
             }
 
@@ -71,15 +80,14 @@ public class PlayHandler extends MusicHandler {
         };
     }
 
-    private void handleTrackLoaded(GuildMusicManager musicManager, AudioTrack audioTrack) {
-        musicManager.getTrackScheduler().queue(audioTrack);
+    private EmbedBuilder getTrackLoadedEmbed(GuildMusicManager musicManager, AudioTrack audioTrack) {
         String method;
         if (musicManager.getTrackScheduler().queue.isEmpty()) {
             method = "▶️ Playing:";
         } else {
             method = "↪️ Adding to queue:";
         }
-        MusicManager.addAudioTrack(method, getMessageChannel(), getUser(),
+        return MusicManager.getAudioTrackEmbed(method, getMessageChannel(), getUser(),
             musicManager.getTrackScheduler().queue.size(), audioTrack);
     }
 }
