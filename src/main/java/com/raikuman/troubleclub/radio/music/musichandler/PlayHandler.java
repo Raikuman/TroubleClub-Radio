@@ -60,7 +60,8 @@ public class PlayHandler extends MusicHandler {
                     }
 
                     getMessageChannel().sendMessageEmbeds(
-                        MusicManager.getPlaylistEmbed("▶️ Adding playlist to queue:", getMessageChannel(), getUser(),
+                        MusicManager.getPlaylistEmbed(musicManager, "▶️ Adding playlist to queue:",
+                            getMessageChannel(), getUser(),
                             audioPlaylist.getName(), audioTracks, false).build()
                     ).queue();
                 }
@@ -91,7 +92,7 @@ public class PlayHandler extends MusicHandler {
         } else {
             method = "↪️ Adding to queue:";
         }
-        return MusicManager.getAudioTrackEmbed(method, getMessageChannel(), getUser(),
+        return MusicManager.getAudioTrackEmbed(musicManager, method, getMessageChannel(), getUser(),
             musicManager.getCurrentTrackScheduler().queue.size(), audioTrack);
     }
 }

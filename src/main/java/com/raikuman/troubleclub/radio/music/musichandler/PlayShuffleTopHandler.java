@@ -43,7 +43,7 @@ public class PlayShuffleTopHandler extends MusicHandler {
                 shuffleAndQueueToTop(musicManager, audioTracks);
 
                 getMessageChannel().sendMessageEmbeds(
-                    getPlaylistLoadedEmbed(audioPlaylist.getName(), audioTracks, false).build()
+                    getPlaylistLoadedEmbed(musicManager, audioPlaylist.getName(), audioTracks, false).build()
                 ).queue();
 
                 getMessage().delete().queue();
@@ -76,7 +76,7 @@ public class PlayShuffleTopHandler extends MusicHandler {
                 shuffleAndQueueToTop(musicManager, audioTracks);
 
                 getMessageChannel().sendMessageEmbeds(
-                    getPlaylistLoadedEmbed(playlist.getTitle(), audioTracks, true).build()
+                    getPlaylistLoadedEmbed(musicManager, playlist.getTitle(), audioTracks, true).build()
                 ).queue();
 
                 getMessage().delete().queue();
@@ -88,7 +88,7 @@ public class PlayShuffleTopHandler extends MusicHandler {
                 shuffleAndQueueToTop(musicManager, audioTracks);
 
                 getMessageChannel().sendMessageEmbeds(
-                    getPlaylistLoadedEmbed(playlist.getTitle(), audioTracks, true).build()
+                    getPlaylistLoadedEmbed(musicManager, playlist.getTitle(), audioTracks, true).build()
                 ).queue();
 
                 getMessage().delete().queue();
@@ -135,7 +135,8 @@ public class PlayShuffleTopHandler extends MusicHandler {
         }
     }
 
-    private EmbedBuilder getPlaylistLoadedEmbed(String playlistName, List<AudioTrack> playlistTracks, boolean isCassette) {
+    private EmbedBuilder getPlaylistLoadedEmbed(GuildMusicManager musicManager, String playlistName,
+                                                List<AudioTrack> playlistTracks, boolean isCassette) {
         String method;
         if (isCassette) {
             if (playNow) {
@@ -151,7 +152,7 @@ public class PlayShuffleTopHandler extends MusicHandler {
             }
         }
 
-        return MusicManager.getPlaylistEmbed(method, getMessageChannel(),
+        return MusicManager.getPlaylistEmbed(musicManager, method, getMessageChannel(),
             getUser(), playlistName, playlistTracks, isCassette);
     }
 }

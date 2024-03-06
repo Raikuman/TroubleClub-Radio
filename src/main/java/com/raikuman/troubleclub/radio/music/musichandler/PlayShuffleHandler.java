@@ -43,7 +43,7 @@ public class PlayShuffleHandler extends MusicHandler {
                 }
 
                 getMessageChannel().sendMessageEmbeds(
-                    getPlaylistLoadedEmbed(audioPlaylist.getName(), audioPlaylist.getTracks(), false).build()
+                    getPlaylistLoadedEmbed(musicManager, audioPlaylist.getName(), audioPlaylist.getTracks(), false).build()
                 ).queue();
 
                 getMessage().delete().queue();
@@ -74,7 +74,7 @@ public class PlayShuffleHandler extends MusicHandler {
                 musicManager.getCurrentTrackScheduler().queue(audioTrack);
 
                 getMessageChannel().sendMessageEmbeds(
-                    getPlaylistLoadedEmbed(playlist.getTitle(), List.of(audioTrack), true).build()
+                    getPlaylistLoadedEmbed(musicManager, playlist.getTitle(), List.of(audioTrack), true).build()
                 ).queue();
 
                 getMessage().delete().queue();
@@ -91,7 +91,7 @@ public class PlayShuffleHandler extends MusicHandler {
                 }
 
                 getMessageChannel().sendMessageEmbeds(
-                    getPlaylistLoadedEmbed(playlist.getTitle(), audioPlaylist.getTracks(), true).build()
+                    getPlaylistLoadedEmbed(musicManager, playlist.getTitle(), audioPlaylist.getTracks(), true).build()
                 ).queue();
 
                 getMessage().delete().queue();
@@ -113,7 +113,8 @@ public class PlayShuffleHandler extends MusicHandler {
         };
     }
 
-    private EmbedBuilder getPlaylistLoadedEmbed(String playlistName, List<AudioTrack> playlistTracks, boolean isCassette) {
+    private EmbedBuilder getPlaylistLoadedEmbed(GuildMusicManager musicManager, String playlistName,
+                                                List<AudioTrack> playlistTracks, boolean isCassette) {
         String method;
         if (isCassette) {
             method = "\uD83D\uDCFC\uD83D\uDD00 Shuffled and adding cassette to queue:";
@@ -121,7 +122,7 @@ public class PlayShuffleHandler extends MusicHandler {
             method = "\uD83D\uDD00↪️ Shuffled and adding playlist to queue:";
         }
 
-        return MusicManager.getPlaylistEmbed(method, getMessageChannel(),
+        return MusicManager.getPlaylistEmbed(musicManager, method, getMessageChannel(),
             getUser(), playlistName, playlistTracks, isCassette);
     }
 }

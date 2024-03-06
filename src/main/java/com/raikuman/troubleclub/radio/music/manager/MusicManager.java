@@ -97,13 +97,13 @@ public class MusicManager {
             musicHandler.getResultHandler(musicManager, playlist));
     }
 
-    private static EmbedBuilder getMusicEmbed(MessageChannelUnion channel, User user, String method, String title,
+    private static EmbedBuilder getMusicEmbed(GuildMusicManager musicManager, MessageChannelUnion channel, User user, String method, String title,
                                               Color color, MessageEmbed.Field... fields) {
         EmbedBuilder embedBuilder = new EmbedBuilder()
             .setColor(color)
             .setAuthor(method, null, user.getAvatarUrl())
             .setTitle(title)
-            .setFooter("#" + channel.getName())
+            .setFooter("Track " + musicManager.getCurrentAudioPlayerNum() + "  •  #" + channel.getName())
             .setTimestamp(Instant.now());
 
         // Add fields
@@ -114,7 +114,7 @@ public class MusicManager {
         return embedBuilder;
     }
 
-    public static EmbedBuilder getAudioTrackEmbed(String method, MessageChannelUnion channel, User user, int queueSize,
+    public static EmbedBuilder getAudioTrackEmbed(GuildMusicManager musicManager, String method, MessageChannelUnion channel, User user, int queueSize,
                                                   AudioTrack audioTrack) {
         String nowPlaying;
         if (queueSize == 0) {
@@ -124,14 +124,14 @@ public class MusicManager {
         }
 
         AudioTrackInfo info = audioTrack.getInfo();
-        return getMusicEmbed(channel, user, method, info.title, MUSIC_COLOR,
+        return getMusicEmbed(musicManager, channel, user, method, info.title, MUSIC_COLOR,
             new MessageEmbed.Field("Channel", info.author, true),
             new MessageEmbed.Field("Duration", formatMilliseconds(audioTrack.getDuration()), true),
             new MessageEmbed.Field("Position in queue", nowPlaying, true)
         );
     }
 
-    public static EmbedBuilder getPlaylistEmbed(String method, MessageChannelUnion channel, User user, String playlistName,
+    public static EmbedBuilder getPlaylistEmbed(GuildMusicManager musicManager, String method, MessageChannelUnion channel, User user, String playlistName,
                                                 List<AudioTrack> audioTracks, boolean isCassette) {
         long playlistLength = 0L;
         for (AudioTrack track : audioTracks) {
@@ -148,7 +148,7 @@ public class MusicManager {
             embedColor = MUSIC_COLOR;
         }
 
-        return getMusicEmbed(channel, user, method, playlistName, embedColor,
+        return getMusicEmbed(musicManager, channel, user, method, playlistName, embedColor,
             new MessageEmbed.Field("Songs in " + playlistText, String.valueOf(audioTracks.size()), true),
             new MessageEmbed.Field("Length of " + playlistText, formatMilliseconds(playlistLength), true)
         );
