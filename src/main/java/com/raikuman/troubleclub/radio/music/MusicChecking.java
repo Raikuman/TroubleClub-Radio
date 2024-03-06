@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 
@@ -15,14 +14,13 @@ public class MusicChecking {
 
     public static boolean isMemberNotInVoiceChannel(CommandContext ctx) {
         MessageChannelUnion messageChannel = ctx.event().getChannel();
-        User user = ctx.event().getAuthor();
         Message message = ctx.event().getMessage();
         Member member = ctx.event().getMember();
 
         if (member == null) {
             MessageResources.embedReplyDelete(message, 10, true,
                 EmbedResources.error("Something went wrong with Discord!",
-                    "An error occurred getting the member when checking for a voice channel",
+                    "An error occurred getting the member when checking for a voice channel.",
                     messageChannel, ctx.event().getGuild().getSelfMember().getUser()));
             return true;
         }
@@ -31,7 +29,7 @@ public class MusicChecking {
         if (memberVoiceState == null) {
             MessageResources.embedReplyDelete(message, 10, true,
                 EmbedResources.error("Something went wrong with Discord!",
-                    "An error occurred getting the voice state for the member when checking for a voice channel",
+                    "An error occurred getting the voice state for the member when checking for a voice channel.",
                     messageChannel, ctx.event().getGuild().getSelfMember().getUser()));
             return true;
         }
@@ -40,15 +38,14 @@ public class MusicChecking {
             return false;
         } else {
             MessageResources.embedReplyDelete(message, 10, true,
-                EmbedResources.error("You are not in a voice channel!", "Connect to a voice channel to use this command",
+                EmbedResources.error("You are not in a voice channel!", "Connect to a voice channel to use this command.",
                     messageChannel, ctx.event().getGuild().getSelfMember().getUser()));
             return true;
         }
     }
 
-    public static boolean isBotInDifferentVoiceChannel(CommandContext ctx) {
+    public static boolean isBotInDifferentVoiceChannel(CommandContext ctx, boolean checkIsInChannel) {
         MessageChannelUnion messageChannel = ctx.event().getChannel();
-        User user = ctx.event().getAuthor();
         Message message = ctx.event().getMessage();
         Member self = ctx.event().getGuild().getSelfMember();
         Member member = ctx.event().getMember();
@@ -56,7 +53,7 @@ public class MusicChecking {
         if (member == null) {
             MessageResources.embedReplyDelete(message, 10, true,
                 EmbedResources.error("Something went wrong with Discord!",
-                    "An error occurred getting the member and bot user when checking for different voice channels",
+                    "An error occurred getting the member and bot user when checking for different voice channels.",
                     messageChannel, self.getUser()));
             return true;
         }
@@ -68,7 +65,7 @@ public class MusicChecking {
         if (selfVoiceState == null || memberVoiceState == null) {
             MessageResources.embedReplyDelete(message, 10, true,
                 EmbedResources.error("Something went wrong with Discord!",
-                    "An error occurred getting the voice state for the member and bot user when checking for different voice channels",
+                    "An error occurred getting the voice state for the member and bot user when checking for different voice channels.",
                     messageChannel, self.getUser()));
             return true;
         }
@@ -77,14 +74,22 @@ public class MusicChecking {
 
         // Check if bot is not in a voice channel
         if (botChannel == null) {
-            return false;
+            if (checkIsInChannel) {
+                MessageResources.embedReplyDelete(message, 10, true,
+                    EmbedResources.error("I must be in a voice channel!",
+                        "I need to be connected to a voice channel to use this command.",
+                        messageChannel, self.getUser()));
+                return true;
+            } else {
+                return false;
+            }
         }
 
         // Check if bot is in a different voice channel
         if (!botChannel.equals(memberVoiceState.getChannel())) {
             MessageResources.embedReplyDelete(message, 10, true,
                 EmbedResources.error("I'm currently in a different channel!", "Unable to join your voice channel until " +
-                        "disconnected from `" + botChannel.getName() + "`",
+                        "disconnected from `" + botChannel.getName() + "`.",
                     messageChannel, self.getUser()));
             return true;
         }
@@ -97,7 +102,7 @@ public class MusicChecking {
             return false;
         } else {
             MessageResources.embedReplyDelete(ctx.event().getMessage(), 10, true,
-                EmbedResources.error("I can't join your voice channel!", "Allow permission to connect to voice channels",
+                EmbedResources.error("I can't join your voice channel!", "Allow permission to connect to voice channels.",
                     ctx.event().getChannel(), ctx.event().getGuild().getSelfMember().getUser()));
             return true;
         }

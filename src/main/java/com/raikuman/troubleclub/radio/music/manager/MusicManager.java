@@ -77,6 +77,7 @@ public class MusicManager {
             return;
         }
 
+        guildAudioManager.setSelfDeafened(true);
         guildAudioManager.openAudioConnection(audioChannel);
     }
 
