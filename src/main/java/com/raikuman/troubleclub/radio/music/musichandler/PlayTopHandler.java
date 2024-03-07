@@ -18,11 +18,16 @@ import java.util.List;
 
 public class PlayTopHandler extends MusicHandler {
 
-    private boolean playNow = false;
+    private final boolean playNow;
 
     public PlayTopHandler(CommandContext ctx, String url, boolean playNow) {
         super(ctx, url);
         this.playNow = playNow;
+    }
+
+    public PlayTopHandler(CommandContext ctx, String url) {
+        super(ctx, url);
+        this.playNow = false;
     }
 
     @Override
