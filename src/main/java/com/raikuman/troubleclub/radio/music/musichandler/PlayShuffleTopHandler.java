@@ -19,11 +19,16 @@ import java.util.List;
 
 public class PlayShuffleTopHandler extends MusicHandler {
 
-    private boolean playNow = false;
+    private final boolean playNow;
 
     public PlayShuffleTopHandler(CommandContext ctx, String url, boolean playNow) {
         super(ctx, url);
         this.playNow = playNow;
+    }
+
+    public PlayShuffleTopHandler(CommandContext ctx, String url) {
+        super(ctx, url);
+        this.playNow = false;
     }
 
     @Override
@@ -32,9 +37,21 @@ public class PlayShuffleTopHandler extends MusicHandler {
 
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
-                MessageResources.embedReplyDelete(getMessage(), 10, true,
-                    EmbedResources.error("Playlist could not load!", "Could not load using `" + getUrl() + "`",
-                        getMessageChannel(), getUser()));
+                musicManager.getCurrentTrackScheduler().queue(audioTrack);
+
+                String method;
+                if (musicManager.getCurrentTrackScheduler().queue.isEmpty()) {
+                    method = "▶️ Playing:";
+                } else {
+                    method = "↪️ Adding to queue:";
+                }
+
+                getMessageChannel().sendMessageEmbeds(
+                    MusicManager.getAudioTrackEmbed(musicManager, method, getMessageChannel(), getUser(),
+                        musicManager.getCurrentTrackScheduler().queue.size(), audioTrack).build()
+                ).queue();
+
+                getMessage().delete().queue();
             }
 
             @Override
