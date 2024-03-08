@@ -30,6 +30,13 @@
             <artifactId>lavaplayer</artifactId>
             <version>2.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.Raikuman</groupId>
+            <artifactId>Bot-Utilities</artifactId>
+            <version>main-c0fce74d6a-1</version>
+        </dependency>
+
+
     </dependencies>
 
     <repositories>
