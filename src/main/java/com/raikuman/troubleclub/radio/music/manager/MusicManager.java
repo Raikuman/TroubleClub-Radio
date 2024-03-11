@@ -29,7 +29,10 @@ public class MusicManager {
     private static MusicManager PLAYER_INSTANCE;
     private final Map<Long, GuildMusicManager> musicManagerMap;
     private final AudioPlayerManager audioPlayerManager;
-    public static final Color MUSIC_COLOR = Color.decode("#4287f5"), CASSETTE_COLOR = Color.decode("#801cba");
+    public static final Color
+        MUSIC_COLOR = Color.decode("#4287f5"),
+        CASSETTE_COLOR = Color.decode("#801cba"),
+        TRACK_COLOR = Color.decode("#e67017");
 
     public MusicManager() {
         this.musicManagerMap = new HashMap<>();

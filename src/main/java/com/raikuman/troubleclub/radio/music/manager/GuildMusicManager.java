@@ -44,6 +44,10 @@ public class GuildMusicManager {
         return mixingSendHandler;
     }
 
+    public TrackScheduler getTrackScheduler(int trackSchedulerNum) {
+        return trackSchedulers[trackSchedulerNum - 1];
+    }
+
     public AudioPlayer getAudioPlayer(int audioPlayerNum) {
         return audioPlayers[audioPlayerNum - 1];
     }
