@@ -39,7 +39,7 @@ public class Stop extends Command {
         String title;
         if (currentTrack != null) {
             if (numCleared > 0) {
-                title = "\uD83D\uDED1 Stopped current song and removed `" + numCleared + "` songs from queue!";
+                title = "\uD83D\uDED1 Stopped current song and removed " + numCleared + " songs from queue!";
             } else {
                 title = "\uD83D\uDED1 Stopped current song!";
             }

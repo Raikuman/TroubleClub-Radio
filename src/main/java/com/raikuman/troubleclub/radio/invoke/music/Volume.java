@@ -30,7 +30,14 @@ public class Volume extends Command {
             defaultHandle(ctx);
             ctx.event().getMessage().delete().queue();
         } else if (ctx.args().size() == 2) {
-            if (!updateVolume(ctx)) {
+            if (!updateVolume(ctx, false)) {
+                MessageResources.embedReplyDelete(ctx.event().getMessage(), 10, true,
+                    EmbedResources.incorrectUsage(getInvoke(), getUsage(), ctx.event().getChannel()));
+            } else {
+                ctx.event().getMessage().delete().queue();
+            }
+        } else if (ctx.args().size() == 1) {
+            if (!updateVolume(ctx, true)) {
                 MessageResources.embedReplyDelete(ctx.event().getMessage(), 10, true,
                     EmbedResources.incorrectUsage(getInvoke(), getUsage(), ctx.event().getChannel()));
             } else {
@@ -82,36 +89,44 @@ public class Volume extends Command {
                 .setFooter("Track " + musicManager.getCurrentAudioPlayerNum() + "  •  #" + ctx.event().getChannel().getName()));
     }
 
-    private boolean updateVolume(CommandContext ctx) {
+    private boolean updateVolume(CommandContext ctx, boolean currentTrack) {
         boolean updated = false;
+        GuildMusicManager musicManager = MusicManager.getInstance().getMusicManager(ctx.event().getGuild());
 
         // Check if first arg is a number between 1 and 3 (inclusive)
         int trackNum;
-        try {
-            trackNum = Integer.parseInt(ctx.args().get(0));
-        } catch (NumberFormatException e) {
-            trackNum = 0;
+        if (currentTrack) {
+            trackNum = musicManager.getCurrentAudioPlayerNum();
+        } else {
+            try {
+                trackNum = Integer.parseInt(ctx.args().get(0));
+            } catch (NumberFormatException e) {
+                trackNum = 0;
+            }
         }
 
         if (trackNum >= 1 && trackNum <= 3) {
             // Check if second arg is a number between 1 and 100 (inclusive)
             int volume;
             try {
-                volume = Integer.parseInt(ctx.args().get(1));
+                if (currentTrack) {
+                    volume = Integer.parseInt(ctx.args().get(0));
+                } else {
+                    volume = Integer.parseInt(ctx.args().get(1));
+                }
             } catch (NumberFormatException e) {
                 volume= 0;
             }
 
             if (volume >= 1 && volume <= 100) {
                 MusicDatabaseHandler.setVolume(ctx.event().getGuild(), trackNum, volume);
-                GuildMusicManager musicManager = MusicManager.getInstance().getMusicManager(ctx.event().getGuild());
                 musicManager.getAudioPlayer(trackNum).setVolume(volume);
 
                 // Send volume embed
                 MessageResources.embedDelete(ctx.event().getChannel(), 10,
                     EmbedResources.defaultResponse(
                         MusicManager.MUSIC_COLOR,
-                        "\uD83D\uDD0A Set track `" + musicManager.getCurrentAudioPlayerNum() + "` volume to `" + volume + "`",
+                        "\uD83D\uDD0A Set track " + musicManager.getCurrentAudioPlayerNum() + " volume to " + volume,
                         "",
                         ctx.event().getChannel(),
                         ctx.event().getAuthor())
