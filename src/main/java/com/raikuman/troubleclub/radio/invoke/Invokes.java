@@ -7,6 +7,7 @@ import com.raikuman.botutilities.invocation.type.Slash;
 import com.raikuman.troubleclub.radio.invoke.category.Music;
 import com.raikuman.troubleclub.radio.invoke.category.Playlist;
 import com.raikuman.troubleclub.radio.invoke.music.*;
+import com.raikuman.troubleclub.radio.invoke.track.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,19 @@ public class Invokes {
             new Move(),
             new Volume(),
             new Join(),
-            new Leave()
+            new Leave(),
+
+            new Track(),
+            new Tracks(),
+            new PauseTracks(),
+            new ResumeTracks(),
+            new RewindTracks(),
+            new StopTracks(),
+            new ClearTracks(),
+            new LoopTracks(),
+            new RepeatTracks(),
+            new PruneTracks(),
+            new VolumeTracks()
         );
     }
 
@@ -52,6 +65,7 @@ public class Invokes {
             List.of(
                 new Music(),
                 new Playlist(),
+                new com.raikuman.troubleclub.radio.invoke.category.Track(),
                 new Settings()
             ),
             slashes,
