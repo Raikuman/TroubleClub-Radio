@@ -81,8 +81,8 @@ public class Volume extends Command {
         MessageResources.embedDelete(ctx.event().getChannel(), 10,
             EmbedResources.defaultResponse(
                 MusicManager.MUSIC_COLOR,
-                "\uD83D\uDD0A Track `" + musicManager.getCurrentAudioPlayerNum() + "` volume is `" +
-                    musicManager.getCurrentAudioPlayer().getVolume() + "`",
+                "\uD83D\uDD0A Track " + musicManager.getCurrentAudioPlayerNum() + " volume is " +
+                    MusicDatabaseHandler.getVolume(ctx.event().getGuild(), musicManager.getCurrentAudioPlayerNum()),
                 "",
                 ctx.event().getChannel(),
                 ctx.event().getAuthor())
@@ -105,7 +105,7 @@ public class Volume extends Command {
             }
         }
 
-        if (trackNum >= 1 && trackNum <= 3) {
+        if (trackNum >= 1 && trackNum <= GuildMusicManager.MAX_AUDIO_PLAYERS) {
             // Check if second arg is a number between 1 and 100 (inclusive)
             int volume;
             try {
@@ -120,7 +120,7 @@ public class Volume extends Command {
 
             if (volume >= 1 && volume <= 100) {
                 MusicDatabaseHandler.setVolume(ctx.event().getGuild(), trackNum, volume);
-                musicManager.getAudioPlayer(trackNum).setVolume(volume);
+                musicManager.getAudioPlayer(trackNum).setVolume((int) Math.ceil(volume / GuildMusicManager.REDUCE_VOLUME));
 
                 // Send volume embed
                 MessageResources.embedDelete(ctx.event().getChannel(), 10,

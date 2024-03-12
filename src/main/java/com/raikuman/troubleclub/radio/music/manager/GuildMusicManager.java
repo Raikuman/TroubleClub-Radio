@@ -12,7 +12,8 @@ public class GuildMusicManager {
     private final AudioPlayer[] audioPlayers;
     private final TrackScheduler[] trackSchedulers;
     private final MixingSendHandler mixingSendHandler;
-    private static final int MAX_AUDIO_PLAYERS = 3;
+    public static final int MAX_AUDIO_PLAYERS = 3;
+    public static final double REDUCE_VOLUME = 5.0;
     private int currentAudioPlayer;
 
     public GuildMusicManager(AudioPlayerManager playerManager, Guild guild) {
@@ -30,7 +31,7 @@ public class GuildMusicManager {
             audioPlayers[i].addListener(trackSchedulers[i]);
 
             // Load volume from database
-            audioPlayers[i].setVolume(MusicDatabaseHandler.getVolume(guild, i + 1));
+            audioPlayers[i].setVolume((int) Math.ceil(MusicDatabaseHandler.getVolume(guild, i + 1) / REDUCE_VOLUME));
 
             // Equalize filter
             audioPlayers[i].setFilterFactory(new EqualizerFactory());
