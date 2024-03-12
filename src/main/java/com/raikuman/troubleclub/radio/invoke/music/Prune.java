@@ -31,20 +31,7 @@ public class Prune extends Command {
         }
 
         GuildMusicManager musicManager = MusicManager.getInstance().getMusicManager(ctx.event().getGuild());
-        TrackScheduler trackScheduler = musicManager.getCurrentTrackScheduler();
-
-        List<AudioTrack> queueTracks = new ArrayList<>();
-        trackScheduler.queue.drainTo(queueTracks);
-
-        List<String> identifiers = queueTracks.stream().map(AudioTrack::getIdentifier).collect(Collectors.toList());
-        int numPruned = 0;
-        for (AudioTrack audioTrack : queueTracks) {
-            if (identifiers.contains(audioTrack.getIdentifier())) {
-                trackScheduler.queue.offer(audioTrack);
-                identifiers.remove(audioTrack.getIdentifier());
-                numPruned++;
-            }
-        }
+        int numPruned = pruneSongs(musicManager.getCurrentTrackScheduler());
 
         String title;
         if (numPruned > 0) {
@@ -82,5 +69,22 @@ public class Prune extends Command {
     @Override
     public List<Category> getCategories() {
         return List.of(new Music());
+    }
+
+    public static int pruneSongs(TrackScheduler trackScheduler) {
+        List<AudioTrack> queueTracks = new ArrayList<>();
+        trackScheduler.queue.drainTo(queueTracks);
+
+        List<String> identifiers = queueTracks.stream().map(AudioTrack::getIdentifier).collect(Collectors.toList());
+        int numPruned = 0;
+        for (AudioTrack audioTrack : queueTracks) {
+            if (identifiers.contains(audioTrack.getIdentifier())) {
+                trackScheduler.queue.offer(audioTrack);
+                identifiers.remove(audioTrack.getIdentifier());
+                numPruned++;
+            }
+        }
+
+        return numPruned;
     }
 }

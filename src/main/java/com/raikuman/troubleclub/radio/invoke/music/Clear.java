@@ -27,9 +27,9 @@ public class Clear extends Command {
             return;
         }
 
-        int numCleared = clearQueue(ctx);
-
         GuildMusicManager musicManager = MusicManager.getInstance().getMusicManager(ctx.event().getGuild());
+        int numCleared = clearQueue(musicManager.getCurrentTrackScheduler());
+
         if (numCleared > 0) {
             MessageResources.embedDelete(ctx.event().getChannel(), 10,
                 EmbedResources.defaultResponse(
@@ -74,9 +74,7 @@ public class Clear extends Command {
         return List.of(new Music());
     }
 
-    public static int clearQueue(CommandContext ctx) {
-        GuildMusicManager musicManager = MusicManager.getInstance().getMusicManager(ctx.event().getGuild());
-        TrackScheduler trackScheduler = musicManager.getCurrentTrackScheduler();
+    public static int clearQueue(TrackScheduler trackScheduler) {
 
         int numSongs = trackScheduler.queue.size();
         trackScheduler.queue.clear();

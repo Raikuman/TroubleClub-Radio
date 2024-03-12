@@ -28,8 +28,11 @@ public class Stop extends Command {
 
         GuildMusicManager musicManager = MusicManager.getInstance().getMusicManager(ctx.event().getGuild());
         AudioTrack currentTrack = musicManager.getCurrentAudioPlayer().getPlayingTrack();
-        int numCleared = Clear.clearQueue(ctx);
-        musicManager.getCurrentTrackScheduler().nextTrack();
+        int numCleared = Clear.clearQueue(musicManager.getCurrentTrackScheduler());
+
+        if (currentTrack != null) {
+            musicManager.getCurrentTrackScheduler().nextTrack();
+        }
 
         // Unpause if paused
         if (musicManager.getCurrentAudioPlayer().isPaused()) {
