@@ -37,6 +37,21 @@ public class Queue extends Command {
         GuildMusicManager musicManager = MusicManager.getInstance().getMusicManager(ctx.event().getGuild());
         TrackScheduler trackScheduler = musicManager.getCurrentTrackScheduler();
 
+        // Handle nothing
+        AudioTrack currentTrack = trackScheduler.audioPlayer.getPlayingTrack();
+        if (currentTrack == null) {
+            MessageResources.embedDelete(ctx.event().getChannel(), 10,
+                EmbedResources.defaultResponse(
+                    MusicManager.MUSIC_COLOR,
+                    "Nothing in the queue!",
+                    "",
+                    ctx.event().getChannel(),
+                    ctx.event().getAuthor()));
+
+            ctx.event().getMessage().delete().queue();
+            return;
+        }
+
         List<String> queueStrings = new ArrayList<>();
         String playerStatus, currentTrackStatus = "Playing:";
         // Handle number of songs
@@ -58,21 +73,6 @@ public class Queue extends Command {
 
         if (musicManager.getCurrentAudioPlayer().isPaused()) {
             currentTrackStatus = "Paused:";
-        }
-
-        // Handle nothing
-        AudioTrack currentTrack = trackScheduler.audioPlayer.getPlayingTrack();
-        if (currentTrack == null) {
-            MessageResources.embedDelete(ctx.event().getChannel(), 10,
-                EmbedResources.defaultResponse(
-                        MusicManager.MUSIC_COLOR,
-                        "Nothing in the queue!",
-                        playerStatus,
-                        ctx.event().getChannel(),
-                        ctx.event().getAuthor()));
-
-            ctx.event().getMessage().delete().queue();
-            return;
         }
 
         // Add player status
