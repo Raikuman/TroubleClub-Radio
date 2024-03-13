@@ -24,7 +24,7 @@ public class PlaylistStartup implements DatabaseStartup {
             statement.execute(
                 "CREATE TABLE IF NOT EXISTS song(" +
                     "song_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "link VARCHAR(20) NOT NULL UNIQUE" +
+                    "encoded TEXT NOT NULL UNIQUE" +
                     ")"
             );
 

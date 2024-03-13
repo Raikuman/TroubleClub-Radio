@@ -11,15 +11,13 @@ public class Playlist {
     private final String title, url;
     private final int id, songs;
     private final User user;
-    private final List<AudioTrack> tracks;
 
-    public Playlist(String title, String url, int songs, User user, List<AudioTrack> tracks) {
+    public Playlist(String title, String url, int songs, User user) {
         this.id = -1;
         this.title = title;
         this.url = url;
         this.songs = songs;
         this.user = user;
-        this.tracks = tracks;
     }
 
     public Playlist(int id, String title, String url, int songs, User user) {
@@ -28,7 +26,6 @@ public class Playlist {
         this.url = url;
         this.songs = songs;
         this.user = user;
-        this.tracks = new ArrayList<>();
     }
 
     public int getId() {
@@ -49,13 +46,5 @@ public class Playlist {
 
     public User getUser() {
         return user;
-    }
-
-    public List<AudioTrack> getTracks() {
-        return tracks;
-    }
-
-    public void addTracks(List<AudioTrack> tracks) {
-        this.tracks.addAll(tracks);
     }
 }

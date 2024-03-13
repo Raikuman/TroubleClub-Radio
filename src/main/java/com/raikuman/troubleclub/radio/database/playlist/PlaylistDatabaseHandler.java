@@ -20,7 +20,7 @@ public class PlaylistDatabaseHandler {
 
     public static final Logger logger = LoggerFactory.getLogger(PlaylistDatabaseHandler.class);
 
-    public static boolean addPlaylist(Playlist playlist) {
+    public static boolean addPlaylist(Playlist playlist, List<String> tracksEncoded) {
         int userId = DefaultDatabaseHandler.getUserId(playlist.getUser());
 
         // Couldn't retrieve user id
@@ -38,7 +38,7 @@ public class PlaylistDatabaseHandler {
             statement.setInt(1, userId);
             statement.setString(2, playlist.getTitle());
             statement.setString(3, playlist.getUrl());
-            statement.setInt(4, playlist.getTracks().size());
+            statement.setInt(4, playlist.getSongs());
             statement.execute();
 
             try (ResultSet resultSet = statement.getGeneratedKeys()) {
@@ -47,7 +47,7 @@ public class PlaylistDatabaseHandler {
                 }
             }
         } catch (SQLException e) {
-            logger.error("An error occurred adding playlist to playlist table for: " + playlist.getTitle());
+            logger.error("An error occurred adding playlist to playlist table for: {}", playlist.getTitle());
             return false;
         }
 
@@ -62,14 +62,14 @@ public class PlaylistDatabaseHandler {
             PreparedStatement statement = connection.prepareStatement(
                 "INSERT INTO playlist_song(playlist_id, song_id) VALUES(?, ?)"
             )) {
-            for (int songId : addTracks(playlist.getTracks())) {
+            for (int songId : addTracks(tracksEncoded)) {
                 statement.setInt(1, playlistId);
                 statement.setInt(2, songId);
                 statement.addBatch();
             }
             statement.executeBatch();
         } catch (SQLException e) {
-            logger.error("An error occurred adding playlist id and song ids to playlist_song table for: " + playlist.getTitle());
+            logger.error("An error occurred adding playlist id and song ids to playlist_song table for: {}", playlist.getTitle());
             return false;
         }
 
@@ -104,7 +104,7 @@ public class PlaylistDatabaseHandler {
                 }
             }
         } catch (SQLException e) {
-            logger.error("An error occurred retrieving playlists for user: " + user.getEffectiveName());
+            logger.error("An error occurred retrieving playlists for user: {}", user.getEffectiveName());
             return null;
         }
 
@@ -127,7 +127,7 @@ public class PlaylistDatabaseHandler {
                 }
             }
         } catch (SQLException e) {
-            logger.error("An error occurred retrieving song ids for playlist: " + playlistId);
+            logger.error("An error occurred retrieving song ids for playlist: {}", playlistId);
             return null;
         }
 
@@ -136,29 +136,29 @@ public class PlaylistDatabaseHandler {
         }
 
         // Get song urls from song ids
-        List<String> songUrls = new ArrayList<>();
+        List<String> tracksEncoded = new ArrayList<>();
         try (
             Connection connection = DatabaseManager.getConnection();
             PreparedStatement statement = connection.prepareStatement(
-                "SELECT link FROM song WHERE song_id = ?"
+                "SELECT encoded FROM song WHERE song_id = ?"
             )) {
             for (Integer songId : songIds) {
                 statement.setInt(1, songId);
 
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
-                        songUrls.add(resultSet.getString(1));
+                        tracksEncoded.add(resultSet.getString(1));
                     } else {
-                        logger.error("An error occurred retrieving song url for song id: " + songId);
+                        logger.error("An error occurred retrieving song url for song id: {}", songId);
                     }
                 }
             }
         } catch (SQLException e) {
-            logger.error("An error occurred retrieving song urls for playlist: " + playlistId);
+            logger.error("An error occurred retrieving song urls for playlist: {}", playlistId);
             return null;
         }
 
-        return songUrls;
+        return tracksEncoded;
     }
 
     public static boolean deletePlaylist(int playlistId) {
@@ -177,17 +177,17 @@ public class PlaylistDatabaseHandler {
         return true;
     }
 
-    private static int[] addTracks(List<AudioTrack> tracks) {
-        int[] trackIds = new int[tracks.size()];
+    private static int[] addTracks(List<String> tracksEncoded) {
+        int[] trackIds = new int[tracksEncoded.size()];
         for (int i = 0; i < trackIds.length; i++) {
-            trackIds[i] = addTrack(tracks.get(i));
+            trackIds[i] = addTrack(tracksEncoded.get(i));
         }
 
         return trackIds;
     }
 
-    private static int addTrack(AudioTrack track) {
-        int trackId = getTrackId(track);
+    private static int addTrack(String trackEncoded) {
+        int trackId = getTrackId(trackEncoded);
 
         // Return track id if already found
         if (trackId != -1) {
@@ -197,9 +197,9 @@ public class PlaylistDatabaseHandler {
         try (
             Connection connection = DatabaseManager.getConnection();
             PreparedStatement statement = connection.prepareStatement(
-                "INSERT OR IGNORE INTO song(link) VALUES(?)"
+                "INSERT OR IGNORE INTO song(encoded) VALUES(?)"
             )) {
-            statement.setString(1, track.getInfo().uri.split("watch\\?v=")[1]);
+            statement.setString(1, trackEncoded);
             statement.execute();
             try (ResultSet resultSet = statement.getGeneratedKeys()) {
                 if (resultSet.next()) {
@@ -209,18 +209,18 @@ public class PlaylistDatabaseHandler {
                 }
             }
         } catch (SQLException e) {
-            logger.error("An error occurred adding track id for: " + track.getInfo().title);
+            logger.error("An error occurred adding track id for: {}", trackEncoded);
             return -1;
         }
     }
 
-    private static int getTrackId(AudioTrack track) {
+    private static int getTrackId(String trackEncoded) {
         try (
             Connection connection = DatabaseManager.getConnection();
             PreparedStatement statement = connection.prepareStatement(
-                "SELECT song_id FROM song WHERE link = ?"
+                "SELECT song_id FROM song WHERE encoded = ?"
             )) {
-            statement.setString(1, track.getInfo().uri.split("watch\\?v=")[1]);
+            statement.setString(1, trackEncoded);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return resultSet.getInt(1);
@@ -229,7 +229,7 @@ public class PlaylistDatabaseHandler {
                 }
             }
         } catch (SQLException e) {
-            logger.error("An error occurred getting track id for: " + track.getInfo().title);
+            logger.error("An error occurred getting track id for: {}", trackEncoded);
             return -1;
         }
     }
