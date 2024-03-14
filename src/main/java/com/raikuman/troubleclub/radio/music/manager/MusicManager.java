@@ -158,7 +158,7 @@ public class MusicManager {
         );
     }
 
-    private static String formatMilliseconds(long timeInMillis) {
+    public static String formatMilliseconds(long timeInMillis) {
         return String.format("%02d:%02d:%02d",
             TimeUnit.MILLISECONDS.toHours(timeInMillis),
             TimeUnit.MILLISECONDS.toMinutes(timeInMillis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(timeInMillis)),

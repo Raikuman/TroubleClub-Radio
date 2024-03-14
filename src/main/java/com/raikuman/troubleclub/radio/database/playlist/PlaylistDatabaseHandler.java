@@ -32,7 +32,7 @@ public class PlaylistDatabaseHandler {
         try (
             Connection connection = DatabaseManager.getConnection();
             PreparedStatement statement = connection.prepareStatement(
-                "INSERT INTO playlist(user_id, name, songs) VALUES(?, ?, ?, ?)"
+                "INSERT INTO playlist(user_id, name, songs) VALUES(?, ?, ?)"
             )) {
             statement.setInt(1, userId);
             statement.setString(2, playlist.getTitle());
