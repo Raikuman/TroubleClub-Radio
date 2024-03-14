@@ -7,7 +7,7 @@ public class Playlist implements Category {
 
     @Override
     public String getCategory() {
-        return "playlist";
+        return "cassette";
     }
 
     @Override

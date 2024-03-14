@@ -4,8 +4,9 @@ import com.raikuman.botutilities.BotSetup;
 import com.raikuman.troubleclub.radio.config.music.MusicConfig;
 import com.raikuman.troubleclub.radio.config.music.MusicStartup;
 import com.raikuman.troubleclub.radio.config.PlaylistStartup;
-import com.raikuman.troubleclub.radio.database.music.MusicListener;
+import com.raikuman.troubleclub.radio.listener.MusicEventListener;
 import com.raikuman.troubleclub.radio.invoke.Invokes;
+import com.raikuman.troubleclub.radio.listener.VoiceEventListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -38,7 +39,7 @@ public class TroubleClub {
             .setup(jdaBuilder)
             .setConfigs(new MusicConfig())
             .setDatabases(new MusicStartup(), new PlaylistStartup())
-            .addListeners(List.of(new MusicListener()))
+            .addListeners(List.of(new MusicEventListener(), new VoiceEventListener()))
             .addCommands(Invokes.getCommands())
             .addSlashes(Invokes.getSlashes())
             .build(System.getenv("RADIOTOKEN"));
