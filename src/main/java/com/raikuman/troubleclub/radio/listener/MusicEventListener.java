@@ -1,5 +1,6 @@
-package com.raikuman.troubleclub.radio.database.music;
+package com.raikuman.troubleclub.radio.listener;
 
+import com.raikuman.troubleclub.radio.database.music.MusicDatabaseHandler;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -7,13 +8,13 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MusicListener extends ListenerAdapter {
+public class MusicEventListener extends ListenerAdapter {
 
-    private static final Logger logger = LoggerFactory.getLogger(MusicListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(MusicEventListener.class);
 
     @Override
     public void onReady(ReadyEvent event) {
-        logger.info("{}" + MusicListener.class.getName() + " is initialized",
+        logger.info("{}" + MusicEventListener.class.getName() + " is initialized",
             event.getJDA().getSelfUser().getEffectiveName());
     }
 
