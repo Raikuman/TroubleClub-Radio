@@ -3,7 +3,6 @@ package com.raikuman.troubleclub.radio.database.playlist;
 import com.raikuman.botutilities.database.DatabaseManager;
 import com.raikuman.botutilities.defaults.database.DefaultDatabaseHandler;
 import com.raikuman.troubleclub.radio.music.playlist.Playlist;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,12 +32,11 @@ public class PlaylistDatabaseHandler {
         try (
             Connection connection = DatabaseManager.getConnection();
             PreparedStatement statement = connection.prepareStatement(
-                "INSERT INTO playlist(user_id, name, link, songs) VALUES(?, ?, ?, ?)"
+                "INSERT INTO playlist(user_id, name, songs) VALUES(?, ?, ?, ?)"
             )) {
             statement.setInt(1, userId);
             statement.setString(2, playlist.getTitle());
-            statement.setString(3, playlist.getUrl());
-            statement.setInt(4, playlist.getSongs());
+            statement.setInt(3, playlist.getNumSongs());
             statement.execute();
 
             try (ResultSet resultSet = statement.getGeneratedKeys()) {
@@ -76,6 +74,33 @@ public class PlaylistDatabaseHandler {
         return true;
     }
 
+    public static int numberOfPlaylists(User user) {
+        int userId = DefaultDatabaseHandler.getUserId(user);
+
+        // Couldn't retrieve user id
+        if (userId == -1) {
+            return 0;
+        }
+
+        try (
+            Connection connection = DatabaseManager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(
+                "SELECT COUNT(*) FROM playlist WHERE user_id = ?"
+            )) {
+            statement.setInt(1, userId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("An error occurred retrieving number of playlists for user: {}", user.getEffectiveName());
+        }
+
+        return 0;
+    }
+
     public static List<Playlist> getPlaylists(User user) {
         int userId = DefaultDatabaseHandler.getUserId(user);
 
@@ -89,7 +114,7 @@ public class PlaylistDatabaseHandler {
         try (
             Connection connection = DatabaseManager.getConnection();
             PreparedStatement statement = connection.prepareStatement(
-                "SELECT playlist_id, name, link, songs FROM playlist WHERE user_id = ?"
+                "SELECT playlist_id, name, songs FROM playlist WHERE user_id = ?"
             )) {
                 statement.setInt(1, userId);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -97,8 +122,7 @@ public class PlaylistDatabaseHandler {
                     playlists.add(new Playlist(
                         resultSet.getInt(1),
                         resultSet.getString(2),
-                        resultSet.getString(3),
-                        resultSet.getInt(4),
+                        resultSet.getInt(3),
                         user
                     ));
                 }

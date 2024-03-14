@@ -34,7 +34,6 @@ public class PlaylistStartup implements DatabaseStartup {
                     "playlist_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "user_id INTEGER NOT NULL," +
                     "name VARCHAR(20)," +
-                    "link VARCHAR(20)," +
                     "songs INTEGER NOT NULL," +
                     "FOREIGN KEY(user_id) REFERENCES user(user_id) ON DELETE CASCADE" +
                     ")"
