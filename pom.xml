@@ -55,19 +55,14 @@
             <version>2.20.0</version>
         </dependency>
         <dependency>
-            <groupId>org.xerial</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>3.42.0.0</version>
-        </dependency>
-        <dependency>
             <groupId>dev.arbjerg</groupId>
             <artifactId>lavaplayer</artifactId>
-            <version>2.1.0</version>
+            <version>2.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.Raikuman</groupId>
             <artifactId>Bot-Utilities</artifactId>
-            <version>main-c0fce74d6a-1</version>
+            <version>main-99ffa7835b-1</version>
         </dependency>
     </dependencies>
 
