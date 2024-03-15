@@ -1,6 +1,8 @@
 package com.raikuman.troubleclub.radio;
 
 import com.raikuman.botutilities.BotSetup;
+import com.raikuman.botutilities.config.ConfigData;
+import com.raikuman.botutilities.defaults.DefaultConfig;
 import com.raikuman.troubleclub.radio.config.music.MusicConfig;
 import com.raikuman.troubleclub.radio.config.music.MusicStartup;
 import com.raikuman.troubleclub.radio.config.PlaylistStartup;
@@ -20,6 +22,9 @@ import java.util.List;
 public class TroubleClub {
 
     public static void main(String[] args) {
+        // Update config for thindatabase
+        new ConfigData(new DefaultConfig()).setConfig("thindatabase", "false");
+
         JDABuilder jdaBuilder = JDABuilder
             .create(List.of(
                 GatewayIntent.GUILD_MEMBERS,
