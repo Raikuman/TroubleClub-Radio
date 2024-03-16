@@ -39,6 +39,12 @@ public class PlaylistStartup implements DatabaseStartup {
                     ")"
             );
 
+            statement.execute(
+                "CREATE VIRTUAL TABLE IF NOT EXISTS playlist_fts USING fts5(" +
+                    "playlist_id, user_id, name, songs" +
+                    ")"
+            );
+
             // Create playlist song table
             statement.execute(
                 "CREATE TABLE IF NOT EXISTS playlist_song(" +
@@ -57,6 +63,31 @@ public class PlaylistStartup implements DatabaseStartup {
                     "song_id = OLD.song_id); " +
                     "END"
             );
+
+            // Triggers to update playlist_fts
+            statement.execute(
+                "CREATE TRIGGER IF NOT EXISTS insert_playlist_fts AFTER INSERT ON playlist " +
+                    "BEGIN " +
+                    "INSERT INTO playlist_fts(playlist_id, user_id, name, songs) VALUES (NEW.playlist_id, NEW.user_id, NEW.name, NEW.songs); " +
+                    "END"
+            );
+
+            statement.execute(
+                "CREATE TRIGGER IF NOT EXISTS update_playlist_fts AFTER UPDATE ON playlist " +
+                    "BEGIN " +
+                    "UPDATE playlist_fts SET " +
+                    "user_id = NEW.user_id, name = NEW.name, songs = NEW.songs " +
+                    "WHERE playlist_id = NEW.playlist_id; " +
+                    "END"
+            );
+
+            statement.execute(
+                "CREATE TRIGGER IF NOT EXISTS delete_playlist_fts AFTER DELETE ON playlist " +
+                    "BEGIN " +
+                    "DELETE FROM playlist_fts WHERE playlist_id = OLD.playlist_id; " +
+                    "END"
+            );
+
         } catch (SQLException e) {
             logger.error("An error occurred creating playlist tables");
         }
