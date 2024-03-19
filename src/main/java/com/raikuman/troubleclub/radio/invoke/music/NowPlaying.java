@@ -60,7 +60,7 @@ public class NowPlaying extends Command {
             MessageResources.embedDelete(
                 ctx.event().getChannel(),
                 10,
-                EmbedResources.error("No song is currently playing!", "", ctx.event().getChannel(),
+                EmbedResources.error("No song is currently playing!", "A song must be playing to view its information.", ctx.event().getChannel(),
                     ctx.event().getAuthor())
                     .setFooter("Track " + musicManager.getCurrentAudioPlayerNum() + "  •  #" + ctx.event().getChannel().getName())
             );
