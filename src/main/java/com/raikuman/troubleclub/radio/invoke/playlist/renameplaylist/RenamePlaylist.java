@@ -8,6 +8,7 @@ import com.raikuman.botutilities.utilities.EmbedResources;
 import com.raikuman.botutilities.utilities.MessageResources;
 import com.raikuman.troubleclub.radio.database.playlist.PlaylistDatabaseHandler;
 import com.raikuman.troubleclub.radio.invoke.category.Playlist;
+import com.raikuman.troubleclub.radio.music.playlist.PlaylistUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class RenamePlaylist extends Command {
             return;
         }
 
-        List<EmbedBuilder> pages = com.raikuman.troubleclub.radio.invoke.playlist.playlist.Playlist.getPlaylistPages(
+        List<EmbedBuilder> pages = PlaylistUtils.getPlaylistPages(
             playlists, ctx.event().getChannel(), ctx.event().getAuthor());
 
         int iterator = 0;

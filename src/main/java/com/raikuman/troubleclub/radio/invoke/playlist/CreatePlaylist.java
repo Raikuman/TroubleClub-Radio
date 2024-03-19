@@ -13,10 +13,8 @@ import com.raikuman.troubleclub.radio.music.manager.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.manager.MusicManager;
 import com.raikuman.troubleclub.radio.music.manager.TrackScheduler;
 import com.raikuman.troubleclub.radio.music.musichandler.PlaylistCreatorHandler;
+import com.raikuman.troubleclub.radio.music.playlist.PlaylistUtils;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,7 +132,7 @@ public class CreatePlaylist extends Command {
 
         if (playlistCreated) {
             MessageResources.embedDelete(ctx.event().getChannel(), 10,
-                getCassetteInfoEmbed(
+                PlaylistUtils.getPlaylistInfoEmbed(
                     ctx.event().getChannel(),
                     ctx.event().getAuthor(),
                     "\uD83D\uDCFC Created Cassette!",
@@ -151,22 +149,6 @@ public class CreatePlaylist extends Command {
         }
     }
 
-    public static EmbedBuilder getCassetteInfoEmbed(MessageChannelUnion channelUnion, User user, String title, String playlistName, int numSongs, long playlistLength) {
-        EmbedBuilder embedBuilder = EmbedResources.defaultResponse(
-                MusicManager.CASSETTE_COLOR,
-                title,
-                "",
-                channelUnion,
-                user)
-            .setTitle(playlistName)
-            .addField("Songs in cassette", String.valueOf(numSongs), true);
-
-        if (playlistLength > 0L) {
-            embedBuilder.addField("Length of cassette", MusicManager.formatMilliseconds(playlistLength), true);
-        }
-
-        return embedBuilder;
-    }
 
     private void playlistNameTooLong(CommandContext ctx) {
         MessageResources.embedReplyDelete(ctx.event().getMessage(), 10, true,

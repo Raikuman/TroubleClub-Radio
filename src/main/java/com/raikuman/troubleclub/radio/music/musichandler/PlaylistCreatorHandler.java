@@ -4,9 +4,9 @@ import com.raikuman.botutilities.invocation.context.CommandContext;
 import com.raikuman.botutilities.utilities.EmbedResources;
 import com.raikuman.botutilities.utilities.MessageResources;
 import com.raikuman.troubleclub.radio.database.playlist.PlaylistDatabaseHandler;
-import com.raikuman.troubleclub.radio.invoke.playlist.CreatePlaylist;
 import com.raikuman.troubleclub.radio.music.manager.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.manager.MusicManager;
+import com.raikuman.troubleclub.radio.music.playlist.PlaylistUtils;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
@@ -64,7 +64,7 @@ public class PlaylistCreatorHandler extends MusicHandler {
 
                 if (playlistCreated) {
                     MessageResources.embedDelete(getMessageChannel(), 10,
-                        CreatePlaylist.getCassetteInfoEmbed(
+                        PlaylistUtils.getPlaylistInfoEmbed(
                             getMessageChannel(),
                             getUser(),
                             "\uD83D\uDCFC Created Cassette!",
