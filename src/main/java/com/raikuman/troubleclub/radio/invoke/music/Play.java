@@ -102,7 +102,12 @@ public class Play extends Command {
             link = "ytsearch:" + link;
         }
 
-        MusicManager.getInstance().play(new PlayHandler(ctx, link));
+        MusicManager.getInstance().play(new PlayHandler(
+            ctx.event().getGuild(),
+            ctx.event().getChannel(),
+            ctx.event().getMessage(),
+            ctx.event().getAuthor(),
+            link));
     }
 
     public static boolean isUrl(String url) {

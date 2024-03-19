@@ -40,7 +40,13 @@ public class PlayNow extends Command {
                 link = "ytsearch:" + link;
             }
 
-            MusicManager.getInstance().play(new PlayTopHandler(ctx, link, true));
+            MusicManager.getInstance().play(new PlayTopHandler(
+                ctx.event().getGuild(),
+                ctx.event().getChannel(),
+                ctx.event().getMessage(),
+                ctx.event().getAuthor(),
+                link,
+                true));
         } else {
             MessageResources.embedReplyDelete(ctx.event().getMessage(), 10, true,
                 EmbedResources.incorrectUsage(getInvoke(), getUsage(), ctx.event().getChannel()));

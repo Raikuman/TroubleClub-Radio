@@ -40,7 +40,12 @@ public class PlayTop extends Command {
                 link = "ytsearch:" + link;
             }
 
-            MusicManager.getInstance().play(new PlayTopHandler(ctx, link));
+            MusicManager.getInstance().play(new PlayTopHandler(
+                ctx.event().getGuild(),
+                ctx.event().getChannel(),
+                ctx.event().getMessage(),
+                ctx.event().getAuthor(),
+                link));
         } else {
             MessageResources.embedReplyDelete(ctx.event().getMessage(), 10, true,
                 EmbedResources.incorrectUsage(getInvoke(), getUsage(), ctx.event().getChannel()));

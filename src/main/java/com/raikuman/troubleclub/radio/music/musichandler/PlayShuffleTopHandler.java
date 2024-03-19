@@ -12,6 +12,10 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,14 +25,15 @@ public class PlayShuffleTopHandler extends MusicHandler {
 
     private final boolean playNow;
 
-    public PlayShuffleTopHandler(CommandContext ctx, String url, boolean playNow) {
-        super(ctx, url);
-        this.playNow = playNow;
+    public PlayShuffleTopHandler(Guild guild, MessageChannelUnion channel, Message message, User user, String url) {
+        super(guild, channel, message, user, url);
+        this.playNow = false;
     }
 
-    public PlayShuffleTopHandler(CommandContext ctx, String url) {
-        super(ctx, url);
-        this.playNow = false;
+    public PlayShuffleTopHandler(Guild guild, MessageChannelUnion channel, Message message, User user, String url,
+                                 boolean playNow) {
+        super(guild, channel, message, user, url);
+        this.playNow = playNow;
     }
 
     @Override

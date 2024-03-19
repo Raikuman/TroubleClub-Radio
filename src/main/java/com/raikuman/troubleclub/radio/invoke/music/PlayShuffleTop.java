@@ -40,7 +40,12 @@ public class PlayShuffleTop extends Command {
                 link = "ytsearch:" + link;
             }
 
-            MusicManager.getInstance().play(new PlayShuffleTopHandler(ctx, link));
+            MusicManager.getInstance().play(new PlayShuffleTopHandler(
+                ctx.event().getGuild(),
+                ctx.event().getChannel(),
+                ctx.event().getMessage(),
+                ctx.event().getAuthor(),
+                link));
         } else {
             MessageResources.embedReplyDelete(ctx.event().getMessage(), 10, true,
                 EmbedResources.incorrectUsage(getInvoke(), getUsage(), ctx.event().getChannel()));

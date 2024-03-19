@@ -10,13 +10,17 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 
 import java.util.List;
 
 public class PlayHandler extends MusicHandler {
 
-    public PlayHandler(CommandContext ctx, String url) {
-        super(ctx, url);
+    public PlayHandler(Guild guild, MessageChannelUnion channel, Message message, User user, String url) {
+        super(guild, channel, message, user, url);
     }
 
     @Override

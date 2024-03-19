@@ -30,7 +30,13 @@ public class CreatePlaylist extends Command {
             // Check for url
             if (Play.isUrl(ctx.args().get(0)) && ctx.args().get(0).contains("youtube.com/playlist?list")) {
                 // Playlist from link with default name
-                MusicManager.getInstance().play(new PlaylistCreatorHandler(ctx, ctx.args().get(0), ""));
+                MusicManager.getInstance().play(new PlaylistCreatorHandler(
+                    ctx.event().getGuild(),
+                    ctx.event().getChannel(),
+                    ctx.event().getMessage(),
+                    ctx.event().getAuthor(),
+                    ctx.args().get(0),
+                    ""));
             } else {
                 // Playlist from queue with custom name
                 if (ctx.args().get(0).length() > 20 || ctx.args().get(0).length() < 3) {
@@ -56,7 +62,13 @@ public class CreatePlaylist extends Command {
                 String link = ctx.args().get(ctx.args().size() - 1);
                 if (Play.isUrl(link) && link.contains("youtube.com/playlist?list")) {
                     // Playlist from link with custom name
-                    MusicManager.getInstance().play(new PlaylistCreatorHandler(ctx, link, nameBuilder.toString()));
+                    MusicManager.getInstance().play(new PlaylistCreatorHandler(
+                        ctx.event().getGuild(),
+                        ctx.event().getChannel(),
+                        ctx.event().getMessage(),
+                        ctx.event().getAuthor(),
+                        link,
+                        nameBuilder.toString()));
                 }
             }
         }

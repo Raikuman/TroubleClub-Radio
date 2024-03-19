@@ -12,6 +12,10 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,14 +24,15 @@ public class PlayTopHandler extends MusicHandler {
 
     private final boolean playNow;
 
-    public PlayTopHandler(CommandContext ctx, String url, boolean playNow) {
-        super(ctx, url);
-        this.playNow = playNow;
+    public PlayTopHandler(Guild guild, MessageChannelUnion channel, Message message, User user, String url) {
+        super(guild, channel, message, user, url);
+        this.playNow = false;
     }
 
-    public PlayTopHandler(CommandContext ctx, String url) {
-        super(ctx, url);
-        this.playNow = false;
+    public PlayTopHandler(Guild guild, MessageChannelUnion channel, Message message, User user, String url,
+                          boolean playNow) {
+        super(guild, channel, message, user, url);
+        this.playNow = playNow;
     }
 
     @Override

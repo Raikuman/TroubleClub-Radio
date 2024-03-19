@@ -1,6 +1,5 @@
 package com.raikuman.troubleclub.radio.music.musichandler;
 
-import com.raikuman.botutilities.invocation.context.CommandContext;
 import com.raikuman.botutilities.utilities.EmbedResources;
 import com.raikuman.botutilities.utilities.MessageResources;
 import com.raikuman.troubleclub.radio.database.playlist.PlaylistDatabaseHandler;
@@ -11,6 +10,10 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +22,12 @@ public class PlaylistCreatorHandler extends MusicHandler {
 
     private final String name;
 
-    public PlaylistCreatorHandler(CommandContext ctx, String url, String name) {
-        super(ctx, url);
+    public PlaylistCreatorHandler(Guild guild, MessageChannelUnion channel, Message message, User user, String url,
+                                  String name) {
+        super(guild, channel, message, user, url);
         this.name = name;
     }
+
 
     @Override
     public AudioLoadResultHandler getResultHandler(GuildMusicManager musicManager) {

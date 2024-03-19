@@ -1,6 +1,5 @@
 package com.raikuman.troubleclub.radio.music.musichandler;
 
-import com.raikuman.botutilities.invocation.context.CommandContext;
 import com.raikuman.troubleclub.radio.music.manager.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.playlist.Playlist;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
@@ -17,13 +16,13 @@ public abstract class MusicHandler {
     private final Message message;
     private final Guild guild;
 
-    public MusicHandler(CommandContext ctx, String url) {
+    public MusicHandler(Guild guild, MessageChannelUnion channel, Message message, User user, String url) {
         this.url = url;
 
-        this.messageChannel = ctx.event().getChannel();
-        this.user = ctx.event().getAuthor();
-        this.message = ctx.event().getMessage();
-        this.guild = ctx.event().getGuild();
+        this.messageChannel = channel;
+        this.user = user;
+        this.message = message;
+        this.guild = guild;
     }
 
     public String getUrl() {
