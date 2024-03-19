@@ -11,6 +11,7 @@ import com.raikuman.troubleclub.radio.music.manager.MusicManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,6 @@ public class Playlist extends Command {
             notSelf = true;
         }
         List<com.raikuman.troubleclub.radio.music.playlist.Playlist> playlists = PlaylistDatabaseHandler.getPlaylists(targetUser);
-
 
         // Handle empty playlists/errors
         if (playlists == null) {
@@ -85,10 +85,11 @@ public class Playlist extends Command {
                 0L));
         }
 
+        User finalTargetUser = targetUser;
         new Pagination(
             ctx.event().getAuthor(),
             "\uD83D\uDCFC " + targetString,
-            ((messageChannelUnion, user) -> pages),
+            ((messageChannelUnion, user) -> getPlaylistPages(playlists, ctx.event().getChannel(), finalTargetUser)),
             componentHandler)
             .setLooping(true)
             .setHasFirstPage(true)
@@ -118,5 +119,21 @@ public class Playlist extends Command {
     @Override
     public List<Category> getCategories() {
         return List.of(new com.raikuman.troubleclub.radio.invoke.category.Playlist());
+    }
+
+    public static List<EmbedBuilder> getPlaylistPages(List<com.raikuman.troubleclub.radio.music.playlist.Playlist> playlists,
+                                                      MessageChannelUnion channel, User user) {
+        List<EmbedBuilder> pages = new ArrayList<>();
+        for (com.raikuman.troubleclub.radio.music.playlist.Playlist playlist : playlists) {
+            pages.add(CreatePlaylist.getCassetteInfoEmbed(
+                channel,
+                user,
+                "",
+                playlist.getTitle(),
+                playlist.getNumSongs(),
+                0L));
+        }
+
+        return pages;
     }
 }
