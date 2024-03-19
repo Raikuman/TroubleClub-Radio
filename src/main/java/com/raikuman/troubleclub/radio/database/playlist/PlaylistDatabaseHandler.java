@@ -185,6 +185,23 @@ public class PlaylistDatabaseHandler {
         return tracksEncoded;
     }
 
+    public static boolean renamePlaylist(int playlistId, String newName) {
+        try (
+            Connection connection = DatabaseManager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(
+                "UPDATE playlist SET name = ? WHERE playlist_id = ?"
+            )) {
+            statement.setString(1, newName);
+            statement.setInt(2, playlistId);
+            statement.execute();
+        } catch (SQLException e) {
+            logger.error("An error occurred renaming playlist: {} with name: {}", playlistId, newName);
+            return false;
+        }
+
+        return true;
+    }
+
     public static boolean deletePlaylist(int playlistId) {
         try (
             Connection connection = DatabaseManager.getConnection();
@@ -194,7 +211,7 @@ public class PlaylistDatabaseHandler {
             statement.setInt(1, playlistId);
             statement.execute();
         } catch (SQLException e) {
-            logger.error("An error occurred removing playlist from playlist table for: " + playlistId);
+            logger.error("An error occurred removing playlist from playlist table for: {}", playlistId);
             return false;
         }
 
