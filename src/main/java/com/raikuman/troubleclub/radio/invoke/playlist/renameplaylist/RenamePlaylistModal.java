@@ -4,6 +4,7 @@ import com.raikuman.botutilities.invocation.type.ModalComponent;
 import com.raikuman.botutilities.utilities.EmbedResources;
 import com.raikuman.botutilities.utilities.MessageResources;
 import com.raikuman.troubleclub.radio.database.playlist.PlaylistDatabaseHandler;
+import com.raikuman.troubleclub.radio.music.playlist.PlaylistUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -46,17 +47,7 @@ public class RenamePlaylistModal extends ModalComponent {
 
         // Retrieve playlist id from embed
         MessageEmbed embed = message.getEmbeds().get(0);
-        int playlistId = 0;
-        for (MessageEmbed.Field field : embed.getFields()) {
-            if (field.getName() != null && field.getName().equals("Id") && field.getValue() != null) {
-                try {
-                    playlistId = Integer.parseInt(field.getValue());
-                } catch (NumberFormatException e) {
-                    playlistId = -1;
-                }
-                break;
-            }
-        }
+        int playlistId = PlaylistUtils.getPlaylistId(embed);
 
         if (playlistId <= 0) {
             MessageResources.embedDelete(ctx.getChannel(), 10,

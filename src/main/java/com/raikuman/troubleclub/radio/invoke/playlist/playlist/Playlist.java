@@ -1,4 +1,4 @@
-package com.raikuman.troubleclub.radio.invoke.playlist;
+package com.raikuman.troubleclub.radio.invoke.playlist.playlist;
 
 import com.raikuman.botutilities.invocation.Category;
 import com.raikuman.botutilities.invocation.context.CommandContext;
@@ -7,6 +7,7 @@ import com.raikuman.botutilities.pagination.Pagination;
 import com.raikuman.botutilities.utilities.EmbedResources;
 import com.raikuman.botutilities.utilities.MessageResources;
 import com.raikuman.troubleclub.radio.database.playlist.PlaylistDatabaseHandler;
+import com.raikuman.troubleclub.radio.invoke.playlist.CreatePlaylist;
 import com.raikuman.troubleclub.radio.music.manager.MusicManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -91,6 +92,7 @@ public class Playlist extends Command {
             "\uD83D\uDCFC " + targetString,
             ((messageChannelUnion, user) -> getPlaylistPages(playlists, ctx.event().getChannel(), finalTargetUser)),
             componentHandler)
+            .setSelectMenu("Play Cassette", List.of(new PlaySelect()))
             .setLooping(true)
             .setHasFirstPage(true)
             .sendPagination(ctx);

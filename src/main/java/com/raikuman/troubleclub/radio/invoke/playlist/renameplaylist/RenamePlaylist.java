@@ -29,7 +29,7 @@ public class RenamePlaylist extends Command {
             return;
         }
 
-        List<EmbedBuilder> pages = com.raikuman.troubleclub.radio.invoke.playlist.Playlist.getPlaylistPages(
+        List<EmbedBuilder> pages = com.raikuman.troubleclub.radio.invoke.playlist.playlist.Playlist.getPlaylistPages(
             playlists, ctx.event().getChannel(), ctx.event().getAuthor());
 
         int iterator = 0;

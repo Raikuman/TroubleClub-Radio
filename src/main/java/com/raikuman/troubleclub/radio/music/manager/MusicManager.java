@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 import java.awt.*;
@@ -65,11 +66,27 @@ public class MusicManager {
         AudioManager guildAudioManager = ctx.event().getGuild().getAudioManager();
         AudioChannelUnion audioChannel = MusicChecking.retrieveMemberVoiceChannel(ctx);
 
+        connect(guildAudioManager, audioChannel, ctx.event().getChannel(), ctx.event().getMessage(), ctx.event().getAuthor());
+    }
+
+    public void connect(StringSelectInteractionEvent ctx) {
+        if (ctx.getGuild() == null) {
+            return;
+        }
+
+        AudioManager guildAudioManager = ctx.getGuild().getAudioManager();
+        AudioChannelUnion audioChannel = MusicChecking.retrieveMemberVoiceChannel(ctx);
+
+        connect(guildAudioManager, audioChannel, ctx.getChannel(), ctx.getMessage(), ctx.getUser());
+    }
+
+    private void connect(AudioManager guildAudioManager, AudioChannelUnion audioChannel, MessageChannelUnion channel,
+                         Message message, User user) {
         if (audioChannel == null) {
-            MessageResources.embedReplyDelete(ctx.event().getMessage(), 10, true,
+            MessageResources.embedReplyDelete(message, 10, true,
                 EmbedResources.error("Could not connect to your voice channel!",
                     "Please contact an administrator for help",
-                    ctx.event().getChannel(), ctx.event().getAuthor()));
+                    channel, user));
             return;
         }
 
@@ -82,7 +99,6 @@ public class MusicManager {
 
         guildAudioManager.openAudioConnection(audioChannel);
         guildAudioManager.setSelfDeafened(true);
-
     }
 
     public void play(MusicHandler musicHandler) {
