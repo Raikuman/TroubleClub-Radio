@@ -101,14 +101,18 @@ public class MusicManager {
             musicHandler.getResultHandler(musicManager, playlist));
     }
 
-    private static EmbedBuilder getMusicEmbed(GuildMusicManager musicManager, MessageChannelUnion channel, User user, String method, String title,
-                                              Color color, MessageEmbed.Field... fields) {
+    private static EmbedBuilder getMusicEmbed(GuildMusicManager musicManager, MessageChannelUnion channel, User user,
+                                              String method, String title, String url, Color color, MessageEmbed.Field... fields) {
         EmbedBuilder embedBuilder = new EmbedBuilder()
             .setColor(color)
             .setAuthor(method, null, user.getAvatarUrl())
             .setTitle(title)
             .setFooter("Track " + musicManager.getCurrentAudioPlayerNum() + "  •  #" + channel.getName())
             .setTimestamp(Instant.now());
+
+        if (!url.isEmpty()) {
+            embedBuilder.setUrl(url);
+        }
 
         // Add fields
         for (MessageEmbed.Field field : fields) {
@@ -128,7 +132,7 @@ public class MusicManager {
         }
 
         AudioTrackInfo info = audioTrack.getInfo();
-        return getMusicEmbed(musicManager, channel, user, method, info.title, MUSIC_COLOR,
+        return getMusicEmbed(musicManager, channel, user, method, info.title, info.uri, MUSIC_COLOR,
             new MessageEmbed.Field("Channel", info.author, true),
             new MessageEmbed.Field("Duration", formatMilliseconds(audioTrack.getDuration()), true),
             new MessageEmbed.Field("Position in queue", nowPlaying, true)
@@ -152,7 +156,7 @@ public class MusicManager {
             embedColor = MUSIC_COLOR;
         }
 
-        return getMusicEmbed(musicManager, channel, user, method, playlistName, embedColor,
+        return getMusicEmbed(musicManager, channel, user, method, playlistName, "", embedColor,
             new MessageEmbed.Field("Songs in " + playlistText, String.valueOf(audioTracks.size()), true),
             new MessageEmbed.Field("Length of " + playlistText, formatMilliseconds(playlistLength), true)
         );
