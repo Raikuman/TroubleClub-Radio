@@ -1,7 +1,9 @@
 package com.raikuman.troubleclub.radio.listener;
 
+import com.raikuman.troubleclub.radio.invoke.music.Clear;
 import com.raikuman.troubleclub.radio.music.manager.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.manager.MusicManager;
+import com.raikuman.troubleclub.radio.music.manager.TrackScheduler;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
@@ -44,6 +46,29 @@ public class VoiceEventListener extends ListenerAdapter {
         if (realMembersAmount(channel) != 0) {
             return;
         }
+
+        // Stop, clear, and reset all tracks
+        GuildMusicManager musicManager = MusicManager.getInstance().getMusicManager(event.getGuild());
+        for (int i = 1; i < GuildMusicManager.MAX_AUDIO_PLAYERS + 1; i++) {
+            TrackScheduler trackScheduler = musicManager.getTrackScheduler(i);
+
+            Clear.clearQueue(trackScheduler);
+            if (trackScheduler.audioPlayer.getPlayingTrack() != null) {
+                trackScheduler.nextTrack();
+            }
+
+            if (trackScheduler.isRepeatQueue()) {
+                trackScheduler.setRepeatQueue(false);
+            }
+
+            if (trackScheduler.isRepeat()) {
+                trackScheduler.setRepeat(false);
+            }
+
+            if (trackScheduler.audioPlayer.isPaused()) {
+                trackScheduler.audioPlayer.setPaused(false);
+            }
+         }
 
         // Handle disconnecting from the voice channel
         event.getGuild().getAudioManager().closeAudioConnection();

@@ -50,9 +50,9 @@ public class StopTracks extends Command {
 
             clearBuilder.append("` from queue");
 
-            AudioTrack currentTrack = musicManager.getCurrentAudioPlayer().getPlayingTrack();
+            AudioTrack currentTrack = musicManager.getAudioPlayer(i).getPlayingTrack();
             if (currentTrack != null) {
-                musicManager.getCurrentTrackScheduler().nextTrack();
+                musicManager.getTrackScheduler(i).nextTrack();
                 clearBuilder.append(" and stopped playing");
             }
 
