@@ -61,11 +61,6 @@ public class RenamePlaylist extends Command {
     }
 
     @Override
-    public String getUsage() {
-        return "<cassette #/name> <new name of playlist>";
-    }
-
-    @Override
     public String getDescription() {
         return "Rename a cassette from your library.";
     }

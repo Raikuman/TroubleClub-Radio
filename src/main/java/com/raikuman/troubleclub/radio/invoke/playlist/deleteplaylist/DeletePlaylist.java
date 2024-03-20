@@ -129,7 +129,7 @@ public class DeletePlaylist extends Command {
 
     @Override
     public String getUsage() {
-        return "<cassette #/name>";
+        return "<cassette name>";
     }
 
     @Override

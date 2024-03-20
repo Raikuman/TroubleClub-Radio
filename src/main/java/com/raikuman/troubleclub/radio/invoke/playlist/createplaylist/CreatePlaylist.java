@@ -47,11 +47,6 @@ public class CreatePlaylist extends Command {
     }
 
     @Override
-    public String getUsage() {
-        return "(<cassette name>) (<playlist link>)";
-    }
-
-    @Override
     public String getDescription() {
         return "Create a cassette from the current track's playing song and queue, or from a playlist with a link.";
     }
