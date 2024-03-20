@@ -5,7 +5,7 @@ import com.raikuman.botutilities.invocation.context.CommandContext;
 import com.raikuman.botutilities.invocation.type.Command;
 import com.raikuman.botutilities.utilities.EmbedResources;
 import com.raikuman.botutilities.utilities.MessageResources;
-import com.raikuman.troubleclub.radio.database.music.MusicDatabaseHandler;
+import com.raikuman.troubleclub.radio.database.MusicDatabaseHandler;
 import com.raikuman.troubleclub.radio.invoke.category.Music;
 import com.raikuman.troubleclub.radio.music.MusicChecking;
 import com.raikuman.troubleclub.radio.music.manager.GuildMusicManager;

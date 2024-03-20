@@ -2,7 +2,7 @@ package com.raikuman.troubleclub.radio.music.playerhandler.music;
 
 import com.raikuman.botutilities.utilities.EmbedResources;
 import com.raikuman.botutilities.utilities.MessageResources;
-import com.raikuman.troubleclub.radio.database.playlist.PlaylistDatabaseHandler;
+import com.raikuman.troubleclub.radio.database.PlaylistDatabaseHandler;
 import com.raikuman.troubleclub.radio.music.manager.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.manager.MusicManager;
 import com.raikuman.troubleclub.radio.music.playlist.PlaylistUtils;

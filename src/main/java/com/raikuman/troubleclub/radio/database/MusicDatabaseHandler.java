@@ -1,4 +1,4 @@
-package com.raikuman.troubleclub.radio.database.music;
+package com.raikuman.troubleclub.radio.database;
 
 import com.raikuman.botutilities.config.ConfigData;
 import com.raikuman.botutilities.database.DatabaseManager;

@@ -3,7 +3,7 @@ package com.raikuman.troubleclub.radio.invoke.playlist.deleteplaylist;
 import com.raikuman.botutilities.invocation.type.ButtonComponent;
 import com.raikuman.botutilities.utilities.EmbedResources;
 import com.raikuman.botutilities.utilities.MessageResources;
-import com.raikuman.troubleclub.radio.database.playlist.PlaylistDatabaseHandler;
+import com.raikuman.troubleclub.radio.database.PlaylistDatabaseHandler;
 import com.raikuman.troubleclub.radio.music.playlist.PlaylistUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;

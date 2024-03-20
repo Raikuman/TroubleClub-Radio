@@ -8,7 +8,7 @@ import com.raikuman.botutilities.invocation.type.Command;
 import com.raikuman.botutilities.pagination.Pagination;
 import com.raikuman.botutilities.utilities.EmbedResources;
 import com.raikuman.botutilities.utilities.MessageResources;
-import com.raikuman.troubleclub.radio.database.playlist.PlaylistDatabaseHandler;
+import com.raikuman.troubleclub.radio.database.PlaylistDatabaseHandler;
 import com.raikuman.troubleclub.radio.invoke.category.Playlist;
 import com.raikuman.troubleclub.radio.music.manager.MusicManager;
 import com.raikuman.troubleclub.radio.music.playlist.PlaylistUtils;

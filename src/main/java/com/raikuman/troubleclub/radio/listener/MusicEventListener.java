@@ -1,6 +1,6 @@
 package com.raikuman.troubleclub.radio.listener;
 
-import com.raikuman.troubleclub.radio.database.music.MusicDatabaseHandler;
+import com.raikuman.troubleclub.radio.database.MusicDatabaseHandler;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
