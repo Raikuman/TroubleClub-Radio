@@ -64,7 +64,7 @@ public class MusicManager {
 
     public void connect(CommandContext ctx) {
         AudioManager guildAudioManager = ctx.event().getGuild().getAudioManager();
-        AudioChannelUnion audioChannel = MusicChecking.retrieveMemberVoiceChannel(ctx);
+        AudioChannelUnion audioChannel = MusicChecking.retrieveMemberVoiceChannel(ctx.event().getMember());
 
         connect(guildAudioManager, audioChannel, ctx.event().getChannel(), ctx.event().getMessage(), ctx.event().getAuthor());
     }
@@ -75,7 +75,7 @@ public class MusicManager {
         }
 
         AudioManager guildAudioManager = ctx.getGuild().getAudioManager();
-        AudioChannelUnion audioChannel = MusicChecking.retrieveMemberVoiceChannel(ctx);
+        AudioChannelUnion audioChannel = MusicChecking.retrieveMemberVoiceChannel(ctx.getMember());
 
         connect(guildAudioManager, audioChannel, ctx.getChannel(), ctx.getMessage(), ctx.getUser());
     }

@@ -4,44 +4,97 @@ import com.raikuman.botutilities.invocation.context.CommandContext;
 import com.raikuman.botutilities.utilities.EmbedResources;
 import com.raikuman.botutilities.utilities.MessageResources;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.GuildVoiceState;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 
 public class MusicChecking {
 
-    public static boolean isMemberNotInVoiceChannel(StringSelectInteractionEvent ctx) {
-        if (ctx.getGuild() == null) {
-            return true;
+    private Guild guild;
+    private MessageChannelUnion channel;
+    private Message message;
+    private Member member, self;
+    private boolean isMemberNotInVoiceChannel, isBotInDifferentVoiceChannel, lacksPermissionToJoin, isPrivateMessage, checkBotInVoiceChannel;
+
+    private MusicChecking(Guild guild, MessageChannelUnion channel, Message message, Member member) {
+        this.guild = guild;
+        this.channel = channel;
+        this.message = message;
+        this.member = member;
+        if (guild != null) {
+            this.self = guild.getSelfMember();
+        } else {
+            this.self = null;
         }
 
-        return isMemberNotInVoiceChannel(
-            ctx.getChannel(),
-            ctx.getMessage(),
-            ctx.getMember(),
-            ctx.getGuild().getSelfMember().getUser()
-        );
+        this.isMemberNotInVoiceChannel = false;
+        this.isBotInDifferentVoiceChannel = false;
+        this.lacksPermissionToJoin = false;
+        this.isPrivateMessage = false;
+        this.checkBotInVoiceChannel = true;
     }
 
-    public static boolean isMemberNotInVoiceChannel(CommandContext ctx) {
-        return isMemberNotInVoiceChannel(
-            ctx.event().getChannel(),
-            ctx.event().getMessage(),
-            ctx.event().getMember(),
-            ctx.event().getGuild().getSelfMember().getUser()
-        );
+    public static MusicChecking setup(Guild guild, MessageChannelUnion channel, Message message, Member member) {
+        return new MusicChecking(guild, channel, message, member);
     }
 
-    private static boolean isMemberNotInVoiceChannel(MessageChannelUnion channel, Message message, Member member, User self) {
+    public MusicChecking checkMemberNotInVoiceChannel(boolean check) {
+        this.isMemberNotInVoiceChannel = check;
+        return this;
+    }
+
+    public MusicChecking checkBotInDifferentVoiceChannel(boolean check, boolean checkBotInVoiceChannel) {
+        this.isBotInDifferentVoiceChannel = check;
+        this.checkBotInVoiceChannel = checkBotInVoiceChannel;
+        return this;
+    }
+
+    public MusicChecking checkLacksPermission(boolean check) {
+        this.lacksPermissionToJoin = check;
+        return this;
+    }
+
+    public MusicChecking checkPrivateMessage(boolean check) {
+        this.isPrivateMessage = check;
+        return this;
+    }
+
+    public boolean check() {
+        if (isPrivateMessage) {
+            if (inPrivateMessage()) {
+                return true;
+            }
+        }
+
+        if (isMemberNotInVoiceChannel) {
+            if (isMemberNotInVoiceChannel()) {
+                System.out.println("HERE");
+                return true;
+            }
+        }
+
+        if (isBotInDifferentVoiceChannel) {
+            if (isBotInDifferentVoiceChannel()) {
+                return true;
+            }
+        }
+
+        if (lacksPermissionToJoin) {
+            if (lacksPermissionToJoin()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isMemberNotInVoiceChannel() {
         if (member == null) {
             MessageResources.embedReplyDelete(message, 10, true,
                 EmbedResources.error("Something went wrong with Discord!",
                     "An error occurred getting the member when checking for a voice channel.",
-                    channel, self));
+                    channel, self.getUser()));
             return true;
         }
 
@@ -50,7 +103,7 @@ public class MusicChecking {
             MessageResources.embedReplyDelete(message, 10, true,
                 EmbedResources.error("Something went wrong with Discord!",
                     "An error occurred getting the voice state for the member when checking for a voice channel.",
-                    channel, self));
+                    channel, self.getUser()));
             return true;
         }
 
@@ -59,37 +112,12 @@ public class MusicChecking {
         } else {
             MessageResources.embedReplyDelete(message, 10, true,
                 EmbedResources.error("You are not in a voice channel!", "Connect to a voice channel to use this command.",
-                    channel, self));
+                    channel, self.getUser()));
             return true;
         }
     }
 
-    public static boolean isBotInDifferentVoiceChannel(StringSelectInteractionEvent ctx, boolean checkIsInChannel) {
-        if (ctx.getGuild() == null) {
-            return true;
-        }
-
-        return isBotInDifferentVoiceChannel(
-            ctx.getChannel(),
-            ctx.getMessage(),
-            ctx.getMember(),
-            ctx.getGuild().getSelfMember(),
-            checkIsInChannel
-        );
-    }
-
-    public static boolean isBotInDifferentVoiceChannel(CommandContext ctx, boolean checkIsInChannel) {
-        return isBotInDifferentVoiceChannel(
-            ctx.event().getChannel(),
-            ctx.event().getMessage(),
-            ctx.event().getMember(),
-            ctx.event().getGuild().getSelfMember(),
-            checkIsInChannel
-        );
-    }
-
-    private static boolean isBotInDifferentVoiceChannel(MessageChannelUnion channel, Message message, Member member,
-                                                       Member self, boolean checkIsInChannel) {
+    private boolean isBotInDifferentVoiceChannel() {
         if (member == null) {
             MessageResources.embedReplyDelete(message, 10, true,
                 EmbedResources.error("Something went wrong with Discord!",
@@ -114,7 +142,7 @@ public class MusicChecking {
 
         // Check if bot is not in a voice channel
         if (botChannel == null) {
-            if (checkIsInChannel) {
+            if (checkBotInVoiceChannel) {
                 MessageResources.embedReplyDelete(message, 10, true,
                     EmbedResources.error("I must be in a voice channel!",
                         "I need to be connected to a voice channel to use this command.",
@@ -137,27 +165,7 @@ public class MusicChecking {
         return false;
     }
 
-    public static boolean lacksPermissionToJoin(StringSelectInteractionEvent ctx) {
-        if (ctx.getGuild() == null) {
-            return true;
-        }
-
-        return lacksPermissionToJoin(
-            ctx.getChannel(),
-            ctx.getMessage(),
-            ctx.getGuild().getSelfMember()
-        );
-    }
-
-    public static boolean lacksPermissionToJoin(CommandContext ctx) {
-        return lacksPermissionToJoin(
-            ctx.event().getChannel(),
-            ctx.event().getMessage(),
-            ctx.event().getGuild().getSelfMember()
-        );
-    }
-
-    private static boolean lacksPermissionToJoin(MessageChannelUnion channel, Message message, Member self) {
+    private boolean lacksPermissionToJoin() {
         if (self.hasPermission(Permission.VOICE_CONNECT)) {
             return false;
         } else {
@@ -168,31 +176,19 @@ public class MusicChecking {
         }
     }
 
-    public static AudioChannelUnion retrieveMemberVoiceChannel(StringSelectInteractionEvent ctx) {
-        if (ctx.getGuild() == null) {
-            return null;
-        }
-
-        return retrieveMemberVoiceChannel(ctx.getMember());
-    }
-
-    public static boolean inPrivateMessage(StringSelectInteractionEvent ctx) {
-        if (ctx.getGuild() == null) {
-            MessageResources.embedReplyDelete(ctx.getMessage(), 10, true,
+    private boolean inPrivateMessage() {
+        if (guild == null) {
+            MessageResources.embedReplyDelete(message, 10, true,
                 EmbedResources.error("Cannot use this method in direct messages!",
                     "Use this method in a server.",
-                    ctx.getChannel(), ctx.getUser()));
+                    channel, self.getUser()));
             return true;
         }
 
         return false;
     }
 
-    public static AudioChannelUnion retrieveMemberVoiceChannel(CommandContext ctx) {
-        return retrieveMemberVoiceChannel(ctx.event().getMember());
-    }
-
-    private static AudioChannelUnion retrieveMemberVoiceChannel(Member member) {
+    public static AudioChannelUnion retrieveMemberVoiceChannel(Member member) {
         if (member == null) return null;
 
         GuildVoiceState voiceState = member.getVoiceState();

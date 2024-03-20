@@ -16,18 +16,15 @@ public class PlayShuffleTop extends Command {
 
     @Override
     public void handle(CommandContext ctx) {
-        // Check if member is in a voice channel
-        if (MusicChecking.isMemberNotInVoiceChannel(ctx)) {
-            return;
-        }
-
-        // Check if bot is in a voice channel that is not the member's
-        if (MusicChecking.isBotInDifferentVoiceChannel(ctx, false)) {
-            return;
-        }
-
-        // Check if the bot has permissions to join
-        if (MusicChecking.lacksPermissionToJoin(ctx)) {
+        if (MusicChecking.setup(
+                ctx.event().getGuild(),
+                ctx.event().getChannel(),
+                ctx.event().getMessage(),
+                ctx.event().getMember())
+            .checkMemberNotInVoiceChannel(true)
+            .checkBotInDifferentVoiceChannel(true, false)
+            .checkLacksPermission(true)
+            .check()) {
             return;
         }
 

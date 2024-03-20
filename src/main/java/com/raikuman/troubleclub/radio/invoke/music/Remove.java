@@ -6,6 +6,7 @@ import com.raikuman.botutilities.invocation.type.Command;
 import com.raikuman.botutilities.utilities.EmbedResources;
 import com.raikuman.botutilities.utilities.MessageResources;
 import com.raikuman.troubleclub.radio.invoke.category.Music;
+import com.raikuman.troubleclub.radio.music.MusicChecking;
 import com.raikuman.troubleclub.radio.music.manager.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.manager.MusicManager;
 import com.raikuman.troubleclub.radio.music.manager.TrackScheduler;
@@ -20,6 +21,17 @@ public class Remove extends Command {
 
     @Override
     public void handle(CommandContext ctx) {
+        if (MusicChecking.setup(
+                ctx.event().getGuild(),
+                ctx.event().getChannel(),
+                ctx.event().getMessage(),
+                ctx.event().getMember())
+            .checkMemberNotInVoiceChannel(true)
+            .checkBotInDifferentVoiceChannel(true, true)
+            .check()) {
+            return;
+        }
+
         if (ctx.args().isEmpty()) {
             MessageResources.embedReplyDelete(ctx.event().getMessage(), 10, true,
                 EmbedResources.incorrectUsage(getInvoke(), getUsage(), ctx.event().getChannel()));
