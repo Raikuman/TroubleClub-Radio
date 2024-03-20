@@ -7,7 +7,7 @@ import com.raikuman.botutilities.invocation.type.Slash;
 import com.raikuman.troubleclub.radio.invoke.category.Music;
 import com.raikuman.troubleclub.radio.invoke.category.Playlist;
 import com.raikuman.troubleclub.radio.invoke.music.*;
-import com.raikuman.troubleclub.radio.invoke.playlist.*;
+import com.raikuman.troubleclub.radio.invoke.playlist.createplaylist.CreatePlaylist;
 import com.raikuman.troubleclub.radio.invoke.playlist.deleteplaylist.DeletePlaylist;
 import com.raikuman.troubleclub.radio.invoke.playlist.renameplaylist.RenamePlaylist;
 import com.raikuman.troubleclub.radio.invoke.track.*;

@@ -4,6 +4,7 @@ import com.raikuman.botutilities.invocation.context.CommandContext;
 import com.raikuman.botutilities.utilities.EmbedResources;
 import com.raikuman.botutilities.utilities.MessageResources;
 import com.raikuman.troubleclub.radio.music.MusicChecking;
+import com.raikuman.troubleclub.radio.music.playerhandler.PlaylistCreatorHandler;
 import com.raikuman.troubleclub.radio.music.playerhandler.music.MusicHandler;
 import com.raikuman.troubleclub.radio.music.playerhandler.playlist.PlaylistHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
@@ -110,6 +111,13 @@ public class MusicManager {
 
     public void play(PlaylistHandler playlistHandler) {
         playlistHandler.playPlaylist();
+    }
+
+    public void create(PlaylistCreatorHandler playlistCreator) {
+        this.audioPlayerManager.loadItemOrdered(
+            getMusicManager(playlistCreator.getGuild()),
+            playlistCreator.getUrl(),
+            playlistCreator.getResultHandler());
     }
 
     private static EmbedBuilder getMusicEmbed(GuildMusicManager musicManager, MessageChannelUnion channel, User user,
