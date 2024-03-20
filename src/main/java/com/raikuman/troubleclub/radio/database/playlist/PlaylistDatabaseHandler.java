@@ -101,6 +101,29 @@ public class PlaylistDatabaseHandler {
         return 0;
     }
 
+    public static Playlist getPlaylist(User user, int playlistId) {
+        try (
+            Connection connection = DatabaseManager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(
+                "SELECT name, songs FROM playlist WHERE playlist_id = ?"
+            )) {
+            statement.setInt(1, playlistId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return new Playlist(
+                        playlistId,
+                        resultSet.getString(1),
+                        resultSet.getInt(2),
+                        user);
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("An error occurred retrieving playlist with id: {}", playlistId);
+        }
+
+        return null;
+    }
+
     public static List<Playlist> getPlaylists(User user) {
         int userId = DefaultDatabaseHandler.getUserId(user);
 
@@ -116,7 +139,7 @@ public class PlaylistDatabaseHandler {
             PreparedStatement statement = connection.prepareStatement(
                 "SELECT playlist_id, name, songs FROM playlist WHERE user_id = ?"
             )) {
-                statement.setInt(1, userId);
+            statement.setInt(1, userId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     playlists.add(new Playlist(

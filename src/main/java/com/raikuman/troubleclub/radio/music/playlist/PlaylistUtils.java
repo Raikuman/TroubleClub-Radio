@@ -1,7 +1,6 @@
 package com.raikuman.troubleclub.radio.music.playlist;
 
 import com.raikuman.botutilities.utilities.EmbedResources;
-import com.raikuman.troubleclub.radio.invoke.playlist.CreatePlaylist;
 import com.raikuman.troubleclub.radio.music.manager.MusicManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
