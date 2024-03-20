@@ -2,14 +2,12 @@ package com.raikuman.troubleclub.radio.music.playerhandler.music;
 
 import com.raikuman.botutilities.utilities.EmbedResources;
 import com.raikuman.botutilities.utilities.MessageResources;
-import com.raikuman.troubleclub.radio.music.manager.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.manager.MusicManager;
 import com.raikuman.troubleclub.radio.music.manager.TrackScheduler;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.ArrayList;
@@ -55,11 +53,40 @@ public class PlayShuffleTopHandler extends MusicHandler {
 
             @Override
             public void playlistLoaded(AudioPlaylist audioPlaylist) {
-                List<AudioTrack> audioTracks = audioPlaylist.getTracks();
-                shuffleAndQueueToTop(audioTracks);
+                List<AudioTrack> playlistTracks = audioPlaylist.getTracks();
+                TrackScheduler trackScheduler = getMusicManager().getCurrentTrackScheduler();
+
+                // Drain tracks to new queue
+                List<AudioTrack> queueTracks = new ArrayList<>();
+                trackScheduler.queue.drainTo(queueTracks);
+
+                Collections.shuffle(playlistTracks);
+
+                // Add tracks to top of the queue
+                for (AudioTrack audioTrack : playlistTracks) {
+                    trackScheduler.queue.offer(audioTrack);
+                }
+
+                // Add the rest of the tracks to queue
+                for (AudioTrack queueTrack : queueTracks) {
+                    trackScheduler.queue.offer(queueTrack);
+                }
+
+                // Play result immediately if playNow is true
+                if (playNow && trackScheduler.audioPlayer.getPlayingTrack() != null) {
+                    trackScheduler.nextTrack();
+                }
+
+                String method;
+                if (playNow) {
+                    method = "\uD83D\uDD00▶️ Shuffled and playing playlist at top of queue:";
+                } else {
+                    method = "\uD83D\uDD00⬆️ Shuffled and adding playlist to top of queue:";
+                }
 
                 getChannel().sendMessageEmbeds(
-                    getPlaylistLoadedEmbed(getMusicManager(), audioPlaylist.getName(), audioTracks, false).build()
+                    MusicManager.getPlaylistEmbed(getMusicManager(), method, getChannel(),
+                        getUser(), audioPlaylist.getName(), playlistTracks, false).build()
                 ).queue();
 
                 getMessage().delete().queue();
@@ -79,96 +106,5 @@ public class PlayShuffleTopHandler extends MusicHandler {
                         getChannel(), getUser()));
             }
         };
-    }
-
-//    @Override
-//    public AudioLoadResultHandler getResultHandler(GuildMusicManager musicManager, Playlist playlist) {
-//        return new AudioLoadResultHandler() {
-//
-//            @Override
-//            public void trackLoaded(AudioTrack audioTrack) {
-//                List<AudioTrack> audioTracks = new ArrayList<>();
-//                audioTracks.add(audioTrack);
-//                shuffleAndQueueToTop(musicManager, audioTracks);
-//
-//                getMessageChannel().sendMessageEmbeds(
-//                    getPlaylistLoadedEmbed(musicManager, playlist.getTitle(), audioTracks, true).build()
-//                ).queue();
-//
-//                getMessage().delete().queue();
-//            }
-//
-//            @Override
-//            public void playlistLoaded(AudioPlaylist audioPlaylist) {
-//                List<AudioTrack> audioTracks = audioPlaylist.getTracks();
-//                shuffleAndQueueToTop(musicManager, audioTracks);
-//
-//                getMessageChannel().sendMessageEmbeds(
-//                    getPlaylistLoadedEmbed(musicManager, playlist.getTitle(), audioTracks, true).build()
-//                ).queue();
-//
-//                getMessage().delete().queue();
-//            }
-//
-//            @Override
-//            public void noMatches() {
-//                MessageResources.embedReplyDelete(getMessage(), 10, true,
-//                    EmbedResources.error("Cassette not found!", "Nothing found from `" + playlist.getTitle() + "`",
-//                        getMessageChannel(), getUser()));
-//            }
-//
-//            @Override
-//            public void loadFailed(FriendlyException e) {
-//                MessageResources.embedReplyDelete(getMessage(), 10, true,
-//                    EmbedResources.error("Cassette could not load!", "Could not load using `" + playlist.getTitle() + "`",
-//                        getMessageChannel(), getUser()));
-//            }
-//        };
-//    }
-
-    private void shuffleAndQueueToTop(List<AudioTrack> playlistTracks) {
-        TrackScheduler trackScheduler = getMusicManager().getCurrentTrackScheduler();
-
-        // Drain tracks to new queue
-        List<AudioTrack> queueTracks = new ArrayList<>();
-        trackScheduler.queue.drainTo(queueTracks);
-
-        Collections.shuffle(playlistTracks);
-
-        // Add tracks to top of the queue
-        for (AudioTrack audioTrack : playlistTracks) {
-            trackScheduler.queue.offer(audioTrack);
-        }
-
-        // Add the rest of the tracks to queue
-        for (AudioTrack queueTrack : queueTracks) {
-            trackScheduler.queue.offer(queueTrack);
-        }
-
-        // Play result immediately if playNow is true
-        if (playNow && trackScheduler.audioPlayer.getPlayingTrack() != null) {
-            trackScheduler.nextTrack();
-        }
-    }
-
-    private EmbedBuilder getPlaylistLoadedEmbed(GuildMusicManager musicManager, String playlistName,
-                                                List<AudioTrack> playlistTracks, boolean isCassette) {
-        String method;
-        if (isCassette) {
-            if (playNow) {
-                method = "\uD83D\uDCFC\uD83D\uDD00▶️ Shuffled and playing cassette at top of queue:";
-            } else {
-                method = "\uD83D\uDCFC\uD83D\uDD00⬆️ Shuffled and adding cassette to top of queue:";
-            }
-        } else {
-            if (playNow) {
-                method = "\uD83D\uDD00▶️ Shuffled and playing playlist at top of queue:";
-            } else {
-                method = "\uD83D\uDD00⬆️ Shuffled and adding playlist to top of queue:";
-            }
-        }
-
-        return MusicManager.getPlaylistEmbed(musicManager, method, getChannel(),
-            getUser(), playlistName, playlistTracks, isCassette);
     }
 }

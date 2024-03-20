@@ -24,7 +24,6 @@ public class PlaylistCreatorHandler extends MusicHandler {
         this.name = name;
     }
 
-
     @Override
     public AudioLoadResultHandler getResultHandler() {
         return new AudioLoadResultHandler() {
