@@ -4,8 +4,8 @@ import com.raikuman.botutilities.invocation.context.CommandContext;
 import com.raikuman.botutilities.utilities.EmbedResources;
 import com.raikuman.botutilities.utilities.MessageResources;
 import com.raikuman.troubleclub.radio.music.MusicChecking;
-import com.raikuman.troubleclub.radio.music.musichandler.MusicHandler;
-import com.raikuman.troubleclub.radio.music.playlist.Playlist;
+import com.raikuman.troubleclub.radio.music.playerhandler.music.MusicHandler;
+import com.raikuman.troubleclub.radio.music.playerhandler.playlist.PlaylistHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -102,19 +102,14 @@ public class MusicManager {
     }
 
     public void play(MusicHandler musicHandler) {
-        GuildMusicManager musicManager = getMusicManager(musicHandler.getGuild());
         this.audioPlayerManager.loadItemOrdered(
-            musicManager,
+            getMusicManager(musicHandler.getGuild()),
             musicHandler.getUrl(),
-            musicHandler.getResultHandler(musicManager));
+            musicHandler.getResultHandler());
     }
 
-    public void play(MusicHandler musicHandler, Playlist playlist) {
-        GuildMusicManager musicManager = getMusicManager(musicHandler.getGuild());
-        this.audioPlayerManager.loadItemOrdered(
-            musicManager,
-            musicHandler.getUrl(),
-            musicHandler.getResultHandler(musicManager, playlist));
+    public void play(PlaylistHandler playlistHandler) {
+        playlistHandler.playPlaylist();
     }
 
     private static EmbedBuilder getMusicEmbed(GuildMusicManager musicManager, MessageChannelUnion channel, User user,

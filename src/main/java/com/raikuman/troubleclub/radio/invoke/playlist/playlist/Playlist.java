@@ -13,7 +13,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Playlist extends Command {
@@ -74,24 +73,27 @@ public class Playlist extends Command {
             targetString = targetUser.getEffectiveName() + "'s Cassettes";
         }
 
-        List<EmbedBuilder> pages = new ArrayList<>();
-        for (com.raikuman.troubleclub.radio.music.playlist.Playlist playlist : playlists) {
-            pages.add(PlaylistUtils.getPlaylistInfoEmbed(
-                ctx.event().getChannel(),
-                targetUser,
-                "",
-                playlist.getTitle(),
-                playlist.getNumSongs(),
-                0L));
+        List<EmbedBuilder> pages = PlaylistUtils.getPlaylistPages(
+            playlists, ctx.event().getChannel(), ctx.event().getAuthor());
+
+        int iterator = 0;
+        for (EmbedBuilder page : pages) {
+            page.addField("Id", String.valueOf(playlists.get(iterator).getId()), true);
+            iterator++;
         }
 
-        User finalTargetUser = targetUser;
         new Pagination(
             ctx.event().getAuthor(),
             "\uD83D\uDCFC " + targetString,
-            ((messageChannelUnion, user) -> PlaylistUtils.getPlaylistPages(playlists, ctx.event().getChannel(), finalTargetUser)),
+            ((messageChannelUnion, user) -> pages),
             componentHandler)
-            .setSelectMenu("Play Cassette", List.of(new PlaySelect()))
+            .setSelectMenu("Play Cassette", List.of(
+                new PlaySelect(),
+                new PlayTopSelect(),
+                new PlayNowSelect(),
+                new PlayShuffleSelect(),
+                new PlayShuffleTopSelect(),
+                new PlayShuffleTopNowSelect()))
             .setLooping(true)
             .setHasFirstPage(true)
             .sendPagination(ctx);

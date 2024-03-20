@@ -22,9 +22,6 @@ import java.util.List;
 public class TroubleClub {
 
     public static void main(String[] args) {
-        // Update config for thindatabase
-        new ConfigData(new DefaultConfig()).setConfig("thindatabase", "false");
-
         JDABuilder jdaBuilder = JDABuilder
             .create(List.of(
                 GatewayIntent.GUILD_MEMBERS,
@@ -50,5 +47,8 @@ public class TroubleClub {
             .build(System.getenv("RADIOTOKEN"));
 
         jda.getPresence().setActivity(Activity.playing("music! \uD83C\uDFB9 | /radio"));
+
+        // Update config for thindatabase
+        new ConfigData(new DefaultConfig()).setConfig("thindatabase", "false");
     }
 }
