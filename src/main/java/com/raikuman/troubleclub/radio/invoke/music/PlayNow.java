@@ -8,7 +8,7 @@ import com.raikuman.botutilities.utilities.MessageResources;
 import com.raikuman.troubleclub.radio.invoke.category.Music;
 import com.raikuman.troubleclub.radio.music.MusicChecking;
 import com.raikuman.troubleclub.radio.music.manager.MusicManager;
-import com.raikuman.troubleclub.radio.music.musichandler.PlayTopHandler;
+import com.raikuman.troubleclub.radio.music.playerhandler.music.PlayTopHandler;
 
 import java.util.List;
 
@@ -38,12 +38,7 @@ public class PlayNow extends Command {
             }
 
             MusicManager.getInstance().play(new PlayTopHandler(
-                ctx.event().getGuild(),
-                ctx.event().getChannel(),
-                ctx.event().getMessage(),
-                ctx.event().getAuthor(),
-                link,
-                true));
+                ctx.event(), link, true));
         } else {
             MessageResources.embedReplyDelete(ctx.event().getMessage(), 10, true,
                 EmbedResources.incorrectUsage(getInvoke(), getUsage(), ctx.event().getChannel()));

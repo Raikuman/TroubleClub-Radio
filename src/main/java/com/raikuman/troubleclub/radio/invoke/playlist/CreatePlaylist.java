@@ -12,7 +12,7 @@ import com.raikuman.troubleclub.radio.music.MusicChecking;
 import com.raikuman.troubleclub.radio.music.manager.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.manager.MusicManager;
 import com.raikuman.troubleclub.radio.music.manager.TrackScheduler;
-import com.raikuman.troubleclub.radio.music.musichandler.PlaylistCreatorHandler;
+import com.raikuman.troubleclub.radio.music.playerhandler.music.PlaylistCreatorHandler;
 import com.raikuman.troubleclub.radio.music.playlist.PlaylistUtils;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
@@ -31,12 +31,7 @@ public class CreatePlaylist extends Command {
             if (Play.isUrl(ctx.args().get(0)) && ctx.args().get(0).contains("youtube.com/playlist?list")) {
                 // Playlist from link with default name
                 MusicManager.getInstance().play(new PlaylistCreatorHandler(
-                    ctx.event().getGuild(),
-                    ctx.event().getChannel(),
-                    ctx.event().getMessage(),
-                    ctx.event().getAuthor(),
-                    ctx.args().get(0),
-                    ""));
+                    ctx.event(), ctx.args().get(0), ""));
             } else {
                 // Playlist from queue with custom name
                 if (ctx.args().get(0).length() > 20 || ctx.args().get(0).length() < 3) {
@@ -63,12 +58,7 @@ public class CreatePlaylist extends Command {
                 if (Play.isUrl(link) && link.contains("youtube.com/playlist?list")) {
                     // Playlist from link with custom name
                     MusicManager.getInstance().play(new PlaylistCreatorHandler(
-                        ctx.event().getGuild(),
-                        ctx.event().getChannel(),
-                        ctx.event().getMessage(),
-                        ctx.event().getAuthor(),
-                        link,
-                        nameBuilder.toString()));
+                        ctx.event(), link, nameBuilder.toString()));
                 }
             }
         }

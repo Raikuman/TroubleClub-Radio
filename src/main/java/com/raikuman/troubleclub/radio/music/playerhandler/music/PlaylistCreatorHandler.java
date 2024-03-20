@@ -1,4 +1,4 @@
-package com.raikuman.troubleclub.radio.music.musichandler;
+package com.raikuman.troubleclub.radio.music.playerhandler.music;
 
 import com.raikuman.botutilities.utilities.EmbedResources;
 import com.raikuman.botutilities.utilities.MessageResources;
@@ -10,10 +10,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +19,14 @@ public class PlaylistCreatorHandler extends MusicHandler {
 
     private final String name;
 
-    public PlaylistCreatorHandler(Guild guild, MessageChannelUnion channel, Message message, User user, String url,
-                                  String name) {
-        super(guild, channel, message, user, url);
+    public PlaylistCreatorHandler(MessageReceivedEvent event, String url, String name) {
+        super(event, url);
         this.name = name;
     }
 
 
     @Override
-    public AudioLoadResultHandler getResultHandler(GuildMusicManager musicManager) {
+    public AudioLoadResultHandler getResultHandler() {
         return new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack audioTrack) {
@@ -38,7 +34,7 @@ public class PlaylistCreatorHandler extends MusicHandler {
                     EmbedResources.error(
                         "No playlist found!",
                         "You must provide a valid playlist link.",
-                        getMessageChannel(),
+                        getChannel(),
                         getUser()));
             }
 
@@ -68,9 +64,9 @@ public class PlaylistCreatorHandler extends MusicHandler {
                     encodedTracks);
 
                 if (playlistCreated) {
-                    MessageResources.embedDelete(getMessageChannel(), 10,
+                    MessageResources.embedDelete(getChannel(), 10,
                         PlaylistUtils.getPlaylistInfoEmbed(
-                            getMessageChannel(),
+                            getChannel(),
                             getUser(),
                             "\uD83D\uDCFC Created Cassette!",
                             newName,
@@ -82,7 +78,7 @@ public class PlaylistCreatorHandler extends MusicHandler {
                 } else {
                     MessageResources.embedReplyDelete(getMessage(), 10, true,
                         EmbedResources.error("Could not create cassette!", "Could not add cassette to database.",
-                            getMessageChannel(), getUser()));
+                            getChannel(), getUser()));
                 }
             }
 
@@ -90,14 +86,14 @@ public class PlaylistCreatorHandler extends MusicHandler {
             public void noMatches() {
                 MessageResources.embedReplyDelete(getMessage(), 10, true,
                     EmbedResources.error("Playlist not found!", "Nothing found using `" + getUrl() + "`",
-                        getMessageChannel(), getUser()));
+                        getChannel(), getUser()));
             }
 
             @Override
             public void loadFailed(FriendlyException e) {
                 MessageResources.embedReplyDelete(getMessage(), 10, true,
                     EmbedResources.error("Playlist not found!", "Nothing found using `" + getUrl() + "`",
-                        getMessageChannel(), getUser()));
+                        getChannel(), getUser()));
             }
         };
     }

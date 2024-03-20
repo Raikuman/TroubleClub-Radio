@@ -8,7 +8,7 @@ import com.raikuman.botutilities.utilities.MessageResources;
 import com.raikuman.troubleclub.radio.invoke.category.Music;
 import com.raikuman.troubleclub.radio.music.MusicChecking;
 import com.raikuman.troubleclub.radio.music.manager.MusicManager;
-import com.raikuman.troubleclub.radio.music.musichandler.PlayShuffleTopHandler;
+import com.raikuman.troubleclub.radio.music.playerhandler.music.PlayShuffleTopHandler;
 
 import java.util.List;
 
@@ -38,11 +38,7 @@ public class PlayShuffleTop extends Command {
             }
 
             MusicManager.getInstance().play(new PlayShuffleTopHandler(
-                ctx.event().getGuild(),
-                ctx.event().getChannel(),
-                ctx.event().getMessage(),
-                ctx.event().getAuthor(),
-                link));
+                ctx.event(), link));
         } else {
             MessageResources.embedReplyDelete(ctx.event().getMessage(), 10, true,
                 EmbedResources.incorrectUsage(getInvoke(), getUsage(), ctx.event().getChannel()));

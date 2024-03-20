@@ -9,7 +9,7 @@ import com.raikuman.troubleclub.radio.invoke.category.Playlist;
 import com.raikuman.troubleclub.radio.music.MusicChecking;
 import com.raikuman.troubleclub.radio.music.manager.GuildMusicManager;
 import com.raikuman.troubleclub.radio.music.manager.MusicManager;
-import com.raikuman.troubleclub.radio.music.musichandler.PlayHandler;
+import com.raikuman.troubleclub.radio.music.playerhandler.music.PlayHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -100,11 +100,7 @@ public class Play extends Command {
         }
 
         MusicManager.getInstance().play(new PlayHandler(
-            ctx.event().getGuild(),
-            ctx.event().getChannel(),
-            ctx.event().getMessage(),
-            ctx.event().getAuthor(),
-            link));
+            ctx.event(), link));
     }
 
     public static boolean isUrl(String url) {
