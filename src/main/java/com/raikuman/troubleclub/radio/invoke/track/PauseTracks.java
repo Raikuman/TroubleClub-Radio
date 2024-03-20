@@ -18,13 +18,14 @@ public class PauseTracks extends Command {
 
     @Override
     public void handle(CommandContext ctx) {
-        // Check if member is in a voice channel
-        if (MusicChecking.isMemberNotInVoiceChannel(ctx)) {
-            return;
-        }
-
-        // Check if bot is in a voice channel that is not the member's
-        if (MusicChecking.isBotInDifferentVoiceChannel(ctx, true)) {
+        if (MusicChecking.setup(
+                ctx.event().getGuild(),
+                ctx.event().getChannel(),
+                ctx.event().getMessage(),
+                ctx.event().getMember())
+            .checkMemberNotInVoiceChannel(true)
+            .checkBotInDifferentVoiceChannel(true, true)
+            .check()) {
             return;
         }
 
