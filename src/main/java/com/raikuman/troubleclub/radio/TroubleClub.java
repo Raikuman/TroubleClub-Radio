@@ -44,11 +44,9 @@ public class TroubleClub {
             .addListeners(List.of(new MusicEventListener(), new VoiceEventListener()))
             .addCommands(Invokes.getCommands())
             .addSlashes(Invokes.getSlashes())
+            .thinDatabase(false)
             .build(System.getenv("RADIOTOKEN"));
 
         jda.getPresence().setActivity(Activity.playing("music! \uD83C\uDFB9 | /radio"));
-
-        // Update config for thindatabase
-        new ConfigData(new DefaultConfig()).setConfig("thindatabase", "false");
     }
 }
