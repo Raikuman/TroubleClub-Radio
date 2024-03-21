@@ -80,7 +80,7 @@ public class Prune extends Command {
         int numPruned = 0;
         for (AudioTrack audioTrack : queueTracks) {
             if (identifiers.contains(audioTrack.getIdentifier())) {
-                trackScheduler.queue.offer(audioTrack);
+                trackScheduler.queue(audioTrack);
                 identifiers.remove(audioTrack.getIdentifier());
                 numPruned++;
             }

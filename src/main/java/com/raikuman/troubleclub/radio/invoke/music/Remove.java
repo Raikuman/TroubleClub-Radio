@@ -69,7 +69,7 @@ public class Remove extends Command {
             queueTracks.remove(songNum - 1);
 
             for (AudioTrack audioTrack : queueTracks) {
-                trackScheduler.queue.offer(audioTrack);
+                trackScheduler.queue(audioTrack);
             }
 
             EmbedBuilder embedBuilder = NowPlaying.songInfoEmbed(ctx, removedTrack, musicManager.getCurrentAudioPlayerNum())

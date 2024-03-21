@@ -40,12 +40,12 @@ public class PlayShuffleTopPlaylistHandler extends PlaylistHandler {
 
         // Add tracks to top of the queue
         for (AudioTrack audioTrack : getAudioTracks()) {
-            trackScheduler.queue.offer(audioTrack);
+            trackScheduler.queue(audioTrack);
         }
 
         // Add the rest of the tracks to queue
         for (AudioTrack queueTrack : queueTracks) {
-            trackScheduler.queue.offer(queueTrack);
+            trackScheduler.queue(queueTrack);
         }
 
         // Play result immediately if playNow is true

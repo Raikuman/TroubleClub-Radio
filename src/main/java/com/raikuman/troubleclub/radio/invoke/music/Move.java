@@ -115,10 +115,10 @@ public class Move extends Command {
         int currentPos = 1;
         for (AudioTrack track : queueTracks) {
             if (currentPos == positionNum) {
-                trackScheduler.queue.offer(moveTrack);
+                trackScheduler.queue(moveTrack);
             }
 
-            trackScheduler.queue.offer(track);
+            trackScheduler.queue(track);
             currentPos++;
         }
 

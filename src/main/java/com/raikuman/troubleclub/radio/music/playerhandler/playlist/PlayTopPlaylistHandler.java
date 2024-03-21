@@ -37,12 +37,12 @@ public class PlayTopPlaylistHandler extends PlaylistHandler {
 
         // Add new tracks to queue
         for (AudioTrack playlistTrack : getAudioTracks()) {
-            trackScheduler.queue.offer(playlistTrack);
+            trackScheduler.queue(playlistTrack);
         }
 
         // Add the rest of the tracks to queue
         for (AudioTrack queueTrack : queueTracks) {
-            trackScheduler.queue.offer(queueTrack);
+            trackScheduler.queue(queueTrack);
         }
 
         // Play result immediately if playNow is true

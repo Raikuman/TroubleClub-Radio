@@ -41,9 +41,9 @@ public class Random extends Command {
             int position = new java.util.Random().nextInt(queueTracks.size());
             AudioTrack newTrack = queueTracks.remove(position);
 
-            trackScheduler.queue.offer(newTrack);
+            trackScheduler.queue(newTrack);
             for (AudioTrack audioTrack : queueTracks) {
-                trackScheduler.queue.offer(audioTrack);
+                trackScheduler.queue(audioTrack);
             }
 
             trackScheduler.nextTrack();

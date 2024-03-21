@@ -38,7 +38,7 @@ public class Shuffle extends Command {
             trackScheduler.queue.drainTo(queueTracks);
             Collections.shuffle(queueTracks);
             for (AudioTrack audioTrack : queueTracks) {
-                trackScheduler.queue.offer(audioTrack);
+                trackScheduler.queue(audioTrack);
             }
 
             MessageResources.embedDelete(ctx.event().getChannel(), 10,

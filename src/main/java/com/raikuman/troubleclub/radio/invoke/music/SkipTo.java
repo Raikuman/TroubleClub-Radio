@@ -102,7 +102,7 @@ public class SkipTo extends Command {
                     currentTrack = queueTracks.get(i);
                 }
 
-                trackScheduler.queue.offer(queueTracks.get(i));
+                trackScheduler.queue(queueTracks.get(i));
             }
 
             trackScheduler.nextTrack();
