@@ -55,13 +55,26 @@ public class Queue extends Command {
 
         List<String> queueStrings = new ArrayList<>();
         String playerStatus, currentTrackStatus = "Playing:";
+
+        // Handle queue length
+        long queueLength = currentTrack.getPosition() - currentTrack.getDuration();
+        for (AudioTrack audioTrack : trackScheduler.queue) {
+            queueLength += audioTrack.getDuration();
+        }
+
+        Duration trackDuration = Duration.ofMillis(queueLength);
+        String trackLength = String.format("%02d:%02d:%02d",
+            trackDuration.toHours(),
+            trackDuration.toMinutesPart(),
+            trackDuration.toSecondsPart());
+
         // Handle number of songs
         int totalSongs = trackScheduler.queue.size() + 1;
         playerStatus = "*" + totalSongs + " song";
         if (totalSongs > 1) {
             playerStatus += "s";
         }
-        playerStatus += "*";
+        playerStatus += " | `" + trackLength + "`*";
 
         if (trackScheduler.isRepeat()) {
             playerStatus += "\n\uD83D\uDD04 Repeating song";
