@@ -13,6 +13,7 @@ import com.raikuman.troubleclub.radio.music.playerhandler.music.PlayHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -92,7 +93,9 @@ public class Play extends Command {
 
     private void playMusic(CommandContext ctx) {
         // Connect
-        MusicManager.getInstance().connect(ctx);
+        MusicManager.getInstance().connect(
+            ctx.event(),
+            MusicChecking.retrieveMemberVoiceChannel(ctx.event().getMember()));
 
         String link = String.join(" ", ctx.args());
         if (!isUrl(link)) {

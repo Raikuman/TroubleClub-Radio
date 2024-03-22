@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
 
 import java.awt.*;
@@ -63,22 +64,26 @@ public class MusicManager {
         });
     }
 
-    public void connect(CommandContext ctx) {
-        AudioManager guildAudioManager = ctx.event().getGuild().getAudioManager();
-        AudioChannelUnion audioChannel = MusicChecking.retrieveMemberVoiceChannel(ctx.event().getMember());
-
-        connect(guildAudioManager, audioChannel, ctx.event().getChannel(), ctx.event().getMessage(), ctx.event().getAuthor());
+    public void connect(MessageReceivedEvent event, AudioChannelUnion audioChannel) {
+        connect(
+            event.getGuild().getAudioManager(),
+            audioChannel,
+            event.getChannel(),
+            event.getMessage(),
+            event.getAuthor());
     }
 
-    public void connect(StringSelectInteractionEvent ctx) {
-        if (ctx.getGuild() == null) {
+    public void connect(StringSelectInteractionEvent event, AudioChannelUnion audioChannel) {
+        if (event.getGuild() == null) {
             return;
         }
 
-        AudioManager guildAudioManager = ctx.getGuild().getAudioManager();
-        AudioChannelUnion audioChannel = MusicChecking.retrieveMemberVoiceChannel(ctx.getMember());
-
-        connect(guildAudioManager, audioChannel, ctx.getChannel(), ctx.getMessage(), ctx.getUser());
+        connect(
+            event.getGuild().getAudioManager(),
+            audioChannel,
+            event.getChannel(),
+            event.getMessage(),
+            event.getUser());
     }
 
     private void connect(AudioManager guildAudioManager, AudioChannelUnion audioChannel, MessageChannelUnion channel,

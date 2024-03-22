@@ -32,7 +32,9 @@ public class PlayShuffleSelect extends SelectComponent {
             ctx,
             playlist));
 
-        MusicManager.getInstance().connect(ctx);
+        MusicManager.getInstance().connect(
+            ctx,
+            MusicChecking.retrieveMemberVoiceChannel(ctx.getMember()));
     }
 
     @Override

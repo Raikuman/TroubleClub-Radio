@@ -33,7 +33,9 @@ public class PlayNowSelect extends SelectComponent {
             playlist,
             true));
 
-        MusicManager.getInstance().connect(ctx);
+        MusicManager.getInstance().connect(
+            ctx,
+            MusicChecking.retrieveMemberVoiceChannel(ctx.getMember()));
     }
 
     @Override

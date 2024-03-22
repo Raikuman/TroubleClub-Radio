@@ -30,7 +30,9 @@ public class PlayTop extends Command {
 
         if (!ctx.args().isEmpty()) {
             // Connect
-            MusicManager.getInstance().connect(ctx);
+            MusicManager.getInstance().connect(
+                ctx.event(),
+                MusicChecking.retrieveMemberVoiceChannel(ctx.event().getMember()));
 
             String link = String.join(" ", ctx.args());
             if (!Play.isUrl(link)) {

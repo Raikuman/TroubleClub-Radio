@@ -6,6 +6,7 @@ import com.raikuman.botutilities.invocation.type.Command;
 import com.raikuman.troubleclub.radio.invoke.category.Music;
 import com.raikuman.troubleclub.radio.music.MusicChecking;
 import com.raikuman.troubleclub.radio.music.manager.MusicManager;
+import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 import java.util.List;
@@ -27,7 +28,9 @@ public class Join extends Command {
         }
 
         // Connect
-        MusicManager.getInstance().connect(ctx);
+        MusicManager.getInstance().connect(
+            ctx.event(),
+            MusicChecking.retrieveMemberVoiceChannel(ctx.event().getMember()));
         ctx.event().getMessage().addReaction(Emoji.fromFormatted("\uD83D\uDC4D")).queue();
     }
 
