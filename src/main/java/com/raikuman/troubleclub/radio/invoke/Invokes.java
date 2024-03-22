@@ -4,6 +4,7 @@ import com.raikuman.botutilities.defaults.invocation.Help;
 import com.raikuman.botutilities.defaults.invocation.Settings;
 import com.raikuman.botutilities.invocation.type.Command;
 import com.raikuman.botutilities.invocation.type.Slash;
+import com.raikuman.troubleclub.radio.invoke.bot.*;
 import com.raikuman.troubleclub.radio.invoke.category.Music;
 import com.raikuman.troubleclub.radio.invoke.category.Playlist;
 import com.raikuman.troubleclub.radio.invoke.music.*;
@@ -60,9 +61,15 @@ public class Invokes {
             new com.raikuman.troubleclub.radio.invoke.playlist.playlist.Playlist(),
             new CreatePlaylist(),
             new DeletePlaylist(),
-            new RenamePlaylist()
+            new RenamePlaylist(),
 //            new AddSongToPlaylist(),
 //            new RemoveSongFromPlaylist()
+
+            new PlayBot(),
+            new PlayNowBot(),
+            new PlayShuffleBot(),
+            new PlayShuffleTopBot(),
+            new PlayShuffleTopNowBot()
         );
     }
 
