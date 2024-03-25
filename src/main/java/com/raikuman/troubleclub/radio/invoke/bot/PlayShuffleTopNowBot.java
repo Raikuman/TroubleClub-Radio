@@ -19,11 +19,11 @@ public class PlayShuffleTopNowBot extends Command {
             return;
         }
 
-        // First argument is always target memberId
-        String memberId = ctx.args().get(0);
+        // First argument is always link
+        String link = ctx.args().get(0);
 
-        // Second argument is always link
-        String link = ctx.args().get(1);
+        // Second argument is always target memberId
+        String memberId = ctx.args().get(1);
 
         Member member = ctx.event().getGuild().getMemberById(memberId);
         if (member == null) {
