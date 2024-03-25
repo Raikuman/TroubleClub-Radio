@@ -57,7 +57,7 @@ public class Queue extends Command {
         String playerStatus, currentTrackStatus = "Playing:";
 
         // Handle queue length
-        long queueLength = currentTrack.getPosition() - currentTrack.getDuration();
+        long queueLength = currentTrack.getDuration() - currentTrack.getPosition();
         for (AudioTrack audioTrack : trackScheduler.queue) {
             queueLength += audioTrack.getDuration();
         }
