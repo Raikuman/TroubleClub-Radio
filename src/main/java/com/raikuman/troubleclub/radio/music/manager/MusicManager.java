@@ -12,7 +12,12 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import com.sedmelluq.lava.extensions.youtuberotator.planner.AbstractRoutePlanner;
+import com.sedmelluq.lava.extensions.youtuberotator.tools.Tuple;
+import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.Ipv6Block;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
+import dev.lavalink.youtube.clients.*;
+import dev.lavalink.youtube.clients.skeleton.Client;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
@@ -20,8 +25,12 @@ import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
+import org.apache.http.HttpException;
 
 import java.awt.*;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -39,9 +48,21 @@ public class MusicManager {
         TRACK_COLOR = Color.decode("#e67017");
 
     public MusicManager() {
+        YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true, new Client[]{
+           new Music(),
+           new TvHtml5Embedded(),
+           new AndroidMusic(),
+           new Web(),
+           new WebEmbedded(),
+           new Android(),
+           new AndroidLite(),
+           new MediaConnect(),
+           new Ios()
+        });
+
         this.musicManagerMap = new HashMap<>();
         this.audioPlayerManager = new DefaultAudioPlayerManager();
-        this.audioPlayerManager.registerSourceManager(new YoutubeAudioSourceManager(true));
+        this.audioPlayerManager.registerSourceManager(youtubeAudioSourceManager);
 
         // Check source of track
         AudioSourceManagers.registerRemoteSources(this.audioPlayerManager);
