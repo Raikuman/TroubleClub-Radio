@@ -1,9 +1,7 @@
 package com.raikuman.troubleclub.radio.music.manager;
 
-import com.raikuman.botutilities.invocation.context.CommandContext;
 import com.raikuman.botutilities.utilities.EmbedResources;
 import com.raikuman.botutilities.utilities.MessageResources;
-import com.raikuman.troubleclub.radio.music.MusicChecking;
 import com.raikuman.troubleclub.radio.music.playerhandler.PlaylistCreatorHandler;
 import com.raikuman.troubleclub.radio.music.playerhandler.music.MusicHandler;
 import com.raikuman.troubleclub.radio.music.playerhandler.playlist.PlaylistHandler;
@@ -12,9 +10,6 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import com.sedmelluq.lava.extensions.youtuberotator.planner.AbstractRoutePlanner;
-import com.sedmelluq.lava.extensions.youtuberotator.tools.Tuple;
-import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.Ipv6Block;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import dev.lavalink.youtube.clients.*;
 import dev.lavalink.youtube.clients.skeleton.Client;
@@ -25,12 +20,8 @@ import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
-import org.apache.http.HttpException;
 
 import java.awt.*;
-import java.net.Inet4Address;
-import java.net.Inet6Address;
-import java.net.InetAddress;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -55,8 +46,6 @@ public class MusicManager {
            new Web(),
            new WebEmbedded(),
            new Android(),
-           new AndroidLite(),
-           new MediaConnect(),
            new Ios()
         });
 
